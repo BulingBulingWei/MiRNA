@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* 滑动动画，完全消失 2*/
+.Slide2-enter {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+.Slide2-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: transform 0.2s;
+}
+
+.Slide2-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.Slide2-exit-active {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: transform 0.2s;
+}
+.Slide2-exit-done {
+  opacity: 0;
+  transform: translateY(-100%);
+}
