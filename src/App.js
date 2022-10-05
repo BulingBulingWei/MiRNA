@@ -6,7 +6,7 @@ const Home = lazy(() => import("./pages/Home"));
 const Loading = lazy(() => import("./pages/Loading"));
 const Search = lazy(() => import("./pages/Search"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
-// const  = lazy(() => import(""));
+const SearchDetail = lazy(() => import("./pages/SearchDetail"));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
@@ -41,6 +41,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />}>
                 <Route path="/" element={<Search />}></Route>
+                <Route path="/SearchDetail" element={<SearchDetail />}></Route>
               </Route>
               <Route path="*" element={<GoWrong404 />}></Route>
             </Routes>

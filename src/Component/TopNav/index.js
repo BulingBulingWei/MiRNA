@@ -5,7 +5,7 @@ export default function TopNav() {
   return (
     <div
       className="h-full w-full px-1 md:px-20 md:gap-5 py-1 flex justify-start items-center bg-gray-50
-      border-y border-b-2 border-gray-300 transition-all gap-2 z-50 "
+      border-y border-b-2 border-gray-300 transition-all gap-2 z-50 shadow-2xl"
     >
       {/* Home */}
       <div

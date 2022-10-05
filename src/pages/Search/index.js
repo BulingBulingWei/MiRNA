@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import bgimg from "../../img/img1.jpg";
 import img1 from "../../img/cap.jpg";
 import img2 from "../../img/img1.jpg";
@@ -8,19 +10,47 @@ import img4 from "../../img/img8.jpg";
 
 export default function Search() {
   // type：0为疾病 ， 1为mirna
-  const [type, setType] = useState(0);
+  const navigate = useNavigate();
   const toastController = useContext(ToastContext);
+  const [type, setType] = useState(0);
+
   const searchInput = useRef(null);
+
+  //点击搜索
+  const handleSearch = () => {
+    const fetchData = async () => {
+      const options = {
+        url: "",
+        method: "GET",
+        headers: {
+          "content-type": "",
+        },
+        data: {},
+      };
+      const res = await axios(options);
+
+      if (res.data.code === 200) {
+        navigate(``);
+      } else {
+        toastController({
+          mes: res.data.message,
+          timeout: 1000,
+        });
+      }
+    };
+    fetchData();
+  };
 
   const enterKeyUp = (e) => {
     if (e.keyCode === 13) {
-      toastController({ mes: "sou suo", timeout: 1000 });
+      // handleSearch();
+      navigate(`SearchDetail`);
     }
   };
 
   return (
     <div
-      className="h-fit w-full "
+      className="h-fit w-full transition-all duration-500"
       style={{
         backgroundImage: `url(${bgimg})`,
         backgroundRepeat: "no-repeat",
@@ -30,15 +60,16 @@ export default function Search() {
     >
       {/* 背景蒙层 */}
       <div
-        className="h-fit w-full flex flex-col justify-between items-center flex-grow "
+        className="h-full w-full flex flex-col justify-between items-center flex-grow "
         style={{
           background: "rgba(39, 39, 39,0.55)",
         }}
       >
         {/* 上方 */}
         <div
-          className="w-full h-36 flex flex-col justify-center items-center gap-3
-          md:flex-row md:h-60 lg:pb-16 lg:h-96 xl:gap-10 2xl:h-110"
+          className="w-full h-36 flex flex-col shrink-0 justify-center items-center gap-3 
+          sm:h-52
+          md:flex-row md:h-52 lg:pb-16 lg:h-96 xl:gap-10 2xl:h-100"
         >
           {/* 搜索类型 */}
           <div
@@ -114,9 +145,9 @@ export default function Search() {
 
         {/* 下方热点推荐 */}
         <div
-          className="w-full h-fit grid grid-cols-1 py-2 gap-1 px-2 
-        sm:grid-cols-2 sm:pt-5 md:pt-10  md:pb-16 md:gap-4
-        lg:pb-14 xl:grid-cols-4 xl:gap-4 2xl:gap-10 2xl:pt-20 2xl:pb-24"
+          className="w-full h-fit grid grid-cols-1 py-2 gap-2 px-2 
+        sm:grid-cols-2 sm:pb-10 sm:pt-20 md:pb-10 md:gap-4
+        lg:pb-20 xl:grid-cols-4 xl:gap-4 2xl:gap-10 2xl:pt-20 2xl:pb-24"
         >
           <div
             className="h-32 w-11/12 mx-auto rounded transiti on-all 
