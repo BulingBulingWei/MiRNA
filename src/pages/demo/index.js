@@ -8,7 +8,7 @@ import img2 from "../../img/img1.jpg";
 import img3 from "../../img/img2.jpg";
 import img4 from "../../img/img8.jpg";
 
-export default function Search() {
+export default function PictureShift1() {
   // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
   const toastController = useContext(ToastContext);
@@ -51,11 +51,12 @@ export default function Search() {
 
   return (
     <div
-      className="h-fit w-full transition-all duration-500 "
+      className="h-fit w-full transition-all duration-500"
       style={{
-        backgroundPosition: "center",
         backgroundImage: `url(${bgimg})`,
+        backgroundRepeat: "repeat-y",
         backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       {/* 背景蒙层 */}
@@ -69,7 +70,7 @@ export default function Search() {
         <div
           className="w-full h-36 flex flex-col shrink-0 justify-center items-center gap-3 
           sm:h-52 
-        md:flex-row lg:h-72 xl:h-80 xl:gap-10 2xl:h-85"
+        md:flex-row lg:h-72 xl:h-80 xl:gap-10"
         >
           {/* 搜索类型 */}
           <div
@@ -80,7 +81,8 @@ export default function Search() {
             <div
               className={`${
                 type === 0 ? "w-9/12 bg-yellow-300" : "w-3/12 text-xs"
-              } h-full flex justify-center items-center rounded-sm text-gray-600 text-center text-2xl`}
+              } h-full flex justify-center items-center rounded-sm text-gray-600 text-center
+               text-2xl transition-all duration-500 overflow-hidden`}
               onClick={(event) => {
                 event.stopPropagation();
                 setType(0);
@@ -94,7 +96,8 @@ export default function Search() {
             <div
               className={`${
                 type === 1 ? "w-9/12 bg-yellow-300 " : "w-3/12"
-              } h-full flex justify-center items-center rounded-sm text-gray-600 text-center text-2xl`}
+              } h-full flex justify-center items-center rounded-sm text-gray-600 text-center
+               text-2xl transition-all duration-500 overflow-hidden`}
               onClick={(event) => {
                 event.stopPropagation();
                 setType(1);
@@ -107,7 +110,7 @@ export default function Search() {
           {/* 搜索框 */}
           <div
             className="w-11/12 h-9 flex justify-between items-center bg-white rounded-sm
-             md:w-7/12 md:h-10 xl:h-12 xl:w-1/2 2xl:h-14"
+             md:w-7/12 md:h-10 xl:h-12 xl:w-1/2 s24:h-14"
           >
             <input
               className="h-full w-11/12 px-2 rounded-sm outline-none text-xl text-gray-600"
@@ -150,12 +153,12 @@ export default function Search() {
         <div
           className="w-full h-fit grid grid-cols-1 py-2 gap-2 px-2 
         sm:grid-cols-2 sm:pb-10 sm:pt-10 md:pb-10 md:gap-3
-        lg:pb-20 xl:grid-cols-4 xl:gap-4 2xl:gap-6 2xl:pt-10 2xl:pb-24"
+        lg:pb-20 xl:grid-cols-4 xl:gap-4 s24:gap-6 s24:pt-10 s24:pb-24"
         >
           <div
             className="h-32 w-11/12 mx-auto rounded transition-all 
           transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
+          sm:h-40 md:border-8 md:h-48 xl:h-52 s24:h-64"
             style={{
               backgroundImage: `url(${img1})`,
               backgroundRepeat: "no-repeat",
@@ -167,7 +170,7 @@ export default function Search() {
           <div
             className="h-32 w-11/12 mx-auto rounded transition-all 
           transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
+          sm:h-40 md:border-8 md:h-48 xl:h-52 s24:h-64"
             style={{
               backgroundImage: `url(${img2})`,
               backgroundRepeat: "no-repeat",
@@ -179,7 +182,7 @@ export default function Search() {
           <div
             className="h-32 w-11/12 mx-auto rounded transition-all 
           transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
+          sm:h-40 md:border-8 md:h-48 xl:h-52 s24:h-64"
             style={{
               backgroundImage: `url(${img3})`,
               backgroundRepeat: "no-repeat",
@@ -191,7 +194,7 @@ export default function Search() {
           <div
             className="h-32 w-11/12 mx-auto rounded transition-all 
           transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
+          sm:h-40 md:border-8 md:h-48 xl:h-52 s24:h-64"
             style={{
               backgroundImage: `url(${img4})`,
               backgroundRepeat: "no-repeat",

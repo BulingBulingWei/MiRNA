@@ -3,17 +3,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
-      screens: { ss: "220px" },
+      screens: { ss: "220px", s15: "1400px", s24: "1800px", s27: "2500" },
       height: {
         18: "4.5rem",
-        p15: "15%",
-        p10: "10%",
-        p20: "20%",
-        p30: "30%",
-        p40: "40%",
-        p50: "50%",
-        p60: "60%",
-        p90: "90%",
         85: "22rem",
         98: "26rem",
         100: "28rem",
