@@ -2186,72 +2186,6 @@ export default function SearchDetail() {
         md:h-full ${showGraph === true ? "" : "hidden"}`}
       ></div>
 
-      {/* 论文题目和摘要（详情） */}
-      {paperList !== undefined &&
-        paperList !== null &&
-        paperSelectedId !== undefined &&
-        paperList.map((item) => {
-          if (item.id === paperSelectedId) {
-            return (
-              // 论文详情
-              <div
-                className={`h-fit w-full 
-                transition-all duration-1000 
-                ${
-                  showGraph === false
-                    ? // 无图
-                      "md:h-full md:order-2 md:w-7/12 "
-                    : showRight === true
-                    ? // 有图且显示论文详情
-                      "md:w-60 lg:w-80 xl:w-85 2xl:w-100 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
-                    : // 不显示右边的论文详情
-                      "md:w-0 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
-                }
-                `}
-              >
-                {/* 点击向右回缩按钮 */}
-                <div
-                  className={`h-0 w-5 bg-gray-100 flex justify-center items-center shadow-lg
-                md:h-12 md:absolute md:top-40 md:-left-5 md:rounded-l ${
-                  showGraph === true ? "" : "hidden"
-                }`}
-                  onClick={() => {
-                    setShowRight(!showRight);
-                  }}
-                >
-                  <Svg1
-                    className={`hidden transform duration-700 md:block ${
-                      showRight === true ? "" : "rotate-180"
-                    }`}
-                  ></Svg1>
-                </div>
-                {/* 论文内容滚动面板 container */}
-                <div
-                  className="h-full w-full bg-gray-50 pl-3 py-3 shadow-lg 
-                    md:overflow-y-scroll"
-                >
-                  <h1 className="text-xl font-bold block mb-2">{item.title}</h1>
-                  {item.author !== undefined &&
-                    item.author !== null &&
-                    item.author.map((aut) => {
-                      return <p className="text-gray-600 inline pr-2">{aut}</p>;
-                    })}
-                  <p className="pt-1 text-gray-600">{item.time}</p>
-                  <div className="h-4 w-full"></div>
-                  <div className="inline-block h-6 w-fit mr-3">Open in:</div>
-                  <div className="h-6 w-6 rounded-full text-white bg-gray-500 inline-block">
-                    <div className=" h-fit w-fit mx-auto">doi</div>
-                  </div>
-                  <div className="h-4 w-full"></div>
-                  <p className="text-sky-800 font-bold">Abstract:</p>
-                  <p>{item.abstract}</p>
-                </div>
-              </div>
-            );
-          }
-          return <></>;
-        })}
-
       {/* 相关论文选项列表 */}
       <div
         className={`h-fit w-full select-none 
@@ -2259,7 +2193,7 @@ export default function SearchDetail() {
         ${
           showGraph === false
             ? // 无图
-              " md:order-1 md:mr-1 md:h-full md:w-3/12"
+              " md:mr-1 md:h-full md:w-3/12"
             : // 有图
             showLeft === true
             ? "md:w-60 lg:w-72 xl:w-80 2xl:w-96 md:absolute md:top-0 md:left-0 md:h-full md:min-h-0"
@@ -2402,7 +2336,50 @@ export default function SearchDetail() {
                 </PaperBox>
               );
             })}
-          {/* 底部的选择按钮 */}
+          {/* 手机端的论文详情 */}
+          {paperList !== undefined &&
+            paperList !== null &&
+            paperSelectedId !== undefined &&
+            paperList.map((item) => {
+              if (item.id === paperSelectedId) {
+                return (
+                  // 论文详情
+                  <div
+                    className={`h-48 w-full sticky bottom-10 border-t-4 border-green-300 md:hidden`}
+                  >
+                    {/* 论文内容滚动面板 container */}
+                    <div
+                      className="h-48 w-full  pl-3 py-3 shadow-lg 
+                    overflow-y-scroll bg-green-50"
+                    >
+                      <h1 className="text-xl font-bold block mb-2">
+                        {item.title}
+                      </h1>
+                      {item.author !== undefined &&
+                        item.author !== null &&
+                        item.author.map((aut) => {
+                          return (
+                            <p className="text-gray-600 inline pr-2">{aut}</p>
+                          );
+                        })}
+                      <p className="pt-1 text-gray-600">{item.time}</p>
+                      <div className="h-4 w-full"></div>
+                      <div className="inline-block h-6 w-fit mr-3">
+                        Open in:
+                      </div>
+                      <div className="h-6 w-6 rounded-full text-white bg-gray-500 inline-block">
+                        <div className=" h-fit w-fit mx-auto">doi</div>
+                      </div>
+                      <div className="h-4 w-full"></div>
+                      <p className="text-sky-800 font-bold">Abstract:</p>
+                      <p>{item.abstract}</p>
+                    </div>
+                  </div>
+                );
+              }
+              return <></>;
+            })}
+          {/* 底部的选择页面按钮 */}
           <div
             className="sticky bottom-0 w-full h-10 shrink-0 flex justify-center items-center
            bg-blue-100"
@@ -2432,8 +2409,72 @@ export default function SearchDetail() {
           </div>
         </div>
       </div>
+
+      {/* 论文题目和摘要（详情） */}
+      {paperList !== undefined &&
+        paperList !== null &&
+        paperSelectedId !== undefined &&
+        paperList.map((item) => {
+          if (item.id === paperSelectedId) {
+            return (
+              // 论文详情
+              <div
+                className={`h-fit w-full hidden md:block
+                transition-all duration-1000 
+                ${
+                  showGraph === false
+                    ? // 无图
+                      " md:h-full md:w-7/12 "
+                    : showRight === true
+                    ? // 有图且显示论文详情
+                      "md:w-60 lg:w-80 xl:w-85 2xl:w-100 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
+                    : // 不显示右边的论文详情
+                      "md:w-0 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
+                }
+                `}
+              >
+                {/* 点击向右回缩按钮 */}
+                <div
+                  className={`h-0 w-5 bg-gray-100 flex justify-center items-center shadow-lg
+                md:h-12 md:absolute md:top-40 md:-left-5 md:rounded-l ${
+                  showGraph === true ? "" : "hidden"
+                }`}
+                  onClick={() => {
+                    setShowRight(!showRight);
+                  }}
+                >
+                  <Svg1
+                    className={`hidden transform duration-700 md:block ${
+                      showRight === true ? "" : "rotate-180"
+                    }`}
+                  ></Svg1>
+                </div>
+                {/* 论文内容滚动面板 container */}
+                <div
+                  className="h-full w-full bg-gray-50 pl-3 py-3 shadow-lg 
+                    md:overflow-y-scroll"
+                >
+                  <h1 className="text-xl font-bold block mb-2">{item.title}</h1>
+                  {item.author !== undefined &&
+                    item.author !== null &&
+                    item.author.map((aut) => {
+                      return <p className="text-gray-600 inline pr-2">{aut}</p>;
+                    })}
+                  <p className="pt-1 text-gray-600">{item.time}</p>
+                  <div className="h-4 w-full"></div>
+                  <div className="inline-block h-6 w-fit mr-3">Open in:</div>
+                  <div className="h-6 w-6 rounded-full text-white bg-gray-500 inline-block">
+                    <div className=" h-fit w-fit mx-auto">doi</div>
+                  </div>
+                  <div className="h-4 w-full"></div>
+                  <p className="text-sky-800 font-bold">Abstract:</p>
+                  <p>{item.abstract}</p>
+                </div>
+              </div>
+            );
+          }
+          return <></>;
+        })}
     </div>
   );
 }
-
-// md:w-72 lg:w-80 xl:w-85 2xl:w-96
