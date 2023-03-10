@@ -44,6 +44,15 @@ code {
   display: block; /* 修复交汇时出现的白块 */
 }
 
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 /* 滑动动画，完全消失 2*/
 .Slide2-enter {
   opacity: 0;

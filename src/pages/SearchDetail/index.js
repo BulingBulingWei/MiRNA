@@ -9,6 +9,7 @@ import { TooltipComponent, LegendComponent } from "echarts/components";
 import { GraphChart } from "echarts/charts";
 import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
+import PageButton from "../../Component/PageButton";
 
 echarts.use([
   TooltipComponent,
@@ -57,11 +58,15 @@ export default function SearchDetail() {
   const toastController = useContext(ToastContext);
   const { showGraph, setShowGraph } = useContext(GraphContext);
   const searchInput = useRef(null);
-  const [searchType, setSearchType] = useState("mi-RNA");
+  const pageInput = useRef(null);
 
+  const [searchType, setSearchType] = useState("mi-RNA");
   const [graph, setGraph] = useState("");
   const [startYear, setStartYear] = useState("1900");
   const [endYear, setEndYear] = useState("2023");
+
+  const [page_now, setPage_now] = useState(0);
+  const [page_end, setPage_end] = useState(25);
 
   const [showLeft, setShowLeft] = useState(true);
   const [showRight, setShowRight] = useState(true);
@@ -2152,6 +2157,22 @@ export default function SearchDetail() {
     }
   };
 
+  const gotopage = (e) => {
+    let tmp = parseInt(e.target.value);
+    if (tmp > 0 && tmp <= page_end) {
+      toastController({
+        mes: `go to page ${e.target.value}`,
+        timeout: 1000,
+      });
+      setPage_now(tmp);
+    } else {
+      toastController({
+        mes: `error page`,
+        timeout: 1000,
+      });
+    }
+  };
+
   return (
     <div
       className={`h-fit w-full bg-blue-5 relative md:h-full ${
@@ -2165,7 +2186,7 @@ export default function SearchDetail() {
         md:h-full ${showGraph === true ? "" : "hidden"}`}
       ></div>
 
-      {/* 论文详情 */}
+      {/* 论文题目和摘要（详情） */}
       {paperList !== undefined &&
         paperList !== null &&
         paperSelectedId !== undefined &&
@@ -2263,7 +2284,7 @@ export default function SearchDetail() {
         </div>
         {/* 论文选择方块滚动面板 container */}
         <div
-          className="h-full w-full bg-gray-50 flex flex-col justify-start items-center pb-1
+          className="h-full w-full bg-gray-50 flex flex-col justify-start items-center 
           md:overflow-y-scroll shadow-lg"
         >
           {/* 论文顶部的搜索框以及时间选择器 */}
@@ -2356,6 +2377,7 @@ export default function SearchDetail() {
               </select>
             </div>
           </div>
+          {/* 非sticky的选项列表 */}
           {paperList !== undefined &&
             paperList.map((item) => {
               return (
@@ -2380,6 +2402,34 @@ export default function SearchDetail() {
                 </PaperBox>
               );
             })}
+          {/* 底部的选择按钮 */}
+          <div
+            className="sticky bottom-0 w-full h-10 shrink-0 flex justify-center items-center
+           bg-blue-100"
+          >
+            {page_now > 2 && <PageButton content={1}></PageButton>}
+            {page_now > 2 && " < < "}
+            {page_now > 1 && <PageButton content={page_now - 1}></PageButton>}
+            {/* 当前页的按钮以及输入框 */}
+            <div className="h-7 w-fit relative px-3 mx-2 rounded bg-gray-50 shadow-md ring-2 ring-blue-300">
+              <p className="leading-7 text-center text-gray-600">{page_now}</p>
+              <input
+                type="number"
+                ref={pageInput}
+                onChange={gotopage}
+                placeholder={page_now}
+                className="absolute top-0 left-0 h-7 w-10 rounded text-center outline-none
+                opacity-0 focus:opacity-100 ring-2 ring-blue-300"
+              />
+            </div>
+            {page_now < page_end && (
+              <PageButton content={page_now + 1}></PageButton>
+            )}
+            {page_now < page_end - 1 && " > > "}
+            {page_now < page_end - 1 && (
+              <PageButton content={page_end}></PageButton>
+            )}
+          </div>
         </div>
       </div>
     </div>
