@@ -19,6 +19,8 @@ const SearchDetail = lazy(() => import("./pages/SearchDetail"));
 function App() {
   const [toastConfig, setToastConfig] = useState({});
   const [showGraph, setShowGraph] = useState(true);
+  const [showLeft, setShowLeft] = useState(true);
+  const [showRight, setShowRight] = useState(true);
   /**
    * 用于控制toast展示的函数，这个控制函数通过context向下传递到每一个组件里
    * 在控制函数内部实现了组件定时关闭的能力
@@ -39,20 +41,24 @@ function App() {
       <Toast config={toastConfig} />
       <ToastContext.Provider value={handleToastConfig}>
         <GraphContext.Provider value={{ showGraph, setShowGraph }}>
-          <Suspense fallback={<Loading />}>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Home />}>
-                  <Route path="/" element={<Search />}></Route>
-                  <Route
-                    path="/SearchDetail"
-                    element={<SearchDetail />}
-                  ></Route>
-                </Route>
-                <Route path="*" element={<GoWrong404 />}></Route>
-              </Routes>
-            </BrowserRouter>
-          </Suspense>
+          <ShowLeftContext.Provider value={{ showLeft, setShowLeft }}>
+            <ShowRightContext.Provider value={{ showRight, setShowRight }}>
+              <Suspense fallback={<Loading />}>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Home />}>
+                      <Route path="/" element={<Search />}></Route>
+                      <Route
+                        path="/SearchDetail/:type/:searchName"
+                        element={<SearchDetail />}
+                      ></Route>
+                    </Route>
+                    <Route path="*" element={<GoWrong404 />}></Route>
+                  </Routes>
+                </BrowserRouter>
+              </Suspense>
+            </ShowRightContext.Provider>
+          </ShowLeftContext.Provider>
         </GraphContext.Provider>
       </ToastContext.Provider>
     </>
@@ -60,4 +66,6 @@ function App() {
 }
 export const ToastContext = React.createContext();
 export const GraphContext = React.createContext();
+export const ShowLeftContext = React.createContext();
+export const ShowRightContext = React.createContext();
 export default App;

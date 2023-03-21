@@ -18,34 +18,22 @@ export default function PictureShift1() {
 
   //点击搜索
   const handleSearch = () => {
-    const fetchData = async () => {
-      const options = {
-        url: "",
-        method: "GET",
-        headers: {
-          "content-type": "",
-        },
-        data: {},
-      };
-      const res = await axios(options);
-
-      if (res.data.code === 200) {
-        navigate(`SearchDetail`);
-      } else {
-        toastController({
-          mes: res.data.message,
-          timeout: 1000,
-        });
-      }
-    };
-    navigate(`SearchDetail`);
-    // fetchData();
+    let searchName = searchInput.current.value;
+    if (searchName === undefined || searchName === "") {
+      toastController({
+        mes: "请输入搜索内容",
+        timeout: 2000,
+      });
+      return;
+    }
+    searchName.replaceAll(" ", "+");
+    let searchType = type === 0 ? "Disease" : "mi-RNA";
+    navigate(`SearchDetail/` + searchType + `/` + searchName);
   };
 
   const enterKeyUp = (e) => {
     if (e.keyCode === 13) {
-      // handleSearch();
-      navigate(`SearchDetail`);
+      handleSearch();
     }
   };
 

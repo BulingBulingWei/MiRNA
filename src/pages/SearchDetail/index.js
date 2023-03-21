@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext, GraphContext } from "../../App";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import { Svg1 } from "../../svg";
@@ -10,7 +10,13 @@ import { GraphChart } from "echarts/charts";
 import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import PageButton from "../../Component/PageButton";
-import gData from "../../data/graphData";
+import yearSelectOptions from "../../data/yearData";
+import {
+  GetDieaseSearch,
+  GetMirnaSearch,
+  GetDiseaseGraphData,
+  GetMirnaGraphData,
+} from "../../utils/mapPath";
 
 echarts.use([
   TooltipComponent,
@@ -22,6 +28,7 @@ echarts.use([
 
 const PaperBox = styled.div`
   height: fit-content;
+  z-index: 10;
   width: 98%;
   margin-left: 0.1rem;
   flex-shrink: 0;
@@ -53,385 +60,415 @@ const AbsBox = styled.div`
   }
 `;
 
-export default function SearchDetail() {
+//props:
+export default function SearchDetail(props) {
   // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
+  const params = useParams();
+  const location = useLocation();
+
+  const maxSize = 20;
   //一些useContext
   const toastController = useContext(ToastContext);
-  const { showGraph, setShowGraph } = useContext(GraphContext);
+  const { showGraph } = useContext(GraphContext);
 
   //一些input的 dom标识
   const searchInput = useRef(null);
   const pageInput = useRef(null);
+  const graphDom = useRef(null);
+  const searchTypeSelect = useRef(null);
+  const startTimeSelect = useRef(null);
+  const endTimeSelect = useRef(null);
 
   //有关搜索参数（类型，时间，是否显示图）的state
-  const [searchType, setSearchType] = useState("mi-RNA");
-  const [graph, setGraph] = useState("");
-  const [startYear, setStartYear] = useState("1900");
-  const [endYear, setEndYear] = useState("2023");
+  const [searchType, setSearchType] = useState(params.type);
+  const [startYear, setStartYear] = useState("2000");
+  const [endYear, setEndYear] = useState("2020");
+  const [searchContext, setSearchContext] = useState(params.searchName);
 
   //有关页数的state
-  const [page_now, setPage_now] = useState(3);
-  const [page_end, setPage_end] = useState(25);
+  const [page_now, setPage_now] = useState(1);
+  const [page_end, setPage_end] = useState(1);
 
   //有关页面控制的state，如是否显示左右边的列表以及论文摘要
   const [showLeft, setShowLeft] = useState(true);
   const [showRight, setShowRight] = useState(true);
-  const [paperSelectedId, setPaperSelectedId] = useState(3);
+  const [paperSelectedId, setPaperSelectedId] = useState(undefined);
 
   //一些用到的数据
-  const [paperList, setPaperList] = useState([
-    {
-      id: 1,
-      doi: ["10.1038/420732a [doi]", "420732a [pii]"],
-      pmcid: "12490907",
-      title: "Small RNAs: the genome's guiding hand?",
-      abstract: null,
-      author: ["Dennis Carina"],
-      time: "2002 Dec 19-26",
-    },
-    {
-      id: 2,
-      doi: [
-        "S0168-9525(02)00005-7 [pii]",
-        "10.1016/s0168-9525(02)00005-7 [doi]",
-      ],
-      pmcid: "12493242",
-      title: "Mammalian RNAi for the masses.",
-      abstract:
-        "Just a couple of years ago only biologists working with plants or Caenorhabditis elegans could use RNA-mediated interference (RNAi) technology to gain insight into gene function. However the recent groundbreaking discovery that in vitro synthesized 21- to 23-nucleotide double-stranded RNAs can act as small interfering RNAs (siRNAs) to elicit gene-specific inhibition in mammalian cells has made RNAi possible in mammalian systems too. Reported only a year ago mammalian RNAi is already changing our way of studying gene function in higher eukaryotes. And a recent exciting advance allows delivery of siRNAs into mammalian cells by a DNA vector. In addition to providing a low-cost alternative to the chemically synthesized siRNAs this DNA-vector-based strategy is capable of mediating stable target gene inhibition thus allowing gene function analysis over an extended period of time.",
-      author: ["Shi Yang"],
-      time: "2003 Jan",
-    },
-    {
-      id: 3,
-      doi: [
-        "S0168-9525(02)00011-2 [pii]",
-        "10.1016/s0168-9525(02)00011-2 [doi]",
-      ],
-      pmcid: "12493243",
-      title: "Macro effects of microRNAs in plants.",
-      abstract:
-        "MicroRNAs (miRNAs) are 20- to 22-nucleotide fragments that regulate expression of mRNAs that have complementary sequences. They are numerous and widespread among eukaryotes being conserved throughout evolution. The few miRNAs that have been fully characterized were found in Caenorhabditis elegans and are required for development. Recently a study of miRNAs isolated from Arabidopsis showed that here also developmental genes are putative regulatory targets. A role for miRNAs have in plant development is supported by the developmental phenotypes of mutations in the genes required for miRNA processing.",
-      author: ["Kidner Catherine A", "Martienssen Robert A"],
-      time: "2003 Jan",
-    },
-    {
-      id: 4,
-      doi: [
-        "S0168-9525(02)00005-7 [pii]",
-        "10.1016/s0168-9525(02)00005-7 [doi]",
-      ],
-      pmcid: "12493242",
-      title: "Mammalian RNAi for the masses.",
-      abstract:
-        "Just a couple of years ago only biologists working with plants or Caenorhabditis elegans could use RNA-mediated interference (RNAi) technology to gain insight into gene function. However the recent groundbreaking discovery that in vitro synthesized 21- to 23-nucleotide double-stranded RNAs can act as small interfering RNAs (siRNAs) to elicit gene-specific inhibition in mammalian cells has made RNAi possible in mammalian systems too. Reported only a year ago mammalian RNAi is already changing our way of studying gene function in higher eukaryotes. And a recent exciting advance allows delivery of siRNAs into mammalian cells by a DNA vector. In addition to providing a low-cost alternative to the chemically synthesized siRNAs this DNA-vector-based strategy is capable of mediating stable target gene inhibition thus allowing gene function analysis over an extended period of time.",
-      author: ["Shi Yang"],
-      time: "2003 Jan",
-    },
-    {
-      id: 5,
-      doi: [
-        "S0168-9525(02)00011-2 [pii]",
-        "10.1016/s0168-9525(02)00011-2 [doi]",
-      ],
-      pmcid: "12493243",
-      title: "Macro effects of microRNAs in plants.",
-      abstract:
-        "MicroRNAs (miRNAs) are 20- to 22-nucleotide fragments that regulate expression of mRNAs that have complementary sequences. They are numerous and widespread among eukaryotes being conserved throughout evolution. The few miRNAs that have been fully characterized were found in Caenorhabditis elegans and are required for development. Recently a study of miRNAs isolated from Arabidopsis showed that here also developmental genes are putative regulatory targets. A role for miRNAs have in plant development is supported by the developmental phenotypes of mutations in the genes required for miRNA processing.",
-      author: ["Kidner Catherine A", "Martienssen Robert A"],
-      time: "2003 Jan",
-    },
-    {
-      id: 6,
-      doi: [
-        "S0168-9525(02)00005-7 [pii]",
-        "10.1016/s0168-9525(02)00005-7 [doi]",
-      ],
-      pmcid: "12493242",
-      title: "Mammalian RNAi for the masses.",
-      abstract:
-        "Just a couple of years ago only biologists working with plants or Caenorhabditis elegans could use RNA-mediated interference (RNAi) technology to gain insight into gene function. However the recent groundbreaking discovery that in vitro synthesized 21- to 23-nucleotide double-stranded RNAs can act as small interfering RNAs (siRNAs) to elicit gene-specific inhibition in mammalian cells has made RNAi possible in mammalian systems too. Reported only a year ago mammalian RNAi is already changing our way of studying gene function in higher eukaryotes. And a recent exciting advance allows delivery of siRNAs into mammalian cells by a DNA vector. In addition to providing a low-cost alternative to the chemically synthesized siRNAs this DNA-vector-based strategy is capable of mediating stable target gene inhibition thus allowing gene function analysis over an extended period of time.",
-      author: ["Shi Yang"],
-      time: "2003 Jan",
-    },
-    {
-      id: 7,
-      doi: [
-        "S0168-9525(02)00011-2 [pii]",
-        "10.1016/s0168-9525(02)00011-2 [doi]",
-      ],
-      pmcid: "12493243",
-      title: "Macro effects of microRNAs in plants.",
-      abstract:
-        "MicroRNAs (miRNAs) are 20- to 22-nucleotide fragments that regulate expression of mRNAs that have complementary sequences. They are numerous and widespread among eukaryotes being conserved throughout evolution. The few miRNAs that have been fully characterized were found in Caenorhabditis elegans and are required for development. Recently a study of miRNAs isolated from Arabidopsis showed that here also developmental genes are putative regulatory targets. A role for miRNAs have in plant development is supported by the developmental phenotypes of mutations in the genes required for miRNA processing.",
-      author: ["Kidner Catherine A", "Martienssen Robert A"],
-      time: "2003 Jan",
-    },
-    {
-      id: 8,
-      doi: [
-        "S0168-9525(02)00005-7 [pii]",
-        "10.1016/s0168-9525(02)00005-7 [doi]",
-      ],
-      pmcid: "12493242",
-      title: "Mammalian RNAi for the masses.",
-      abstract:
-        "Just a couple of years ago only biologists working with plants or Caenorhabditis elegans could use RNA-mediated interference (RNAi) technology to gain insight into gene function. However the recent groundbreaking discovery that in vitro synthesized 21- to 23-nucleotide double-stranded RNAs can act as small interfering RNAs (siRNAs) to elicit gene-specific inhibition in mammalian cells has made RNAi possible in mammalian systems too. Reported only a year ago mammalian RNAi is already changing our way of studying gene function in higher eukaryotes. And a recent exciting advance allows delivery of siRNAs into mammalian cells by a DNA vector. In addition to providing a low-cost alternative to the chemically synthesized siRNAs this DNA-vector-based strategy is capable of mediating stable target gene inhibition thus allowing gene function analysis over an extended period of time.",
-      author: ["Shi Yang"],
-      time: "2003 Jan",
-    },
-    {
-      id: 9,
-      doi: [
-        "S0168-9525(02)00011-2 [pii]",
-        "10.1016/s0168-9525(02)00011-2 [doi]",
-      ],
-      pmcid: "12493243",
-      title: "Macro effects of microRNAs in plants.",
-      abstract:
-        "MicroRNAs (miRNAs) are 20- to 22-nucleotide fragments that regulate expression of mRNAs that have complementary sequences. They are numerous and widespread among eukaryotes being conserved throughout evolution. The few miRNAs that have been fully characterized were found in Caenorhabditis elegans and are required for development. Recently a study of miRNAs isolated from Arabidopsis showed that here also developmental genes are putative regulatory targets. A role for miRNAs have in plant development is supported by the developmental phenotypes of mutations in the genes required for miRNA processing.",
-      author: ["Kidner Catherine A", "Martienssen Robert A"],
-      time: "2003 Jan",
-    },
-    {
-      id: 10,
-      doi: [
-        "S0168-9525(02)00005-7 [pii]",
-        "10.1016/s0168-9525(02)00005-7 [doi]",
-      ],
-      pmcid: "12493242",
-      title: "Mammalian RNAi for the masses.",
-      abstract:
-        "Just a couple of years ago only biologists working with plants or Caenorhabditis elegans could use RNA-mediated interference (RNAi) technology to gain insight into gene function. However the recent groundbreaking discovery that in vitro synthesized 21- to 23-nucleotide double-stranded RNAs can act as small interfering RNAs (siRNAs) to elicit gene-specific inhibition in mammalian cells has made RNAi possible in mammalian systems too. Reported only a year ago mammalian RNAi is already changing our way of studying gene function in higher eukaryotes. And a recent exciting advance allows delivery of siRNAs into mammalian cells by a DNA vector. In addition to providing a low-cost alternative to the chemically synthesized siRNAs this DNA-vector-based strategy is capable of mediating stable target gene inhibition thus allowing gene function analysis over an extended period of time.",
-      author: ["Shi Yang"],
-      time: "2003 Jan",
-    },
-  ]);
+  const [paperList, setPaperList] = useState([]);
+  const [graphData, setGraphData] = useState({});
+  // const [yearSelectOption, setYearSelectOption] = useState(yearSelectOptions);
+  const yearSelectOption = yearSelectOptions();
 
-  const [graphData, setGraphData] = useState(gData);
-
-  const graphOption = {
-    tooltip: {},
-    animationDuration: 1500,
-    animationEasingUpdate: "quinticInOut",
-    series: [
-      {
-        name: "Les Miserables",
-        type: "graph",
-        layout: "none",
-        data: graphData.nodes,
-        links: graphData.links,
-        categories: graphData.categories,
-        roam: true,
-        label: {
+  //请求函数---------------------
+  useEffect(() => {
+    let myChart;
+    let graphOption = {
+      tooltip: {},
+      animationDuration: 1500,
+      animationEasingUpdate: "quinticInOut",
+      legend: [
+        {
+          data:
+            graphData.categories !== undefined &&
+            graphData.categories.map(function (a) {
+              return a.name;
+            }),
+          z: 100,
           show: true,
-          position: "right",
-          formatter: "{b}",
+          orient: "horizontal",
+          left: "center",
+          top: 10,
+          align: "auto",
+          backgroundColor: "rgba(0,0,0,0)",
+          borderColor: "#ccc",
+          padding: 5,
+          itemGap: 10,
+          itemWidth: 25,
+          itemHeight: 14,
+          symbolRotate: "inherit",
+          symbolKeepAspect: true,
+          inactiveColor: "#ccc",
+          inactiveBorderColor: "#ccc",
+          inactiveBorderWidth: "auto",
         },
-        labelLayout: {
-          hideOverlap: true,
-        },
-        scaleLimit: {
-          min: 0.4,
-          max: 2,
-        },
-        lineStyle: {
-          color: "source",
-          curveness: 0.2,
-        },
-        emphasis: {
-          focus: "adjacency",
+      ],
+      series: [
+        {
+          name: "Les Miserables",
+          type: "graph",
+          layout: "force",
+          data: graphData.nodes,
+          links: graphData.links,
+          categories: graphData.categories,
+          //可以旋转也可以缩放
+          roam: true,
+
+          label: {
+            show: true,
+            position: "right",
+            formatter: "{b}",
+          },
+          labelLayout: {
+            hideOverlap: true,
+          },
+          scaleLimit: {
+            min: 0.1,
+            max: 10,
+          },
           lineStyle: {
-            width: 10,
+            color: "source",
+            curveness: 0.2,
+          },
+          emphasis: {
+            focus: "adjacency",
+            lineStyle: {
+              width: 10,
+            },
+          },
+          force: {
+            repulsion: 500,
+            edgeLength: [30, 40],
+            //可以旋转也可以缩放
+            roam: true,
+            layoutAnimation: true,
           },
         },
-        force: {
-          repulsion: 700,
-          edgeLength: [30, 40],
-          layoutAnimation: false,
-        },
-      },
-    ],
-  };
+      ],
+    };
 
-  const yearSelectOption = [
-    "1900",
-    "1901",
-    "1902",
-    "1903",
-    "1904",
-    "1905",
-    "1906",
-    "1907",
-    "1908",
-    "1909",
-    "1910",
-    "1911",
-    "1912",
-    "1913",
-    "1914",
-    "1915",
-    "1916",
-    "1917",
-    "1918",
-    "1919",
-    "1920",
-    "1921",
-    "1922",
-    "1923",
-    "1924",
-    "1925",
-    "1926",
-    "1927",
-    "1928",
-    "1929",
-    "1930",
-    "1931",
-    "1932",
-    "1933",
-    "1934",
-    "1935",
-    "1936",
-    "1937",
-    "1938",
-    "1939",
-    "1940",
-    "1941",
-    "1942",
-    "1943",
-    "1944",
-    "1945",
-    "1946",
-    "1947",
-    "1948",
-    "1949",
-    "1950",
-    "1951",
-    "1952",
-    "1953",
-    "1954",
-    "1955",
-    "1956",
-    "1957",
-    "1958",
-    "1959",
-    "1960",
-    "1961",
-    "1962",
-    "1963",
-    "1964",
-    "1965",
-    "1966",
-    "1967",
-    "1968",
-    "1969",
-    "1970",
-    "1971",
-    "1972",
-    "1973",
-    "1974",
-    "1975",
-    "1976",
-    "1977",
-    "1978",
-    "1979",
-    "1980",
-    "1981",
-    "1982",
-    "1983",
-    "1984",
-    "1985",
-    "1986",
-    "1987",
-    "1988",
-    "1989",
-    "1990",
-    "1991",
-    "1992",
-    "1993",
-    "1994",
-    "1995",
-    "1996",
-    "1997",
-    "1998",
-    "1999",
-    "2000",
-    "2001",
-    "2002",
-    "2003",
-    "2004",
-    "2005",
-    "2006",
-    "2007",
-    "2008",
-    "2009",
-    "2010",
-    "2011",
-    "2012",
-    "2013",
-    "2014",
-    "2015",
-    "2016",
-    "2017",
-    "2018",
-    "2019",
-    "2020",
-    "2021",
-    "2022",
-    "2023",
-  ];
+    myChart = echarts.init(graphDom.current);
+    myChart.setOption(graphOption, true);
+    return () => {
+      graphOption = null;
+      myChart.dispose();
+    };
+  }, [graphData, showGraph, location]);
 
   useEffect(() => {
-    var node = document.getElementById("graph");
-    setGraph(node);
-  }, [graph]);
+    let name = params.searchName.replaceAll("+", " ");
+    searchInput.current.value = name;
 
-  if (graph !== "") {
-    var myChart = echarts.init(document.getElementById("graph"));
-    myChart.setOption(graphOption);
-  }
+    //判断搜索类型
+    if (params.type === "Disease") {
+      searchTypeSelect.current.selectedIndex = 1;
+      getDiseaseArticles({
+        searchName: name,
+        startTime: "2000",
+        endTime: "2020",
+        pageNum: 1,
+      });
+      GetDiseaseGraphDataFun(name);
+    } else if (params.type === "mi-RNA") {
+      searchTypeSelect.current.selectedIndex = 0;
+      getMirnaArticles({
+        searchName: name,
+        startTime: "2000",
+        endTime: "2020",
+        pageNum: 1,
+      });
+      GetMirnaGraphDataFun(name);
+    }
+  }, [location]);
 
-  //点击搜索
-  const handleSearch = () => {
-    const fetchData = async () => {
-      const options = {
-        url: "",
-        method: "GET",
-        headers: {
-          "content-type": "",
-        },
-        data: {},
-      };
-      const res = await axios(options);
+  //根据疾病获取论文
+  const getDiseaseArticles = async ({
+    searchName,
+    startTime,
+    endTime,
+    pageNum,
+  }) => {
+    // console.log("props:");
+    // console.log(pageNum);
+    // console.log(searchName);
+    // console.log(startTime);
+    // console.log(endTime);
+    let options = {
+      url: GetDieaseSearch,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: searchName,
+        startTime: startTime,
+        pageNum: pageNum,
+        pageSize: maxSize,
+        endTime: endTime,
+      },
+    };
+    let res = await axios(options);
 
-      if (res.data.code === 200) {
-        navigate(`SearchDetail`);
-      } else {
+    if (res.data.code === "0") {
+      // console.log(res.data.data.articles);
+      setPaperList(res.data.data.articles);
+      setSearchContext(searchName);
+      setStartYear(startTime);
+      setEndYear(endTime);
+      if (res.data.data.count === 0) {
+        setPage_end(1);
+        setPage_now(1);
         toastController({
-          mes: res.data.message,
+          mes: "没有查询到相关论文",
           timeout: 1000,
         });
+      } else {
+        //向上取整
+        let pe = Math.ceil(res.data.data.count / maxSize);
+        setPage_end(parseInt(pe));
+        setPage_now(parseInt(pageNum));
+        setPaperSelectedId(res.data.data.articles[0].pmid);
       }
-    };
-    navigate(`SearchDetail`);
-    // fetchData();
-  };
-
-  const enterKeyUp = (e) => {
-    if (e.keyCode === 13) {
-      // handleSearch();
+    }
+    //请求不成功
+    else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
     }
   };
 
-  const gotopage = (e) => {
-    let tmp = parseInt(e.target.value);
-    if (tmp > 0 && tmp <= page_end) {
+  //根据mi-rna获取论文
+  const getMirnaArticles = async ({
+    searchName,
+    startTime,
+    endTime,
+    pageNum,
+  }) => {
+    // console.log("props:");
+    // console.log(pageNum);
+    // console.log(searchName);
+    // console.log(startTime);
+    // console.log(endTime);
+    let options = {
+      url: GetMirnaSearch,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        mirnaName: searchName,
+        startTime: startTime,
+        pageNum: pageNum,
+        pageSize: maxSize,
+        endTime: endTime,
+      },
+    };
+    let res = await axios(options);
+
+    if (res.data.code === "0") {
+      // console.log(res.data.data.articles);
+      setPaperList(res.data.data.articles);
+      setSearchContext(searchName);
+      setStartYear(startTime);
+      setEndYear(endTime);
+      if (res.data.data.count === 0) {
+        setPage_end(1);
+        setPage_now(1);
+        toastController({
+          mes: "没有查询到相关论文",
+          timeout: 1000,
+        });
+      } else {
+        //向上取整
+        let pe = Math.ceil(res.data.data.count / maxSize);
+        setPage_end(parseInt(pe));
+        setPage_now(parseInt(pageNum));
+        setPaperSelectedId(res.data.data.articles[0].pmid);
+      }
+    }
+    //请求不成功
+    else {
       toastController({
-        mes: `go to page ${e.target.value}`,
+        mes: res.data.message,
         timeout: 1000,
       });
-      setPage_now(tmp);
+    }
+  };
+  //根据疾病获取关系图数据
+  const GetDiseaseGraphDataFun = async (searchName) => {
+    // let searchName = searchInput.current.value;
+    let options = {
+      url: GetDiseaseGraphData,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: searchName, //"Lung Neoplasms",
+      },
+    };
+
+    let res = await axios(options);
+
+    if (res.data.code === "0") {
+      setGraphData(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+  //根据mi-rna获取关系图数据
+  const GetMirnaGraphDataFun = async (searchName) => {
+    // let searchName = searchInput.current.value;
+    let options = {
+      url: GetMirnaGraphData,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        mirnaName: searchName, //"hsa-mir-15a",
+      },
+    };
+
+    let res = await axios(options);
+
+    if (res.data.code === "0") {
+      setGraphData(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  //事件函数
+
+  //点击搜索
+  //"Lung Neoplasms"
+  //"hsa-mir-106",
+  const handleSearch = () => {
+    // console.log("search");
+    let searchName = searchInput.current.value;
+    let idx = searchTypeSelect.current.selectedIndex;
+    let t =
+      idx === undefined ? "" : searchTypeSelect.current.options[idx].value;
+
+    let startTimeIdx = startTimeSelect.current.selectedIndex;
+    let startTime =
+      startTimeIdx === undefined
+        ? "2000"
+        : startTimeSelect.current.options[startTimeIdx].value;
+    let endTimeIdx = endTimeSelect.current.selectedIndex;
+    let endTime =
+      endTimeIdx === undefined
+        ? "2020"
+        : endTimeSelect.current.options[endTimeIdx].value;
+    if (searchName === undefined || searchName === "") {
+      toastController({
+        mes: "请输入搜索内容",
+        timeout: 2000,
+      });
+      return;
+    }
+    if (startTime > endTime) {
+      toastController({
+        mes: "请选择正确年份",
+        timeout: 2000,
+      });
+      return;
+    }
+    if (searchName === searchContext && searchType === t) {
+      if (searchType === "Disease") {
+        getDiseaseArticles({
+          searchName: searchContext,
+          startTime: startTime,
+          endTime: endTime,
+          pageNum: page_now,
+        });
+      } else if (searchType === "mi-RNA") {
+        getMirnaArticles({
+          searchName: searchContext,
+          startTime: startTime,
+          endTime: endTime,
+          pageNum: page_now,
+        });
+      }
+      return;
+    }
+
+    searchName.replaceAll(" ", "+");
+    console.log(`SearchDetail/${t}/${searchName}`);
+    navigate(`/SearchDetail/${t}/${searchName}`);
+  };
+
+  const searchEnterKeyUp = (e) => {
+    if (e.keyCode === 13) {
+      handleSearch();
+    }
+  };
+
+  const goToPage = (pageNum) => {
+    if (typeof parseInt(pageNum) !== "number" || pageNum < 1) {
+      toastController({
+        mes: "请输入合法页数",
+        timeout: 1500,
+      });
+      return;
+    }
+    if (pageNum > 0 && pageNum <= page_end) {
+      setPage_now(parseInt(pageNum));
+      if (searchType === "Disease") {
+        getDiseaseArticles({
+          searchName: searchContext,
+          startTime: startYear,
+          endTime: endYear,
+          pageNum: pageNum,
+        });
+      } else if (searchType === "mi-RNA") {
+        getMirnaArticles({
+          searchName: searchContext,
+          startTime: startYear,
+          endTime: endYear,
+          pageNum: pageNum,
+        });
+      }
     } else {
       toastController({
         mes: `error page`,
@@ -440,51 +477,66 @@ export default function SearchDetail() {
     }
   };
 
+  const pageEnterKeyUp = (e) => {
+    if (e.keyCode === 13) {
+      goToPage(pageInput.current.value);
+    }
+  };
+
+  //--------------------------------------------------
+
   // div可修改的最小高度
   const minHeight = 90;
   // 是否开启尺寸修改
   let reSizeable = false;
   let lastClientY;
-  let dragBox = document.getElementById("dragBox");
-  document.addEventListener("mousemove", handleMouseMove);
-  document.addEventListener("mouseup", handleMouseUp);
+  let dragBox, dragLine;
 
   function handleMouseDown(event) {
     // 禁止用户选择网页中文字
     document.onselectstart = () => false;
     // 禁止用户拖动元素
     document.ondragstart = () => false;
+
+    dragBox = document.getElementById("dragBox");
+    dragLine = document.getElementById("dragLine");
+    document.addEventListener("touchmove", handleMouseMove);
+    document.addEventListener("touchend", handleMouseUp);
+    dragLine.style.backgroundColor = "#818a92";
+
     reSizeable = true;
-    lastClientY = event.clientY;
+    lastClientY = event.changedTouches[0].clientY;
   }
 
   function handleMouseMove(event) {
-    document.getElementById("dragLine").style.cursor = "grabbing";
     if (reSizeable) {
       dragBox.style.height =
         Math.max(
           minHeight,
-          dragBox.offsetHeight + (lastClientY - event.clientY)
+          dragBox.offsetHeight + (lastClientY - event.changedTouches[0].clientY)
         ) + "px";
       // offsetHeight 是鼠标所点击的位置与对应元素（dragBox）的垂直距离
       // lastClientY - event.clientY 计算出变动的垂直距离
-      lastClientY = event.clientY;
+      lastClientY = event.changedTouches[0].clientY;
     }
   }
 
   function handleMouseUp() {
+    dragLine.style.backgroundColor = "#e5e7eb";
     reSizeable = false;
   }
 
+  //---------------------------------------------------
   return (
     <div
       className={`h-fit w-full bg-blue-5 relative md:h-full ${
         showGraph === false ? "md:flex md:justify-center" : ""
       }`}
     >
-      {/* (关系图)搜索框+关系图+图例 */}
+      {/* (关系图)关系图+图例 */}
       <div
         id="graph"
+        ref={graphDom}
         className={`h-96 w-full flex justify-center items-center bg-blue-50 shadow-inner
         md:h-full ${showGraph === true ? "" : "hidden"}`}
       ></div>
@@ -521,6 +573,7 @@ export default function SearchDetail() {
         </div>
         {/* 论文选择方块滚动面板 container */}
         <div
+          id="selectContainer"
           className="h-full w-full bg-gray-50 flex flex-col justify-start items-center 
           md:overflow-y-scroll shadow-lg"
         >
@@ -533,11 +586,11 @@ export default function SearchDetail() {
             <div className="h-8 w-11/12 rounded flex justify-between items-center">
               <input
                 className="h-8 w-11/12 px-2 rounded border-2 border-solid border-blue-200 text-gray-600"
-                placeholder="Search"
+                placeholder={searchContext}
                 ref={searchInput}
-                onKeyUp={enterKeyUp}
+                onKeyUp={searchEnterKeyUp}
               ></input>
-              <div className="h-fit w-fit p-1" onClick={enterKeyUp}>
+              <div className="h-fit w-fit p-1" onClick={handleSearch}>
                 <svg
                   t="1657012954779"
                   viewBox="0 0 1024 1024"
@@ -564,10 +617,11 @@ export default function SearchDetail() {
               </div>
             </div>
 
-            {/* 两个选择时间器 */}
+            {/* 时间以及类型选择器 */}
             <div className="min-h-0 h-9 w-full px-2 flex justify-around items-center">
               <select
                 className="h-auto w-1/4"
+                ref={searchTypeSelect}
                 onChange={(e) => {
                   setSearchType(e.target.value);
                 }}
@@ -578,6 +632,7 @@ export default function SearchDetail() {
               {/* start-year */}
               <select
                 className="h-auto w-1/4"
+                ref={startTimeSelect}
                 onChange={(e) => {
                   setStartYear(e.target.value);
                 }}
@@ -597,6 +652,7 @@ export default function SearchDetail() {
               {/* end-year */}
               <select
                 className="h-auto w-1/4"
+                ref={endTimeSelect}
                 onChange={(e) => {
                   setEndYear(e.target.value);
                 }}
@@ -617,12 +673,15 @@ export default function SearchDetail() {
 
           {/* 非sticky的选项列表 */}
           {paperList !== undefined &&
+            paperList !== null &&
             paperList.map((item) => {
               return (
                 <PaperBox
-                  selected={`${item.id === paperSelectedId ? "true" : "false"}`}
+                  selected={`${
+                    item.pmid === paperSelectedId ? "true" : "false"
+                  }`}
                   onClick={() => {
-                    setPaperSelectedId(item.id);
+                    setPaperSelectedId(item.pmid);
                   }}
                 >
                   <p
@@ -631,49 +690,54 @@ export default function SearchDetail() {
                   >
                     {item.title}
                   </p>
-                  {item.abstract !== undefined && item.abstract !== null && (
-                    <AbsBox time={item.time}>
+                  {item.abs !== undefined && item.abs !== null && (
+                    <AbsBox time={item.date}>
                       <span className="text-sky-700 font-bold">Abstract: </span>
-                      {item.abstract}
+                      {item.abs}
                     </AbsBox>
                   )}
                 </PaperBox>
               );
             })}
-
           {/* 手机端的论文详情 */}
           {paperList !== undefined &&
             paperList !== null &&
             paperSelectedId !== undefined &&
             paperList.map((item) => {
-              if (item.id === paperSelectedId) {
+              if (item.pmid === paperSelectedId) {
                 return (
                   // 手机端论文详情
                   <div
                     id="dragBox"
-                    onMouseDown={handleMouseDown}
-                    className={`h-52 w-full sticky bottom-10 md:hidden`}
+                    // onTouchStart={handleMouseDown}
+                    className={`h-64 w-full z-50 sticky bottom-12 md:hidden`}
                   >
                     {/* 论文内容上的拖动条 */}
                     <div
                       id="dragLine"
-                      className="h-3 w-full p-0 flex justify-center items-center bg-gray-200"
+                      onTouchStart={handleMouseDown}
+                      className="h-5 w-full p-0 flex justify-center items-center bg-gray-200"
                     >
                       <div className="h-1 w-12 rounded-full m-0 bg-gray-400 "></div>
                     </div>
                     {/* 手机端论文内容滚动面板 container */}
-                    <div className="h-full w-full px-1 pb-3 cursor-default overflow-y-scroll text-justify bg-green-50">
+                    <div className="h-full w-full px-1 pb-3 cursor-default overflow-y-scroll text-justify text-sm bg-green-50">
                       <h1 className="text-lg font-bold block mb-1">
                         {item.title}
                       </h1>
-                      {item.author !== undefined &&
-                        item.author !== null &&
-                        item.author.map((aut) => {
+                      {/* {item.authors !== undefined &&
+                        item.authors !== null &&
+                        item.authors.map((aut) => {
                           return (
                             <p className="text-gray-600 inline pr-1">{aut}</p>
                           );
-                        })}
-                      <p className=" text-gray-600">{item.time}</p>
+                        })} */}
+                      <p className="text-gray-600 inline pr-1">
+                        {item.authors}
+                      </p>
+                      <div className="h-2"></div>
+                      <p className=" text-gray-600">{item.date}</p>
+                      <div className="h-2"></div>
                       <div className="inline-block h-5 w-fit mr-2">
                         Open in:
                       </div>
@@ -682,7 +746,7 @@ export default function SearchDetail() {
                       </div>
                       <div className="h-1 w-full"></div>
                       <p className="text-sky-800 font-bold">Abstract:</p>
-                      <p>{item.abstract}</p>
+                      <p className="">{item.abs}</p>
                     </div>
                   </div>
                 );
@@ -692,30 +756,57 @@ export default function SearchDetail() {
 
           {/* 底部的选择页面按钮 */}
           <div
-            className="sticky bottom-0 w-full h-10 shrink-0 flex justify-center items-center
+            className="sticky z-50 bottom-0 w-full h-10 shrink-0 flex justify-center items-center
            bg-blue-100"
           >
-            {page_now > 2 && <PageButton content={1}></PageButton>}
+            {page_now > 2 && (
+              <PageButton
+                content={1}
+                onClick={() => {
+                  console.log("click");
+                  goToPage(1);
+                }}
+              ></PageButton>
+            )}
             {page_now > 2 && " < < "}
-            {page_now > 1 && <PageButton content={page_now - 1}></PageButton>}
+            {page_now > 1 && (
+              <PageButton
+                content={page_now - 1}
+                onClick={() => {
+                  console.log("click");
+                  goToPage(parseInt(page_now - 1));
+                }}
+              ></PageButton>
+            )}
             {/* 当前页的按钮以及输入框 */}
             <div className="h-7 w-fit relative px-3 mx-2 rounded bg-gray-50 shadow-md ring-2 ring-blue-300">
               <p className="leading-7 text-center text-gray-600">{page_now}</p>
               <input
                 type="number"
                 ref={pageInput}
-                onChange={gotopage}
+                onKeyUp={pageEnterKeyUp}
                 placeholder={page_now}
                 className="absolute top-0 left-0 h-7 w-10 rounded text-center outline-none
                 opacity-0 focus:opacity-100 ring-2 ring-blue-300"
               />
             </div>
             {page_now < page_end && (
-              <PageButton content={page_now + 1}></PageButton>
+              <PageButton
+                content={page_now + 1}
+                onClick={() => {
+                  goToPage(parseInt(page_now + 1));
+                }}
+              ></PageButton>
             )}
             {page_now < page_end - 1 && " > > "}
             {page_now < page_end - 1 && (
-              <PageButton content={page_end}></PageButton>
+              <PageButton
+                content={page_end}
+                onClick={() => {
+                  console.log("click");
+                  goToPage(parseInt(page_end));
+                }}
+              ></PageButton>
             )}
           </div>
         </div>
@@ -726,7 +817,7 @@ export default function SearchDetail() {
         paperList !== null &&
         paperSelectedId !== undefined &&
         paperList.map((item) => {
-          if (item.id === paperSelectedId) {
+          if (item.pmid === paperSelectedId) {
             return (
               // 论文详情
               <div
@@ -766,12 +857,13 @@ export default function SearchDetail() {
                     md:overflow-y-scroll"
                 >
                   <h1 className="text-xl font-bold block mb-2">{item.title}</h1>
-                  {item.author !== undefined &&
-                    item.author !== null &&
-                    item.author.map((aut) => {
+                  {/* {item.authors !== undefined &&
+                    item.authors !== null &&
+                    item.authors.map((aut) => {
                       return <p className="text-gray-600 inline pr-2">{aut}</p>;
-                    })}
-                  <p className="pt-1 text-gray-600">{item.time}</p>
+                    })} */}
+                  <p className="text-gray-600 inline pr-2">{item.authors}</p>;
+                  <p className="pt-1 text-gray-600">{item.date}</p>
                   <div className="h-4 w-full"></div>
                   <div className="inline-block h-6 w-fit mr-3">Open in:</div>
                   <div className="h-6 w-6 rounded-full text-white bg-gray-500 inline-block">
@@ -779,7 +871,7 @@ export default function SearchDetail() {
                   </div>
                   <div className="h-4 w-full"></div>
                   <p className="text-sky-800 font-bold">Abstract:</p>
-                  <p>{item.abstract}</p>
+                  <p>{item.abs}</p>
                 </div>
               </div>
             );
