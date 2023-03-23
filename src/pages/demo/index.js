@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import {
+  GetDiseaseFuzzySearchName,
+  GetMirnaFuzzySearchName,
+} from "../../utils/mapPath";
 import bgimg from "../../img/img1.jpg";
 import img1 from "../../img/cap.jpg";
 import img2 from "../../img/img1.jpg";
@@ -13,11 +17,59 @@ export default function PictureShift1() {
   const navigate = useNavigate();
   const toastController = useContext(ToastContext);
   const [type, setType] = useState(0);
+  const [fuzzySearchList, setFuzzySearchList] = useState([]);
 
   const searchInput = useRef(null);
 
+  const GetDiseaseFuzzy = async (diseaseName) => {
+    let options = {
+      url: GetDiseaseFuzzySearchName,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: diseaseName,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      setFuzzySearchList(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetMirnaFuzzy = async (MirnaName) => {
+    let options = {
+      url: GetMirnaFuzzySearchName,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        MirnaName: MirnaName,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      setFuzzySearchList(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
   //点击搜索
   const handleSearch = () => {
+    setFuzzySearchList([]);
     let searchName = searchInput.current.value;
     if (searchName === undefined || searchName === "") {
       toastController({
@@ -36,6 +88,33 @@ export default function PictureShift1() {
       handleSearch();
     }
   };
+
+  function throttle(fn, timeout) {
+    var can = true;
+    return function (...args) {
+      if (can === true) {
+        can = false;
+        setTimeout(() => {
+          fn(...args);
+          can = true;
+        }, timeout);
+      }
+    };
+  }
+
+  const fuzzySearch = () => {
+    let searchName = searchInput.current.value;
+    let searchType = type === 0 ? "Disease" : "mi-RNA";
+    if (!searchName || searchName === "") return;
+
+    if (searchType === "Disease") {
+      GetDiseaseFuzzy(searchName);
+    } else {
+      GetMirnaFuzzy(searchName);
+    }
+  };
+
+  const handleSearchInputChange = throttle(fuzzySearch, 1000);
 
   return (
     <div
@@ -74,6 +153,10 @@ export default function PictureShift1() {
               onClick={(event) => {
                 event.stopPropagation();
                 setType(0);
+                setFuzzySearchList([]);
+                let searchName = searchInput.current.value;
+                if (!searchName || searchName === "") return;
+                GetDiseaseFuzzy(searchName);
               }}
             >
               {type === 0 ? "Disease" : "D"}
@@ -89,6 +172,10 @@ export default function PictureShift1() {
               onClick={(event) => {
                 event.stopPropagation();
                 setType(1);
+                setFuzzySearchList([]);
+                let searchName = searchInput.current.value;
+                if (!searchName || searchName === "") return;
+                GetDiseaseFuzzy(searchName);
               }}
             >
               {type === 1 ? "miRNA" : "M"}
@@ -100,14 +187,52 @@ export default function PictureShift1() {
             className="w-11/12 h-9 flex justify-between items-center bg-white rounded-sm
              md:w-7/12 md:h-10 xl:h-12 xl:w-1/2 s24:h-14"
           >
-            <input
-              className="h-full w-11/12 px-2 rounded-sm outline-none text-xl text-gray-600"
-              placeholder="Search"
-              ref={searchInput}
-              onKeyUp={enterKeyUp}
-            ></input>
             <div
-              className="h-full w-1/12 flex justify-center items-center bg-blue-50"
+              className="h-fit w-11/12 relative flex-grow flex flex-col justify-start items-center
+            overflow-y-scrolls rounded-sm md:w-7/12 md:h-10 xl:h-12 xl:w-1/2 s24:h-14"
+            >
+              <input
+                className="h-full w-full px-2 rounded-sm outline-none text-xl text-gray-600"
+                placeholder="Search"
+                ref={searchInput}
+                onChange={handleSearchInputChange}
+                onKeyUp={enterKeyUp}
+              ></input>
+              {/* 模糊搜索选项 */}
+              {fuzzySearchList !== null &&
+                fuzzySearchList !== undefined &&
+                fuzzySearchList.length > 0 && (
+                  <div
+                    className="h-fit w-full max-h-80 absolute top-9 rounded
+                md:top-10 xl:top-12 s24:top-14 z-20 border-2 border-blue-200
+                 overflow-y-scroll bg-gray-100 "
+                  >
+                    <ul
+                      className="h-fit w-full flex-shrink-0 rounded 
+                text-gray-600 shadow p-0"
+                    >
+                      {fuzzySearchList.map((fuzzyItem) => {
+                        return (
+                          <li
+                            className="h-fit w-full z-50 flex px-2 justify-start items-center
+                            hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
+                            onClick={() => {
+                              searchInput.current.value = fuzzyItem.name;
+                              setFuzzySearchList(undefined);
+                              handleSearch();
+                            }}
+                          >
+                            {fuzzyItem.name}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+            </div>
+
+            <div
+              className="h-full w-1/12 rounded-sm flex justify-center items-center bg-blue-50"
               onClick={handleSearch}
             >
               <svg

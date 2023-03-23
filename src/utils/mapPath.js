@@ -6,3 +6,8 @@ export const GetMirnaSearch = "/search/ByMirnaName";
 export const GetDiseaseGraphData = "/relation/getDisease";
 
 export const GetMirnaGraphData = "/relation/getMirna";
+
+//获取模糊查询名字
+export const GetDiseaseFuzzySearchName = "/disease";
+
+export const GetMirnaFuzzySearchName = "/mirna/GetLikeName";

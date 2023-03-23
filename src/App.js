@@ -8,7 +8,7 @@ const Loading = lazy(() => import("./pages/Loading"));
 const Search = lazy(() => import("./pages/demo"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
 const SearchDetail = lazy(() => import("./pages/SearchDetail"));
-// const  = lazy(() => import(""));
+const Paper = lazy(() => import("./pages/Paper"));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
@@ -47,10 +47,14 @@ function App() {
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Home />}>
-                      <Route path="/" element={<Search />}></Route>
+                      <Route path="/" element={<Paper />}></Route>
                       <Route
                         path="/SearchDetail/:type/:searchName"
                         element={<SearchDetail />}
+                      ></Route>
+                      <Route
+                        path="/Paper/:type/:searchName"
+                        element={<Paper />}
                       ></Route>
                     </Route>
                     <Route path="*" element={<GoWrong404 />}></Route>

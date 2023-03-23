@@ -3,6 +3,7 @@ import { ToastContext, GraphContext } from "../../App";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+// import throttle from "../../optimize/index";
 import { Svg1 } from "../../svg";
 import * as echarts from "echarts/core";
 import { TooltipComponent, LegendComponent } from "echarts/components";
@@ -16,6 +17,8 @@ import {
   GetMirnaSearch,
   GetDiseaseGraphData,
   GetMirnaGraphData,
+  GetDiseaseFuzzySearchName,
+  GetMirnaFuzzySearchName,
 } from "../../utils/mapPath";
 
 echarts.use([
@@ -97,11 +100,13 @@ export default function SearchDetail(props) {
 
   //一些用到的数据
   const [paperList, setPaperList] = useState([]);
+  const [fuzzySearchList, setFuzzySearchList] = useState([]);
   const [graphData, setGraphData] = useState({});
-  // const [yearSelectOption, setYearSelectOption] = useState(yearSelectOptions);
+
   const yearSelectOption = yearSelectOptions();
 
   //请求函数---------------------
+
   useEffect(() => {
     let myChart;
     let graphOption = {
@@ -120,12 +125,14 @@ export default function SearchDetail(props) {
           orient: "horizontal",
           left: "center",
           top: 10,
+          width: 300,
           align: "auto",
-          backgroundColor: "rgba(0,0,0,0)",
+          borderRadius: 5,
+          backgroundColor: "rgba(217, 237, 247, 0.5)",
           borderColor: "#ccc",
           padding: 5,
           itemGap: 10,
-          itemWidth: 25,
+          itemWidth: 20,
           itemHeight: 14,
           symbolRotate: "inherit",
           symbolKeepAspect: true,
@@ -179,10 +186,28 @@ export default function SearchDetail(props) {
     };
 
     myChart = echarts.init(graphDom.current);
+    myChart.showLoading("default", {
+      text: "loading",
+      color: "#c23531",
+      textColor: "#000",
+      maskColor: "rgba(255, 255, 255, 0.8)",
+      zlevel: 0,
+      fontSize: 12,
+      showSpinner: true,
+      spinnerRadius: 10,
+      lineWidth: 5,
+      fontWeight: "normal",
+      fontStyle: "normal",
+      fontFamily: "sans-serif",
+    });
     myChart.setOption(graphOption, true);
+    myChart.hideLoading();
+    window.onresize = () => myChart.resize();
+    window.addEventListener("resize", () => myChart.resize());
     return () => {
-      graphOption = null;
+      console.log("xiao shi");
       myChart.dispose();
+      graphOption = null;
     };
   }, [graphData, showGraph, location]);
 
@@ -242,11 +267,12 @@ export default function SearchDetail(props) {
 
     if (res.data.code === "0") {
       // console.log(res.data.data.articles);
-      setPaperList(res.data.data.articles);
+
       setSearchContext(searchName);
       setStartYear(startTime);
       setEndYear(endTime);
       if (res.data.data.count === 0) {
+        setPaperList([]);
         setPage_end(1);
         setPage_now(1);
         toastController({
@@ -255,6 +281,7 @@ export default function SearchDetail(props) {
         });
       } else {
         //向上取整
+        setPaperList(res.data.data.articles);
         let pe = Math.ceil(res.data.data.count / maxSize);
         setPage_end(parseInt(pe));
         setPage_now(parseInt(pageNum));
@@ -300,11 +327,11 @@ export default function SearchDetail(props) {
 
     if (res.data.code === "0") {
       // console.log(res.data.data.articles);
-      setPaperList(res.data.data.articles);
       setSearchContext(searchName);
       setStartYear(startTime);
       setEndYear(endTime);
       if (res.data.data.count === 0) {
+        setPaperList([]);
         setPage_end(1);
         setPage_now(1);
         toastController({
@@ -313,6 +340,7 @@ export default function SearchDetail(props) {
         });
       } else {
         //向上取整
+        setPaperList(res.data.data.articles);
         let pe = Math.ceil(res.data.data.count / maxSize);
         setPage_end(parseInt(pe));
         setPage_now(parseInt(pageNum));
@@ -378,6 +406,52 @@ export default function SearchDetail(props) {
     }
   };
 
+  const GetDiseaseFuzzy = async (diseaseName) => {
+    let options = {
+      url: GetDiseaseFuzzySearchName,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: diseaseName,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      setFuzzySearchList(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetMirnaFuzzy = async (MirnaName) => {
+    let options = {
+      url: GetMirnaFuzzySearchName,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        MirnaName: MirnaName,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      setFuzzySearchList(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
   //事件函数
 
   //点击搜索
@@ -385,6 +459,7 @@ export default function SearchDetail(props) {
   //"hsa-mir-106",
   const handleSearch = () => {
     // console.log("search");
+    setFuzzySearchList(undefined);
     let searchName = searchInput.current.value;
     let idx = searchTypeSelect.current.selectedIndex;
     let t =
@@ -414,15 +489,15 @@ export default function SearchDetail(props) {
       });
       return;
     }
-    if (searchName === searchContext && searchType === t) {
-      if (searchType === "Disease") {
+    if (searchName === params.searchName && t === params.type) {
+      if (params.type === "Disease") {
         getDiseaseArticles({
           searchName: searchContext,
           startTime: startTime,
           endTime: endTime,
           pageNum: page_now,
         });
-      } else if (searchType === "mi-RNA") {
+      } else if (params.type === "mi-RNA") {
         getMirnaArticles({
           searchName: searchContext,
           startTime: startTime,
@@ -431,11 +506,12 @@ export default function SearchDetail(props) {
         });
       }
       return;
+    } else {
+      searchName = searchName.trim();
+      searchName.replaceAll(" ", "+");
+      console.log(`SearchDetail/${t}/${searchName}`);
+      navigate(`/SearchDetail/${t}/${searchName}`);
     }
-
-    searchName.replaceAll(" ", "+");
-    console.log(`SearchDetail/${t}/${searchName}`);
-    navigate(`/SearchDetail/${t}/${searchName}`);
   };
 
   const searchEnterKeyUp = (e) => {
@@ -483,7 +559,36 @@ export default function SearchDetail(props) {
     }
   };
 
+  function throttle(fn, timeout) {
+    var can = true;
+    return function (...args) {
+      if (can === true) {
+        can = false;
+        setTimeout(() => {
+          fn(...args);
+          can = true;
+        }, timeout);
+      }
+    };
+  }
+
+  const fuzzySearch = () => {
+    let searchName = searchInput.current.value;
+    if (!searchName || searchName === "") return;
+    let idx = searchTypeSelect.current.selectedIndex;
+    let type =
+      idx === undefined ? "" : searchTypeSelect.current.options[idx].value;
+    if (type === "Disease") {
+      GetDiseaseFuzzy(searchName);
+    } else {
+      GetMirnaFuzzy(searchName);
+    }
+  };
+
+  const handleSearchInputChange = throttle(fuzzySearch, 1000);
+
   //--------------------------------------------------
+  //页面效果函数
 
   // div可修改的最小高度
   const minHeight = 90;
@@ -541,7 +646,7 @@ export default function SearchDetail(props) {
         md:h-full ${showGraph === true ? "" : "hidden"}`}
       ></div>
 
-      {/* 相关论文选项列表 */}
+      {/* 相关论文选项列表 + 搜索框 + 时间/类型选择器*/}
       <div
         className={`h-fit w-full select-none 
         transition-all duration-1000 shadow-2xl  
@@ -579,18 +684,54 @@ export default function SearchDetail(props) {
         >
           {/* 论文顶部的搜索框以及时间选择器 */}
           <div
-            className="sticky top-0 z-10 py-1 h-fit w-full bg-blue-100 
+            className="sticky top-0 z-50 py-1 h-fit w-full bg-blue-100 
            flex flex-col justify-center items-center"
           >
             {/* 搜索框 */}
             <div className="h-8 w-11/12 rounded flex justify-between items-center">
-              <input
-                className="h-8 w-11/12 px-2 rounded border-2 border-solid border-blue-200 text-gray-600"
-                placeholder={searchContext}
-                ref={searchInput}
-                onKeyUp={searchEnterKeyUp}
-              ></input>
-              <div className="h-fit w-fit p-1" onClick={handleSearch}>
+              <div className="h-full w-11/12 relative flex flex-col justify-start items-center rounded bg-green-100">
+                <input
+                  className="h-8 w-full px-2 rounded border-2 select-all border-solid border-blue-200 text-gray-700"
+                  placeholder={searchContext}
+                  ref={searchInput}
+                  onKeyUp={searchEnterKeyUp}
+                  onChange={handleSearchInputChange}
+                ></input>
+                {/* 模糊搜索选项 */}
+
+                {fuzzySearchList !== null &&
+                  fuzzySearchList !== undefined &&
+                  fuzzySearchList.length > 0 && (
+                    <div
+                      className="h-fit w-full max-h-96 absolute top-8 rounded border-2 
+                border-blue-200 overflow-y-scroll bg-gray-50"
+                    >
+                      <ul
+                        className="h-fit w-full flex-shrink-0 rounded border-2 border-blue-200
+                text-gray-600 shadow p-0"
+                      >
+                        {fuzzySearchList.map((fuzzyItem) => {
+                          return (
+                            <li
+                              className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
+                   border-b-2 border-gray-300 cursor-pointer"
+                              onClick={() => {
+                                searchInput.current.value = fuzzyItem.name;
+                                setFuzzySearchList(undefined);
+                                setSearchContext(fuzzyItem.name);
+                                handleSearch();
+                              }}
+                            >
+                              {fuzzyItem.name}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+              </div>
+
+              <div className="h-fit w-fit p-2" onClick={handleSearch}>
                 <svg
                   t="1657012954779"
                   viewBox="0 0 1024 1024"
@@ -622,9 +763,9 @@ export default function SearchDetail(props) {
               <select
                 className="h-auto w-1/4"
                 ref={searchTypeSelect}
-                onChange={(e) => {
-                  setSearchType(e.target.value);
-                }}
+                // onChange={(e) => {
+                //   setSearchType(e.target.value);
+                // }}
               >
                 <option value="mi-RNA">mi-RNA</option>
                 <option value="Disease">Disease</option>
@@ -722,7 +863,7 @@ export default function SearchDetail(props) {
                     </div>
                     {/* 手机端论文内容滚动面板 container */}
                     <div className="h-full w-full px-1 pb-3 cursor-default overflow-y-scroll text-justify text-sm bg-green-50">
-                      <h1 className="text-lg font-bold block mb-1">
+                      <h1 className="text-lg font-bold block  mb-1">
                         {item.title}
                       </h1>
                       {/* {item.authors !== undefined &&
@@ -756,7 +897,7 @@ export default function SearchDetail(props) {
 
           {/* 底部的选择页面按钮 */}
           <div
-            className="sticky z-50 bottom-0 w-full h-10 shrink-0 flex justify-center items-center
+            className="sticky z-40 bottom-0 w-full h-10 shrink-0 flex justify-center items-center
            bg-blue-100"
           >
             {page_now > 2 && (
@@ -856,22 +997,63 @@ export default function SearchDetail(props) {
                   className="h-full w-full bg-gray-50 pl-3 py-3 shadow-lg 
                     md:overflow-y-scroll"
                 >
-                  <h1 className="text-xl font-bold block mb-2">{item.title}</h1>
-                  {/* {item.authors !== undefined &&
+                  <h1 className="text-xl font-bold block text-sky-700 mb-2">
+                    {item.title}
+                  </h1>
+                  {item.authors !== undefined &&
                     item.authors !== null &&
                     item.authors.map((aut) => {
                       return <p className="text-gray-600 inline pr-2">{aut}</p>;
-                    })} */}
-                  <p className="text-gray-600 inline pr-2">{item.authors}</p>;
+                    })}
+                  {/* <p className="text-gray-600 inline pr-2">{item.authors}</p>; */}
                   <p className="pt-1 text-gray-600">{item.date}</p>
                   <div className="h-4 w-full"></div>
-                  <div className="inline-block h-6 w-fit mr-3">Open in:</div>
-                  <div className="h-6 w-6 rounded-full text-white bg-gray-500 inline-block">
-                    <div className=" h-fit w-fit mx-auto">doi</div>
+                  <div className="inline-block font-bold h-6 w-fit mr-3">
+                    Open in:
                   </div>
+                  {item.pmid !== undefined && (
+                    <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                      <a href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}>
+                        <div className=" h-fit w-fit text-xs leading-7 mx-auto">
+                          pmid
+                        </div>
+                      </a>
+                    </div>
+                  )}
+                  {item.doi !== undefined && (
+                    <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                      <a href={item.url}>
+                        <div className=" h-fit w-fit leading-6 mx-auto">
+                          doi
+                        </div>
+                      </a>
+                    </div>
+                  )}
+                  <div className="h-3"></div>
+                  <p className="text-sky-700">
+                    <span className="font-bold">pmid:</span>
+                    {item.pmid}
+                  </p>
+                  <p className="text-sky-700">
+                    <span className="font-bold">doi:</span>
+                    {item.doi}
+                  </p>
+                  <p className="text-sky-700">
+                    <span className="font-bold">Library:</span>
+                    {item.library}
+                  </p>
                   <div className="h-4 w-full"></div>
                   <p className="text-sky-800 font-bold">Abstract:</p>
-                  <p>{item.abs}</p>
+                  <p>
+                    <span className="px-4"> </span>
+                    {item.abs}
+                  </p>
+                  <div className="h-4 w-full"></div>
+                  <p className="text-sky-800 font-bold">Keywords:</p>
+                  <p>
+                    <span className="px-4"> </span>
+                    {item.Keywords}
+                  </p>
                 </div>
               </div>
             );
