@@ -14,7 +14,10 @@ export default function Home() {
         <TopNav></TopNav>
       </nav>
       {/* 页面 ,显示搜索框页面或者是搜索详情页面*/}
-      <div className="w-full h-fit relative overflow-y-scroll overflow-x-hidden flex-grow ">
+      <div
+        className="w-full h-fit relative overflow-y-scroll overflow-x-scroll flex-grow 
+      lg:overflow-y-hidden"
+      >
         <Outlet></Outlet>
       </div>
     </div>

@@ -11,3 +11,5 @@ export const GetMirnaGraphData = "/relation/getMirna";
 export const GetDiseaseFuzzySearchName = "/disease";
 
 export const GetMirnaFuzzySearchName = "/mirna/GetLikeName";
+
+export const GetArticles = "/article/like";

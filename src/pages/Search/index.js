@@ -2,121 +2,205 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import bgimg from "../../img/img1.jpg";
-import img1 from "../../img/cap.jpg";
-import img2 from "../../img/img1.jpg";
-import img3 from "../../img/img2.jpg";
-import img4 from "../../img/img8.jpg";
+import {
+  GetDiseaseFuzzySearchName,
+  GetMirnaFuzzySearchName,
+} from "../../utils/mapPath";
+import bgimg from "../../img/img2.jpg";
 
-export default function Search() {
+export default function PictureShift1() {
   // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
   const toastController = useContext(ToastContext);
-  const [type, setType] = useState(0);
+  const [DiseaseFuzzyList, setDiseaseFuzzyList] = useState([]);
+  const [MirnaFuzzyList, setMirnaFuzzyList] = useState([]);
 
   const searchInput = useRef(null);
 
+  const GetDiseaseFuzzy = async (diseaseName) => {
+    let options = {
+      url: GetDiseaseFuzzySearchName,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: diseaseName,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      setDiseaseFuzzyList(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetMirnaFuzzy = async (MirnaName) => {
+    let options = {
+      url: GetMirnaFuzzySearchName,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        MirnaName: MirnaName,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      setMirnaFuzzyList(res.data.data);
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
   //点击搜索
   const handleSearch = () => {
-    const fetchData = async () => {
-      const options = {
-        url: "",
-        method: "GET",
-        headers: {
-          "content-type": "",
-        },
-        data: {},
-      };
-      const res = await axios(options);
-
-      if (res.data.code === 200) {
-        navigate(`SearchDetail`);
-      } else {
-        toastController({
-          mes: res.data.message,
-          timeout: 1000,
-        });
-      }
-    };
-    navigate(`SearchDetail`);
-    // fetchData();
+    setDiseaseFuzzyList([]);
+    setMirnaFuzzyList([]);
+    let searchName = searchInput.current.value;
+    if (searchName === undefined || searchName === "") {
+      toastController({
+        mes: "请输入搜索内容",
+        timeout: 2000,
+      });
+      return;
+    }
+    searchName.replaceAll(" ", "+");
+    navigate(`/Paper/` + searchName + `/1`);
   };
 
   const enterKeyUp = (e) => {
     if (e.keyCode === 13) {
-      // handleSearch();
-      navigate(`SearchDetail`);
+      handleSearch();
     }
   };
 
+  function throttle(fn, timeout) {
+    var can = true;
+    return function (...args) {
+      if (can === true) {
+        can = false;
+        setTimeout(() => {
+          fn(...args);
+          can = true;
+        }, timeout);
+      }
+    };
+  }
+
+  const fuzzySearch = () => {
+    let searchName = searchInput.current.value;
+    GetDiseaseFuzzy(searchName);
+    GetMirnaFuzzy(searchName);
+  };
+
+  const handleSearchInputChange = throttle(fuzzySearch, 1000);
+
   return (
     <div
-      className="h-fit w-full transition-all duration-500 "
+      className="h-full w-full transition-all duration-500"
       style={{
-        backgroundPosition: "center",
         backgroundImage: `url(${bgimg})`,
+        backgroundRepeat: "none",
         backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
       {/* 背景蒙层 */}
       <div
         className="h-full w-full flex flex-col justify-start items-center"
         style={{
-          background: "rgba(39, 39, 39,0.55)",
+          background: "rgba(39, 39, 39,0.35)",
         }}
       >
         {/* 上方 */}
         <div
-          className="w-full h-36 flex flex-col shrink-0 justify-center items-center gap-3 
-          sm:h-52 
-        md:flex-row lg:h-72 xl:h-80 xl:gap-10 2xl:h-85"
+          className="w-full h-44 flex shrink-0 justify-center items-center 
+          sm:h-52 lg:h-64 xl:h-72 2xl:h-85 bg-gray-100 bg-opacity-40 "
         >
-          {/* 搜索类型 */}
-          <div
-            className={`h-8 xl:h-10 w-40 flex justify-between items-center
-         rounded-sm bg-yellow-200  cursor-pointer`}
-          >
-            {/* Disease */}
-            <div
-              className={`${
-                type === 0 ? "w-9/12 bg-yellow-300" : "w-3/12 text-xs"
-              } h-full flex justify-center items-center rounded-sm text-gray-600 text-center text-2xl`}
-              onClick={(event) => {
-                event.stopPropagation();
-                setType(0);
-              }}
-            >
-              {type === 0 ? "Disease" : "D"}
-            </div>
-            {/* 分割线 */}
-            <div className="h-full w-0 border-l-2 border-gray-500"></div>
-            {/* mirna */}
-            <div
-              className={`${
-                type === 1 ? "w-9/12 bg-yellow-300 " : "w-3/12"
-              } h-full flex justify-center items-center rounded-sm text-gray-600 text-center text-2xl`}
-              onClick={(event) => {
-                event.stopPropagation();
-                setType(1);
-              }}
-            >
-              {type === 1 ? "miRNA" : "M"}
-            </div>
-          </div>
-
           {/* 搜索框 */}
           <div
-            className="w-11/12 h-9 flex justify-between items-center bg-white rounded-sm
-             md:w-7/12 md:h-10 xl:h-12 xl:w-1/2 2xl:h-14"
+            className="w-11/12 h-9 flex justify-between items-center bg-white rounded
+             sm:w-7/12 md:h-10 xl:h-12 xl:w-1/2 s24:h-14"
           >
-            <input
-              className="h-full w-11/12 px-2 rounded-sm outline-none text-xl text-gray-600"
-              placeholder="Search"
-              ref={searchInput}
-              onKeyUp={enterKeyUp}
-            ></input>
             <div
-              className="h-full w-1/12 flex justify-center items-center bg-blue-50"
+              className="h-fit w-11/12 relative flex-grow flex flex-col justify-start items-center
+            overflow-y-scrolls rounded md:w-7/12 md:h-10 xl:h-12 xl:w-1/2 s24:h-14"
+            >
+              <input
+                className="h-full w-full px-3 rounded outline-none text-xl text-gray-600"
+                placeholder="Search"
+                ref={searchInput}
+                onBlur={() => {
+                  setDiseaseFuzzyList([]);
+                  setMirnaFuzzyList([]);
+                }}
+                onChange={handleSearchInputChange}
+                onKeyUp={enterKeyUp}
+              ></input>
+              {/* 模糊搜索选项*/}
+              {((MirnaFuzzyList !== null &&
+                MirnaFuzzyList !== undefined &&
+                MirnaFuzzyList.length > 0) ||
+                (DiseaseFuzzyList !== null &&
+                  DiseaseFuzzyList !== undefined &&
+                  DiseaseFuzzyList.length > 0)) && (
+                <div
+                  className="h-fit w-full max-h-80 absolute top-9 rounded
+                md:top-10 xl:top-12 s24:top-14 z-20 border-2 border-blue-200
+                 overflow-y-scroll bg-gray-100 "
+                >
+                  <ul
+                    className="h-fit w-full flex-shrink-0 rounded 
+                text-gray-600 shadow p-0"
+                  >
+                    {DiseaseFuzzyList.map((fuzzyItem) => {
+                      return (
+                        <li
+                          className="h-fit w-full z-50 flex px-2 justify-start items-center
+                            hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
+                          onClick={() => {
+                            searchInput.current.value = fuzzyItem.name;
+                            setDiseaseFuzzyList(undefined);
+                            handleSearch();
+                          }}
+                        >
+                          {fuzzyItem.name}
+                        </li>
+                      );
+                    })}
+                    {MirnaFuzzyList.map((fuzzyItem) => {
+                      return (
+                        <li
+                          className="h-fit w-full z-50 flex px-2 justify-start items-center
+                            hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
+                          onClick={() => {
+                            searchInput.current.value = fuzzyItem.name;
+                            setMirnaFuzzyList(undefined);
+                            handleSearch();
+                          }}
+                        >
+                          {fuzzyItem.name}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+            </div>
+            {/* 搜索按钮 */}
+            <div
+              className="h-full w-1/12 rounded flex justify-center items-center bg-blue-50"
               onClick={handleSearch}
             >
               <svg
@@ -145,60 +229,34 @@ export default function Search() {
             </div>
           </div>
         </div>
-
-        {/* 下方热点推荐 */}
+        {/* 下方 */}
         <div
-          className="w-full h-fit grid grid-cols-1 py-2 gap-2 px-2 
-        sm:grid-cols-2 sm:pb-10 sm:pt-10 md:pb-10 md:gap-3
-        lg:pb-20 xl:grid-cols-4 xl:gap-4 2xl:gap-6 2xl:pt-10 2xl:pb-24"
+          className="min-h-fit flex-grow w-full py-8 px-5 flex flex-col justify-start items-center
+         font-bold text-white tracking-widest"
         >
-          <div
-            className="h-32 w-11/12 mx-auto rounded transition-all 
-          transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
-            style={{
-              backgroundImage: `url(${img1})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
-
-          <div
-            className="h-32 w-11/12 mx-auto rounded transition-all 
-          transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
-            style={{
-              backgroundImage: `url(${img2})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
-
-          <div
-            className="h-32 w-11/12 mx-auto rounded transition-all 
-          transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
-            style={{
-              backgroundImage: `url(${img3})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
-
-          <div
-            className="h-32 w-11/12 mx-auto rounded transition-all 
-          transform hover:scale-105 duration-500 border-4 border-gray-300 
-          sm:h-40 md:border-8 md:h-48 xl:h-52 2xl:h-64"
-            style={{
-              backgroundImage: `url(${img4})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-          ></div>
+          <p className="font-bold align-bottom">
+            <span className="text-2xl pr-2 md:text-4xl md:pr-4 xl:text-5xl xl:pr-8">
+              一切
+            </span>
+            <span className="text-4xl md:text-6xl xl:text-8xl ">如你所</span>
+            <span className="italic text-4xl md:text-6xl xl:text-8xl ">
+              {" "}
+              搜____
+            </span>
+          </p>
+          <p className="align-top leading-1 text-purple-300 pr-16 md:pr-60 xl:pr-80 text-4xl md:text-6xl xl:text-8xl">
+            The theses
+          </p>
+          <p className=" text-white text-4xl xl:ml-10 md:text-6xl xl:text-7xl">
+            are{" "}
+            <span className=" text-red-200 italic text-4xl md:text-6xl xl:text-7xl ">
+              AS
+            </span>{" "}
+            You
+          </p>
+          <p className="italic text-white text-5xl md:text-7xl xl:text-9x ml-24 md:ml-60 xl:ml-96">
+            Search
+          </p>
         </div>
       </div>
     </div>

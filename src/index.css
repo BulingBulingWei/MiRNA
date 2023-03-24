@@ -15,6 +15,33 @@ code {
     monospace;
 }
 
+.highlight {
+  color: #cc5342;
+  background: #fcddd8;
+  margin: 0.15rem;
+  padding: 0 0.1rem;
+  font-weight: 700;
+  border-radius: 0.25rem /* 4px */;
+}
+
+.TitleLight {
+  color: #cc5342;
+  background: #fcddd8;
+  margin: 0.15rem;
+  padding: 0 0.1rem;
+  font-weight: 700;
+  border-radius: 0.25rem /* 4px */;
+}
+
+.AbstractLight {
+  color: #cc5342;
+  background: #fcddd8;
+  margin: 0.15rem;
+  padding: 0 0.1rem;
+  font-weight: 700;
+  border-radius: 0.25rem /* 4px */;
+}
+
 /* 整个滚动条 */
 ::-webkit-scrollbar {
   width: 8px;

@@ -4,7 +4,7 @@ import Toast from "./Component/toast";
 
 const Home = lazy(() => import("./pages/Home"));
 const Loading = lazy(() => import("./pages/Loading"));
-// const Search = lazy(() => import("./pages/Search"));
+const PaperSearch = lazy(() => import("./pages/Search"));
 const Search = lazy(() => import("./pages/demo"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
 const SearchDetail = lazy(() => import("./pages/SearchDetail"));
@@ -47,13 +47,14 @@ function App() {
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Home />}>
-                      <Route path="/" element={<Paper />}></Route>
+                      <Route path="/" element={<Search />}></Route>
                       <Route
                         path="/SearchDetail/:type/:searchName"
                         element={<SearchDetail />}
                       ></Route>
+                      <Route path="/Paper" element={<PaperSearch />}></Route>
                       <Route
-                        path="/Paper/:type/:searchName"
+                        path="/Paper/:searchName/:pageNum"
                         element={<Paper />}
                       ></Route>
                     </Route>

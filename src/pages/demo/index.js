@@ -118,7 +118,7 @@ export default function PictureShift1() {
 
   return (
     <div
-      className="h-fit w-full transition-all duration-500"
+      className="h-fit lg:h-full w-full transition-all duration-500"
       style={{
         backgroundImage: `url(${bgimg})`,
         backgroundRepeat: "repeat-y",
@@ -195,6 +195,9 @@ export default function PictureShift1() {
                 className="h-full w-full px-2 rounded-sm outline-none text-xl text-gray-600"
                 placeholder="Search"
                 ref={searchInput}
+                onBlur={() => {
+                  setFuzzySearchList([]);
+                }}
                 onChange={handleSearchInputChange}
                 onKeyUp={enterKeyUp}
               ></input>
@@ -266,7 +269,7 @@ export default function PictureShift1() {
         <div
           className="w-full h-fit grid grid-cols-1 py-2 gap-2 px-2 
         sm:grid-cols-2 sm:pb-10 sm:pt-10 md:pb-10 md:gap-3
-        lg:pb-20 xl:grid-cols-4 xl:gap-4 s24:gap-6 s24:pt-10 s24:pb-24"
+        lg:pb-20 lg:grid-cols-4 xl:gap-4 s24:gap-6 s24:pt-10 s24:pb-24"
         >
           <div
             className="h-32 w-11/12 mx-auto rounded transition-all 

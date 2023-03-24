@@ -65,7 +65,6 @@ const AbsBox = styled.div`
 
 //props:
 export default function SearchDetail(props) {
-  // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
@@ -104,6 +103,7 @@ export default function SearchDetail(props) {
   const [graphData, setGraphData] = useState({});
 
   const yearSelectOption = yearSelectOptions();
+  // const StringDom = "";
 
   //请求函数---------------------
 
@@ -244,11 +244,6 @@ export default function SearchDetail(props) {
     endTime,
     pageNum,
   }) => {
-    // console.log("props:");
-    // console.log(pageNum);
-    // console.log(searchName);
-    // console.log(startTime);
-    // console.log(endTime);
     let options = {
       url: GetDieaseSearch,
       method: "GET",
@@ -266,8 +261,6 @@ export default function SearchDetail(props) {
     let res = await axios(options);
 
     if (res.data.code === "0") {
-      // console.log(res.data.data.articles);
-
       setSearchContext(searchName);
       setStartYear(startTime);
       setEndYear(endTime);
@@ -694,6 +687,9 @@ export default function SearchDetail(props) {
                   className="h-8 w-full px-2 rounded border-2 select-all border-solid border-blue-200 text-gray-700"
                   placeholder={searchContext}
                   ref={searchInput}
+                  onBlur={() => {
+                    setFuzzySearchList([]);
+                  }}
                   onKeyUp={searchEnterKeyUp}
                   onChange={handleSearchInputChange}
                 ></input>
@@ -829,12 +825,12 @@ export default function SearchDetail(props) {
                     className={`inline-block w-full text-gray-600
                    font-semibold truncate`}
                   >
-                    {item.title}
+                    <span dangerouslySetInnerHTML={{ __html: item.title }} />
                   </p>
                   {item.abs !== undefined && item.abs !== null && (
                     <AbsBox time={item.date}>
                       <span className="text-sky-700 font-bold">Abstract: </span>
-                      {item.abs}
+                      <span dangerouslySetInnerHTML={{ __html: item.abs }} />
                     </AbsBox>
                   )}
                 </PaperBox>
@@ -882,12 +878,29 @@ export default function SearchDetail(props) {
                       <div className="inline-block h-5 w-fit mr-2">
                         Open in:
                       </div>
-                      <div className="h-6 w-6 rounded-full text-white bg-gray-500 inline-block">
-                        <div className="h-fit w-fit mx-auto">doi</div>
-                      </div>
+                      {item.pmid !== undefined && (
+                        <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                          <a
+                            href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}
+                          >
+                            <div className=" h-fit w-fit text-xs leading-7 mx-auto">
+                              pmid
+                            </div>
+                          </a>
+                        </div>
+                      )}
+                      {item.doi !== undefined && (
+                        <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                          <a href={item.url}>
+                            <div className=" h-fit w-fit leading-6 mx-auto">
+                              doi
+                            </div>
+                          </a>
+                        </div>
+                      )}
                       <div className="h-1 w-full"></div>
                       <p className="text-sky-800 font-bold">Abstract:</p>
-                      <p className="">{item.abs}</p>
+                      <p dangerouslySetInnerHTML={{ __html: item.abs }} />
                     </div>
                   </div>
                 );
@@ -970,7 +983,7 @@ export default function SearchDetail(props) {
                       " md:h-full md:w-7/12 "
                     : showRight === true
                     ? // 有图且显示论文详情
-                      "md:w-60 lg:w-80 xl:w-85 2xl:w-100 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
+                      "md:w-60 lg:w-80 xl:w-98 2xl:w-107 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
                     : // 不显示右边的论文详情
                       "md:w-0 md:absolute md:top-0 md:right-0 md:h-full md:min-h-0"
                 }
@@ -998,7 +1011,7 @@ export default function SearchDetail(props) {
                     md:overflow-y-scroll"
                 >
                   <h1 className="text-xl font-bold block text-sky-700 mb-2">
-                    {item.title}
+                    <span dangerouslySetInnerHTML={{ __html: item.title }} />
                   </h1>
                   {item.authors !== undefined &&
                     item.authors !== null &&
@@ -1046,8 +1059,10 @@ export default function SearchDetail(props) {
                   <p className="text-sky-800 font-bold">Abstract:</p>
                   <p>
                     <span className="px-4"> </span>
-                    {item.abs}
+
+                    <p dangerouslySetInnerHTML={{ __html: item.abs }} />
                   </p>
+
                   <div className="h-4 w-full"></div>
                   <p className="text-sky-800 font-bold">Keywords:</p>
                   <p>

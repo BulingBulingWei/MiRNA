@@ -22,6 +22,19 @@ export default function TopNav() {
         </div>
       </div>
 
+      {/* Paper */}
+      <div
+        className="h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-gray-200 duration-300 cursor-pointer"
+        onClick={() => {
+          navigate(`/Paper`);
+        }}
+      >
+        <div>
+          <p className="text-gray-500 font-bold">Paper</p>
+        </div>
+      </div>
+
       {/* Pubmed */}
       <div
         className="h-full w-fit px-2  flex justify-center items-center rounded 
