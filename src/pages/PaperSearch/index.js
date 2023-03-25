@@ -8,7 +8,7 @@ import {
 } from "../../utils/mapPath";
 import bgimg from "../../img/img2.jpg";
 
-export default function PictureShift1() {
+export default function PaperSearch() {
   // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
   const toastController = useContext(ToastContext);
@@ -142,8 +142,10 @@ export default function PictureShift1() {
                 placeholder="Search"
                 ref={searchInput}
                 onBlur={() => {
-                  setDiseaseFuzzyList([]);
-                  setMirnaFuzzyList([]);
+                  setTimeout(() => {
+                    setDiseaseFuzzyList([]);
+                    setMirnaFuzzyList([]);
+                  }, 100);
                 }}
                 onChange={handleSearchInputChange}
                 onKeyUp={enterKeyUp}

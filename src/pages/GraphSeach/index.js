@@ -12,7 +12,7 @@ import img2 from "../../img/img1.jpg";
 import img3 from "../../img/img2.jpg";
 import img4 from "../../img/img8.jpg";
 
-export default function PictureShift1() {
+export default function GraphSeach() {
   // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
   const toastController = useContext(ToastContext);
@@ -196,7 +196,9 @@ export default function PictureShift1() {
                 placeholder="Search"
                 ref={searchInput}
                 onBlur={() => {
-                  setFuzzySearchList([]);
+                  setTimeout(() => {
+                    setFuzzySearchList([]);
+                  }, 100);
                 }}
                 onChange={handleSearchInputChange}
                 onKeyUp={enterKeyUp}

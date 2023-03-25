@@ -20,7 +20,7 @@ const PaperBox = styled.div`
   background-color: ${(props) =>
     props.selected === "true"
       ? "rgba(229, 245, 251, 1)"
-      : "rgba(255, 255, 255, 0.9)"};
+      : "rgba(255, 255, 255, 1)"};
   padding: 0.4rem 0.3rem;
   font-weight: 400;
   transition: all 0.4s;
@@ -46,7 +46,7 @@ const AbsBox = styled.div`
 `;
 
 //只搜索论文的页面
-export default function Paper() {
+export default function PaperSearhDetail() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
@@ -66,6 +66,7 @@ export default function Paper() {
   //有关搜索参数（类型，时间，是否显示图）的state
   const [searchContext, setSearchContext] = useState("");
   const [paperSelectedId, setPaperSelectedId] = useState("0");
+  // 手机端控制是否显示论文详情
   const [showDetail, setShowDetail] = useState(false);
 
   //一些用到的数据
@@ -250,7 +251,7 @@ export default function Paper() {
         {/* 左边：论文列表选项 , 以及搜索框*/}
         <div
           className="h-fit max-h-full w-full min-h-full flex flex-col justify-between items-center
-         overflow-y-scroll lg:w-1/4 bg-gray-100 bg-opacity-90"
+         overflow-y-scroll lg:w-1/4 bg-gray-100 bg-opacity-90 cursor-pointer"
         >
           {/* 论文顶部的搜索框 */}
           <div
@@ -266,8 +267,10 @@ export default function Paper() {
                   placeholder={searchContext}
                   ref={searchInput}
                   onBlur={() => {
-                    setDiseaseFuzzyList([]);
-                    setMirnaFuzzyList([]);
+                    setTimeout(() => {
+                      setDiseaseFuzzyList([]);
+                      setMirnaFuzzyList([]);
+                    }, 100);
                   }}
                   onKeyUp={searchEnterKeyUp}
                   onChange={handleSearchInputChange}
@@ -363,6 +366,7 @@ export default function Paper() {
                   }`}
                   onClick={() => {
                     setPaperSelectedId(item.pmid);
+                    setShowDetail(true);
                   }}
                 >
                   <p
@@ -374,7 +378,7 @@ export default function Paper() {
                   {item.abs !== undefined && item.abs !== null && (
                     <AbsBox time={item.date}>
                       <span className="text-sky-700 font-bold">Abstract: </span>
-                      {item.abs}
+                      <span dangerouslySetInnerHTML={{ __html: item.abs }} />
                     </AbsBox>
                   )}
                 </PaperBox>
@@ -447,12 +451,21 @@ export default function Paper() {
         </div>
         {/* 右边：论文详情，以及手机端的回退按钮栏 */}
         <div
-          className={`h-full w-full absolute top-0 right-0 lg:relative lg:w-2/3
-          bg-sky-50 bg-opacity-95 overflow-y-scroll`}
+          className={`h-full w-full absolute top-0 right-0 bg-opacity-100 z-50
+          ${showDetail === true ? "" : "w-0"}
+          lg:relative lg:w-2/3 lg:min-h-fit transition-all duration-300
+          bg-sky-50 lg:bg-opacity-60 overflow-y-scroll`}
         >
           {/* 回退按钮栏 */}
-          <div className="h-8 px-5 leading-7 sticky top-0 text-2xl bg-blue-100 lg:hidden">
-            {"<"}
+          <div
+            className="h-8 px-2 leading-7 sticky top-0 text-2xl bg-blue-100 lg:hidden"
+            onClick={() => {
+              setShowDetail(false);
+            }}
+          >
+            <div className="h-full w-fit bg-blue-200 px-4 rounded-full">
+              {"<"}
+            </div>
           </div>
           {/* 论文详情面板 */}
           {paperList !== undefined &&
@@ -462,84 +475,81 @@ export default function Paper() {
               if (item.pmid === paperSelectedId) {
                 return (
                   // 论文详情
+
                   <div
-                    className={`h-fit w-full 
-                `}
+                    className="h-fit w-full bg-gray-50 pl-3 pt-5 pb-16 shadow-lg 
+                     lg:px-12 lg:py-12"
                   >
-                    {/* 论文内容滚动面板 container */}
-                    <div
-                      className="h-full w-full bg-gray-50 pl-3 py-3 shadow-lg 
-                    md:overflow-y-scroll"
-                    >
-                      <h1 className="text-xl font-bold block text-sky-700 mb-2">
-                        <span
-                          dangerouslySetInnerHTML={{ __html: item.title }}
-                        />
-                      </h1>
-                      {/* {item.authors !== undefined &&
+                    <h1 className="text-lg lg:text-xl font-bold block text-sky-700 mb-2">
+                      <span dangerouslySetInnerHTML={{ __html: item.title }} />
+                    </h1>
+                    {/* {item.authors !== undefined &&
                         item.authors !== null &&
                         item.authors.map((aut) => {
                           return (
                             <p className="text-gray-600 inline pr-2">{aut}</p>
                           );
                         })} */}
-                      <p className="text-gray-600 inline pr-2">
-                        {item.authors}
-                      </p>
+                    <p className="text-xs lg:text-base text-gray-600 inline pr-2">
+                      {item.authors}
+                    </p>
 
-                      <p className="pt-1 text-gray-600">{item.date}</p>
-                      <div className="h-4 w-full"></div>
-                      <div className="inline-block font-bold h-6 w-fit mr-3">
-                        Open in:
-                      </div>
-                      {item.pmid !== undefined && (
-                        <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                          <a
-                            href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}
-                          >
-                            <div className=" h-fit w-fit text-xs leading-7 mx-auto">
-                              pmid
-                            </div>
-                          </a>
-                        </div>
-                      )}
-                      {item.doi !== undefined && (
-                        <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                          <a href={item.url}>
-                            <div className=" h-fit w-fit leading-6 mx-auto">
-                              doi
-                            </div>
-                          </a>
-                        </div>
-                      )}
-                      <div className="h-3"></div>
-                      <p className="text-sky-700">
-                        <span className="font-bold">pmid:</span>
-                        {item.pmid}
-                      </p>
-                      <p className="text-sky-700">
-                        <span className="font-bold">doi:</span>
-                        {item.doi}
-                      </p>
-                      <p className="text-sky-700">
-                        <span className="font-bold">Library:</span>
-                        {item.library}
-                      </p>
-                      <div className="h-4 w-full"></div>
-                      <p className="text-sky-800 font-bold">Abstract:</p>
-                      <p>
-                        <span className="px-4"> </span>
-
-                        <p dangerouslySetInnerHTML={{ __html: item.abs }} />
-                      </p>
-
-                      <div className="h-4 w-full"></div>
-                      <p className="text-sky-800 font-bold">Keywords:</p>
-                      <p>
-                        <span className="px-4"> </span>
-                        {item.Keywords}
-                      </p>
+                    <p className="pt-1 text-gray-600">{item.date}</p>
+                    <div className="h-4 w-full"></div>
+                    <div className="inline-block font-bold h-6 w-fit mr-3">
+                      Open in:
                     </div>
+                    {item.pmid !== undefined && (
+                      <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                        <a
+                          href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}
+                        >
+                          <div className=" h-fit w-fit text-xs leading-7 mx-auto">
+                            pmid
+                          </div>
+                        </a>
+                      </div>
+                    )}
+                    {item.doi !== undefined && (
+                      <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                        <a href={item.url}>
+                          <div className=" h-fit w-fit leading-6 mx-auto">
+                            doi
+                          </div>
+                        </a>
+                      </div>
+                    )}
+                    <div className="h-3"></div>
+                    <p className="text-sky-700">
+                      <span className="font-bold">pmid: </span>
+                      {item.pmid}
+                    </p>
+                    <p className="text-sky-700">
+                      <span className="font-bold">doi: </span>
+                      {item.doi}
+                    </p>
+                    <p className="text-sky-700">
+                      <span className="font-bold">Library: </span>
+                      {item.library}
+                    </p>
+                    <div className="h-4 w-full"></div>
+                    <p className="text-sky-800 font-bold leading-10">
+                      Abstract:
+                    </p>
+                    <p>
+                      <p dangerouslySetInnerHTML={{ __html: item.abs }} />
+                    </p>
+
+                    <div className="h-4 w-full"></div>
+                    {item.keywords !== null && (
+                      <>
+                        <p className="text-sky-800 font-bold">Keywords:</p>
+                        <p>
+                          <span className="px-4"> </span>
+                          {item.keywords}
+                        </p>
+                      </>
+                    )}
                   </div>
                 );
               }

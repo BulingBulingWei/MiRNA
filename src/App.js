@@ -3,13 +3,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Toast from "./Component/toast";
 
 const Home = lazy(() => import("./pages/Home"));
+const PaperSearch = lazy(() => import("./pages/PaperSearch"));
+const GraphSeach = lazy(() => import("./pages/GraphSeach"));
+const GraphSearchDetail = lazy(() => import("./pages/GraphSearchDetail"));
+const PaperSearhDetail = lazy(() => import("./pages/PaperSearhDetail"));
+const About = lazy(() => import("./pages/About"));
 const Loading = lazy(() => import("./pages/Loading"));
-const PaperSearch = lazy(() => import("./pages/Search"));
-const Search = lazy(() => import("./pages/demo"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
-const SearchDetail = lazy(() => import("./pages/SearchDetail"));
-const Paper = lazy(() => import("./pages/Paper"));
-// const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
@@ -47,16 +47,17 @@ function App() {
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Home />}>
-                      <Route path="/" element={<Search />}></Route>
+                      <Route path="/" element={<GraphSeach />}></Route>
                       <Route
                         path="/SearchDetail/:type/:searchName"
-                        element={<SearchDetail />}
+                        element={<GraphSearchDetail />}
                       ></Route>
                       <Route path="/Paper" element={<PaperSearch />}></Route>
                       <Route
                         path="/Paper/:searchName/:pageNum"
-                        element={<Paper />}
+                        element={<PaperSearhDetail />}
                       ></Route>
+                      <Route path="/About" element={<About />}></Route>
                     </Route>
                     <Route path="*" element={<GoWrong404 />}></Route>
                   </Routes>

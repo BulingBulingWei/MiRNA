@@ -50,7 +50,7 @@ export default function TopNav() {
         className="h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-gray-200 duration-300 cursor-pointer"
         onClick={() => {
-          navigate(`/`);
+          navigate(`/About`);
         }}
       >
         <div>

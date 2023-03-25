@@ -38,7 +38,7 @@ const PaperBox = styled.div`
   background-color: ${(props) =>
     props.selected === "true"
       ? "rgba(229, 245, 251, 1)"
-      : "rgba(255, 255, 255, 0.9)"};
+      : "rgba(255, 255, 255, 1)"};
   padding: 0.4rem 0.3rem;
   font-weight: 400;
   transition: all 0.4s;
@@ -64,7 +64,7 @@ const AbsBox = styled.div`
 `;
 
 //props:
-export default function SearchDetail(props) {
+export default function GraphSearchDetail() {
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
@@ -688,7 +688,9 @@ export default function SearchDetail(props) {
                   placeholder={searchContext}
                   ref={searchInput}
                   onBlur={() => {
-                    setFuzzySearchList([]);
+                    setTimeout(() => {
+                      setFuzzySearchList([]);
+                    }, 100);
                   }}
                   onKeyUp={searchEnterKeyUp}
                   onChange={handleSearchInputChange}

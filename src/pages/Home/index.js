@@ -1,6 +1,6 @@
 // import React from "react";
 import TopNav from "../../Component/TopNav";
-import Search from "../Search";
+import Search from "../PaperSearch";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 
 export default function Home() {
