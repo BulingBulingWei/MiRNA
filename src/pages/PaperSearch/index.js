@@ -126,7 +126,7 @@ export default function PaperSearch() {
         {/* 上方 */}
         <div
           className="w-full h-44 flex shrink-0 justify-center items-center 
-          sm:h-52 lg:h-64 xl:h-72 2xl:h-85 bg-gray-100 bg-opacity-40 "
+           lg:h-52 xl:h-56 2xl:h-64 bg-gray-100 bg-opacity-40 "
         >
           {/* 搜索框 */}
           <div
@@ -141,12 +141,12 @@ export default function PaperSearch() {
                 className="h-full w-full px-3 rounded outline-none text-xl text-gray-600"
                 placeholder="Search"
                 ref={searchInput}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setDiseaseFuzzyList([]);
-                    setMirnaFuzzyList([]);
-                  }, 100);
-                }}
+                // onBlur={() => {
+                //   setTimeout(() => {
+                //     setDiseaseFuzzyList([]);
+                //     setMirnaFuzzyList([]);
+                //   }, 300);
+                // }}
                 onChange={handleSearchInputChange}
                 onKeyUp={enterKeyUp}
               ></input>

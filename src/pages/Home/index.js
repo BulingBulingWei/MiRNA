@@ -16,7 +16,7 @@ export default function Home() {
       {/* 页面 ,显示搜索框页面或者是搜索详情页面*/}
       <div
         className="w-full h-fit relative overflow-y-scroll overflow-x-scroll flex-grow 
-      lg:overflow-y-hidden"
+      lg:overflow-y-hidden transition-all duration-500"
       >
         <Outlet></Outlet>
       </div>

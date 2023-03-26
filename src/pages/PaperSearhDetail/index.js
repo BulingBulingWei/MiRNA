@@ -3,12 +3,16 @@ import { ToastContext, GraphContext } from "../../App";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
+import download from "downloadjs";
 import PageButton from "../../Component/PageButton";
 import bgimg from "../../img/img1.jpg";
+import { DownloadSvg } from "../../svg/index";
 import {
   GetArticles,
   GetDiseaseFuzzySearchName,
   GetMirnaFuzzySearchName,
+  GetOneArticleDownload,
+  PostArticleListDownload,
 } from "../../utils/mapPath";
 
 const PaperBox = styled.div`
@@ -101,16 +105,84 @@ export default function PaperSearhDetail() {
         });
       } else {
         //向上取整
-        console.log(res.data.data.articleList);
-        setPaperList(res.data.data.articleList);
+        console.log(res.data.data.articles);
+        setPaperList(res.data.data.articles);
         let pe = Math.ceil(res.data.data.count / maxSize);
         setPage_end(parseInt(pe));
         setPage_now(parseInt(pageNum));
-        setPaperSelectedId(res.data.data.articleList[0].pmid);
+        setPaperSelectedId(res.data.data.articles[0].pmid);
       }
     }
     //请求不成功
     else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetOneArticleDownloadAxios = async (pmid) => {
+    let options = {
+      url: GetOneArticleDownload + pmid,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        pmid: pmid,
+      },
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+
+    let res = await axios(options);
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(blob, `${pmid}.pdf`, "application/pdf;charset=utf-8");
+
+      // const href = "http://172.16.103.216:9999" + GetOneArticleDownload + pmid;
+      // const downloadOneArticleElement = document.createElement("a");
+      // downloadOneArticleElement.href = href;
+      // downloadOneArticleElement.target = "downloadFile";
+      // downloadOneArticleElement.click();
+      // document.body.removeChild(downloadOneArticleElement);
+      // window.URL.revokeObjectURL(href);
+    } else {
+      toastController({
+        mes: res.data.code,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const PostArticleListDownloadAxios = async () => {
+    let options = {
+      url: PostArticleListDownload,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: paperList,
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+
+    let res = await axios(options);
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(blob, `${params.searchName}.xlsx`, "application/octet-stream");
+      toastController({
+        mes: "chenggong",
+        timeout: 1000,
+      });
+    } else {
       toastController({
         mes: res.data.message,
         timeout: 1000,
@@ -168,6 +240,10 @@ export default function PaperSearhDetail() {
     if (e.keyCode === 13) {
       goToPage(pageInput.current.value);
     }
+  };
+
+  const handleDownloadOneArticle = (pmid) => {
+    GetOneArticleDownloadAxios(pmid);
   };
 
   const GetDiseaseFuzzy = async (diseaseName) => {
@@ -270,7 +346,7 @@ export default function PaperSearhDetail() {
                     setTimeout(() => {
                       setDiseaseFuzzyList([]);
                       setMirnaFuzzyList([]);
-                    }, 100);
+                    }, 200);
                   }}
                   onKeyUp={searchEnterKeyUp}
                   onChange={handleSearchInputChange}
@@ -298,7 +374,7 @@ export default function PaperSearhDetail() {
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
                               searchInput.current.value = fuzzyItem.name;
-                              setDiseaseFuzzyList(undefined);
+                              setDiseaseFuzzyList([]);
                               handleSearch();
                             }}
                           >
@@ -313,7 +389,7 @@ export default function PaperSearhDetail() {
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
                               searchInput.current.value = fuzzyItem.name;
-                              setMirnaFuzzyList(undefined);
+                              setMirnaFuzzyList([]);
                               handleSearch();
                             }}
                           >
@@ -483,16 +559,19 @@ export default function PaperSearhDetail() {
                     <h1 className="text-lg lg:text-xl font-bold block text-sky-700 mb-2">
                       <span dangerouslySetInnerHTML={{ __html: item.title }} />
                     </h1>
-                    {/* {item.authors !== undefined &&
-                        item.authors !== null &&
-                        item.authors.map((aut) => {
-                          return (
-                            <p className="text-gray-600 inline pr-2">{aut}</p>
-                          );
-                        })} */}
-                    <p className="text-xs lg:text-base text-gray-600 inline pr-2">
+                    {item.authors !== undefined &&
+                      item.authors !== null &&
+                      item.authors.map((aut) => {
+                        return (
+                          <p className="text-gray-600 inline pr-2">
+                            {aut}{" "}
+                            <span className="font-bold text-red-500">|</span>{" "}
+                          </p>
+                        );
+                      })}
+                    {/* <p className="text-xs lg:text-base text-gray-600 inline pr-2">
                       {item.authors}
-                    </p>
+                    </p> */}
 
                     <p className="pt-1 text-gray-600">{item.date}</p>
                     <div className="h-4 w-full"></div>
@@ -501,24 +580,59 @@ export default function PaperSearhDetail() {
                     </div>
                     {item.pmid !== undefined && (
                       <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                        <a
-                          href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}
+                        <div
+                          className=" h-fit w-fit text-xs leading-7 mx-auto cursor-pointer"
+                          onClick={() => {
+                            window.open(
+                              `https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`,
+                              "_blank"
+                            );
+                          }}
                         >
-                          <div className=" h-fit w-fit text-xs leading-7 mx-auto">
-                            pmid
-                          </div>
-                        </a>
+                          pmid
+                        </div>
                       </div>
                     )}
                     {item.doi !== undefined && (
-                      <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                        <a href={item.url}>
-                          <div className=" h-fit w-fit leading-6 mx-auto">
-                            doi
-                          </div>
-                        </a>
+                      <div
+                        className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block cursor-pointer"
+                        onClick={() => {
+                          window.open(`${item.url}`, "_blank");
+                        }}
+                      >
+                        <div className=" h-fit w-fit leading-6 mx-auto">
+                          doi
+                        </div>
                       </div>
                     )}
+                    {/* 下载一篇文章的pdf */}
+                    <div className="h-fit w-full pt-2">
+                      <span className="font-bold text-sky-700">
+                        download this article:{" "}
+                      </span>
+                      <div
+                        className="inline-block h-full w-fit "
+                        onClick={() => {
+                          handleDownloadOneArticle(item.pmid);
+                        }}
+                      >
+                        <DownloadSvg></DownloadSvg>
+                      </div>
+                    </div>
+                    {/* 下载几篇论文 excel */}
+                    <div className="h-fit w-full pt-2">
+                      <span className="font-bold text-red-600">
+                        download ALL articles:{" "}
+                      </span>
+                      <div
+                        className="inline-block h-full w-fit "
+                        onClick={() => {
+                          PostArticleListDownloadAxios();
+                        }}
+                      >
+                        <DownloadSvg></DownloadSvg>
+                      </div>
+                    </div>
                     <div className="h-3"></div>
                     <p className="text-sky-700">
                       <span className="font-bold">pmid: </span>
@@ -545,7 +659,7 @@ export default function PaperSearhDetail() {
                       <>
                         <p className="text-sky-800 font-bold">Keywords:</p>
                         <p>
-                          <span className="px-4"> </span>
+                          <span className="px-4"></span>
                           {item.keywords}
                         </p>
                       </>

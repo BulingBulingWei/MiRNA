@@ -3,15 +3,17 @@ import { ToastContext, GraphContext } from "../../App";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
-// import throttle from "../../optimize/index";
+import bgimg from "../../img/img2.jpg";
 import { Svg1 } from "../../svg";
 import * as echarts from "echarts/core";
+import download from "downloadjs";
 import { TooltipComponent, LegendComponent } from "echarts/components";
 import { GraphChart } from "echarts/charts";
 import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import PageButton from "../../Component/PageButton";
 import yearSelectOptions from "../../data/yearData";
+import { DownloadSvg } from "../../svg/index";
 import {
   GetDieaseSearch,
   GetMirnaSearch,
@@ -19,6 +21,8 @@ import {
   GetMirnaGraphData,
   GetDiseaseFuzzySearchName,
   GetMirnaFuzzySearchName,
+  GetOneArticleDownload,
+  PostArticleListDownload,
 } from "../../utils/mapPath";
 
 echarts.use([
@@ -205,7 +209,6 @@ export default function GraphSearchDetail() {
     window.onresize = () => myChart.resize();
     window.addEventListener("resize", () => myChart.resize());
     return () => {
-      console.log("xiao shi");
       myChart.dispose();
       graphOption = null;
     };
@@ -274,6 +277,7 @@ export default function GraphSearchDetail() {
         });
       } else {
         //向上取整
+        console.log(res.data.data.articles);
         setPaperList(res.data.data.articles);
         let pe = Math.ceil(res.data.data.count / maxSize);
         setPage_end(parseInt(pe));
@@ -297,11 +301,6 @@ export default function GraphSearchDetail() {
     endTime,
     pageNum,
   }) => {
-    // console.log("props:");
-    // console.log(pageNum);
-    // console.log(searchName);
-    // console.log(startTime);
-    // console.log(endTime);
     let options = {
       url: GetMirnaSearch,
       method: "GET",
@@ -445,6 +444,74 @@ export default function GraphSearchDetail() {
     }
   };
 
+  const GetOneArticleDownloadAxios = async (pmid) => {
+    let options = {
+      url: GetOneArticleDownload + pmid,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        pmid: pmid,
+      },
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+
+    let res = await axios(options);
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(blob, `${pmid}.pdf`, "application/pdf;charset=utf-8");
+
+      // const href = "http://172.16.103.216:9999" + GetOneArticleDownload + pmid;
+      // const downloadOneArticleElement = document.createElement("a");
+      // downloadOneArticleElement.href = href;
+      // downloadOneArticleElement.target = "downloadFile";
+      // downloadOneArticleElement.click();
+      // document.body.removeChild(downloadOneArticleElement);
+      // window.URL.revokeObjectURL(href);
+    } else {
+      toastController({
+        mes: res.data.code,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const PostArticleListDownloadAxios = async () => {
+    let options = {
+      url: PostArticleListDownload,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: paperList,
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+
+    let res = await axios(options);
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(blob, `${params.searchName}.xlsx`, "application/octet-stream");
+      toastController({
+        mes: "chenggong",
+        timeout: 1000,
+      });
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
   //事件函数
 
   //点击搜索
@@ -552,19 +619,11 @@ export default function GraphSearchDetail() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
+  const handleDownloadOneArticle = (pmid) => {
+    GetOneArticleDownloadAxios(pmid);
+  };
 
+  // 优化函数
   const fuzzySearch = () => {
     let searchName = searchInput.current.value;
     if (!searchName || searchName === "") return;
@@ -577,6 +636,19 @@ export default function GraphSearchDetail() {
       GetMirnaFuzzy(searchName);
     }
   };
+
+  function throttle(fn, timeout) {
+    var can = true;
+    return function (...args) {
+      if (can === true) {
+        can = false;
+        setTimeout(() => {
+          fn(...args);
+          can = true;
+        }, timeout);
+      }
+    };
+  }
 
   const handleSearchInputChange = throttle(fuzzySearch, 1000);
 
@@ -630,6 +702,12 @@ export default function GraphSearchDetail() {
       className={`h-fit w-full bg-blue-5 relative md:h-full ${
         showGraph === false ? "md:flex md:justify-center" : ""
       }`}
+      style={{
+        backgroundImage: `url(${bgimg})`,
+        backgroundRepeat: "repeat-y",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
       {/* (关系图)关系图+图例 */}
       <div
@@ -690,7 +768,7 @@ export default function GraphSearchDetail() {
                   onBlur={() => {
                     setTimeout(() => {
                       setFuzzySearchList([]);
-                    }, 100);
+                    }, 500);
                   }}
                   onKeyUp={searchEnterKeyUp}
                   onChange={handleSearchInputChange}
@@ -848,7 +926,6 @@ export default function GraphSearchDetail() {
                   // 手机端论文详情
                   <div
                     id="dragBox"
-                    // onTouchStart={handleMouseDown}
                     className={`h-64 w-full z-50 sticky bottom-12 md:hidden`}
                   >
                     {/* 论文内容上的拖动条 */}
@@ -882,24 +959,59 @@ export default function GraphSearchDetail() {
                       </div>
                       {item.pmid !== undefined && (
                         <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                          <a
-                            href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}
+                          <div
+                            className=" h-fit w-fit text-xs leading-7 mx-auto cursor-pointer"
+                            onClick={() => {
+                              window.open(
+                                `https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`,
+                                "_blank"
+                              );
+                            }}
                           >
-                            <div className=" h-fit w-fit text-xs leading-7 mx-auto">
-                              pmid
-                            </div>
-                          </a>
+                            pmid
+                          </div>
                         </div>
                       )}
                       {item.doi !== undefined && (
-                        <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                          <a href={item.url}>
-                            <div className=" h-fit w-fit leading-6 mx-auto">
-                              doi
-                            </div>
-                          </a>
+                        <div
+                          className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block cursor-pointer"
+                          onClick={() => {
+                            window.open(`${item.url}`, "_blank");
+                          }}
+                        >
+                          <div className=" h-fit w-fit leading-6 mx-auto">
+                            doi
+                          </div>
                         </div>
                       )}
+                      {/* 下载一篇文章的pdf */}
+                      <div className="h-fit w-full pt-2">
+                        <span className="font-bold text-sky-700">
+                          download this article:{" "}
+                        </span>
+                        <div
+                          className="inline-block h-full w-fit "
+                          onClick={() => {
+                            handleDownloadOneArticle(item.pmid);
+                          }}
+                        >
+                          <DownloadSvg></DownloadSvg>
+                        </div>
+                      </div>
+                      {/* 下载几篇论文 excel */}
+                      <div className="h-fit w-full pt-2">
+                        <span className="font-bold text-red-600">
+                          download ALL articles:{" "}
+                        </span>
+                        <div
+                          className="inline-block h-full w-fit "
+                          onClick={() => {
+                            PostArticleListDownloadAxios();
+                          }}
+                        >
+                          <DownloadSvg></DownloadSvg>
+                        </div>
+                      </div>
                       <div className="h-1 w-full"></div>
                       <p className="text-sky-800 font-bold">Abstract:</p>
                       <p dangerouslySetInnerHTML={{ __html: item.abs }} />
@@ -1018,7 +1130,12 @@ export default function GraphSearchDetail() {
                   {item.authors !== undefined &&
                     item.authors !== null &&
                     item.authors.map((aut) => {
-                      return <p className="text-gray-600 inline pr-2">{aut}</p>;
+                      return (
+                        <p className="text-gray-600 inline pr-2">
+                          {aut}{" "}
+                          <span className="font-bold text-red-600">|</span>
+                        </p>
+                      );
                     })}
                   {/* <p className="text-gray-600 inline pr-2">{item.authors}</p>; */}
                   <p className="pt-1 text-gray-600">{item.date}</p>
@@ -1028,37 +1145,72 @@ export default function GraphSearchDetail() {
                   </div>
                   {item.pmid !== undefined && (
                     <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                      <a href={`https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`}>
-                        <div className=" h-fit w-fit text-xs leading-7 mx-auto">
-                          pmid
-                        </div>
-                      </a>
+                      <div
+                        className=" h-fit w-fit text-xs leading-7 mx-auto cursor-pointer"
+                        onClick={() => {
+                          window.open(
+                            `https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        pmid
+                      </div>
                     </div>
                   )}
                   {item.doi !== undefined && (
-                    <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                      <a href={item.url}>
-                        <div className=" h-fit w-fit leading-6 mx-auto">
-                          doi
-                        </div>
-                      </a>
+                    <div
+                      className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block cursor-pointer"
+                      onClick={() => {
+                        window.open(`${item.url}`, "_blank");
+                      }}
+                    >
+                      <div className=" h-fit w-fit leading-6 mx-auto">doi</div>
                     </div>
                   )}
                   <div className="h-3"></div>
                   <p className="text-sky-700">
-                    <span className="font-bold">pmid:</span>
+                    <span className="font-bold">pmid: </span>
                     {item.pmid}
                   </p>
                   <p className="text-sky-700">
-                    <span className="font-bold">doi:</span>
+                    <span className="font-bold">doi: </span>
                     {item.doi}
                   </p>
                   <p className="text-sky-700">
-                    <span className="font-bold">Library:</span>
+                    <span className="font-bold">Library: </span>
                     {item.library}
                   </p>
+                  {/* 下载一篇文章的pdf */}
+                  <div className="h-fit w-full pt-2">
+                    <span className="font-bold text-sky-700">
+                      download this article:{" "}
+                    </span>
+                    <div
+                      className="inline-block h-full w-fit "
+                      onClick={() => {
+                        handleDownloadOneArticle(item.pmid);
+                      }}
+                    >
+                      <DownloadSvg></DownloadSvg>
+                    </div>
+                  </div>
+                  {/* 下载几篇论文 excel */}
+                  <div className="h-fit w-full pt-2">
+                    <span className="font-bold text-red-600">
+                      download ALL articles:{" "}
+                    </span>
+                    <div
+                      className="inline-block h-full w-fit "
+                      onClick={() => {
+                        PostArticleListDownloadAxios();
+                      }}
+                    >
+                      <DownloadSvg></DownloadSvg>
+                    </div>
+                  </div>
                   <div className="h-4 w-full"></div>
-                  <p className="text-sky-800 font-bold">Abstract:</p>
+                  <p className="text-sky-800 font-bold">Abstract: </p>
                   <p>
                     <span className="px-4"> </span>
 
@@ -1066,11 +1218,15 @@ export default function GraphSearchDetail() {
                   </p>
 
                   <div className="h-4 w-full"></div>
-                  <p className="text-sky-800 font-bold">Keywords:</p>
-                  <p>
-                    <span className="px-4"> </span>
-                    {item.Keywords}
-                  </p>
+                  {item.keywords !== null && (
+                    <>
+                      <p className="text-sky-800 font-bold">Keywords:</p>
+                      <p>
+                        <span className="px-4"> </span>
+                        {item.keywords}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
             );

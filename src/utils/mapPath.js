@@ -13,3 +13,7 @@ export const GetDiseaseFuzzySearchName = "/disease";
 export const GetMirnaFuzzySearchName = "/mirna/GetLikeName";
 
 export const GetArticles = "/article/like";
+
+export const GetOneArticleDownload = "/download/GetOneArticle/";
+
+export const PostArticleListDownload = "/download/GetArticleList";

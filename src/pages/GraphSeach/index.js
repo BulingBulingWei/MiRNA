@@ -195,11 +195,11 @@ export default function GraphSeach() {
                 className="h-full w-full px-2 rounded-sm outline-none text-xl text-gray-600"
                 placeholder="Search"
                 ref={searchInput}
-                onBlur={() => {
-                  setTimeout(() => {
-                    setFuzzySearchList([]);
-                  }, 100);
-                }}
+                // onBlur={() => {
+                //   setTimeout(() => {
+                //     setFuzzySearchList([]);
+                //   }, 200);
+                // }}
                 onChange={handleSearchInputChange}
                 onKeyUp={enterKeyUp}
               ></input>

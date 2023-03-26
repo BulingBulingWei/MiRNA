@@ -39,10 +39,11 @@ export default function TopNav() {
       <div
         className="h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-gray-200 duration-300 cursor-pointer"
+        onClick={() => {
+          window.open("https://pubmed.ncbi.nlm.nih.gov/", "_blank");
+        }}
       >
-        <a href="https://pubmed.ncbi.nlm.nih.gov/">
-          <p className="text-gray-500 font-bold">Pubmed</p>
-        </a>
+        <p className="text-gray-500 font-bold">Pubmed</p>
       </div>
 
       {/* About */}
