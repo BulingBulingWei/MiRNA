@@ -4,7 +4,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import bgimg from "../../img/img2.jpg";
-import { Svg1 } from "../../svg";
+import { Svg1, LeftSvg } from "../../svg";
 import * as echarts from "echarts/core";
 import download from "downloadjs";
 import { TooltipComponent, LegendComponent } from "echarts/components";
@@ -23,6 +23,10 @@ import {
   GetMirnaFuzzySearchName,
   GetOneArticleDownload,
   PostArticleListDownload,
+  GetRelationShipByDisease,
+  GetRelationShipByMiRNA,
+  GetCalculateByDisease,
+  GetCalculateByMiRNA,
 } from "../../utils/mapPath";
 
 echarts.use([
@@ -99,6 +103,7 @@ export default function GraphSearchDetail() {
   //有关页面控制的state，如是否显示左右边的列表以及论文摘要
   const [showLeft, setShowLeft] = useState(true);
   const [showRight, setShowRight] = useState(true);
+  const [phoneShowRight, setPhoneShowRight] = useState(false); //手机端是否显示论文详情
   const [paperSelectedId, setPaperSelectedId] = useState(undefined);
 
   //一些用到的数据
@@ -115,7 +120,7 @@ export default function GraphSearchDetail() {
     let myChart;
     let graphOption = {
       tooltip: {},
-      animationDuration: 1500,
+      animationDuration: 1000,
       animationEasingUpdate: "quinticInOut",
       legend: [
         {
@@ -126,7 +131,7 @@ export default function GraphSearchDetail() {
             }),
           z: 100,
           show: true,
-          orient: "horizontal",
+          orient: "vertical",
           left: "center",
           top: 10,
           width: 300,
@@ -134,10 +139,10 @@ export default function GraphSearchDetail() {
           borderRadius: 5,
           backgroundColor: "rgba(217, 237, 247, 0.5)",
           borderColor: "#ccc",
-          padding: 5,
-          itemGap: 10,
-          itemWidth: 20,
-          itemHeight: 14,
+          padding: 2,
+          itemGap: 5,
+          itemWidth: 16,
+          itemHeight: 10,
           symbolRotate: "inherit",
           symbolKeepAspect: true,
           inactiveColor: "#ccc",
@@ -155,7 +160,7 @@ export default function GraphSearchDetail() {
           categories: graphData.categories,
           //可以旋转也可以缩放
           roam: true,
-
+          draggable: true,
           label: {
             show: true,
             position: "right",
@@ -166,7 +171,7 @@ export default function GraphSearchDetail() {
           },
           scaleLimit: {
             min: 0.1,
-            max: 10,
+            max: 4,
           },
           lineStyle: {
             color: "source",
@@ -179,8 +184,8 @@ export default function GraphSearchDetail() {
             },
           },
           force: {
-            repulsion: 500,
-            edgeLength: [30, 40],
+            repulsion: 130,
+            edgeLength: [20, 50],
             //可以旋转也可以缩放
             roam: true,
             layoutAnimation: true,
@@ -277,7 +282,6 @@ export default function GraphSearchDetail() {
         });
       } else {
         //向上取整
-        console.log(res.data.data.articles);
         setPaperList(res.data.data.articles);
         let pe = Math.ceil(res.data.data.count / maxSize);
         setPage_end(parseInt(pe));
@@ -318,7 +322,6 @@ export default function GraphSearchDetail() {
     let res = await axios(options);
 
     if (res.data.code === "0") {
-      // console.log(res.data.data.articles);
       setSearchContext(searchName);
       setStartYear(startTime);
       setEndYear(endTime);
@@ -500,10 +503,138 @@ export default function GraphSearchDetail() {
         type: "application/pdf;charset=utf-8",
       });
       download(blob, `${params.searchName}.xlsx`, "application/octet-stream");
+    } else {
       toastController({
-        mes: "chenggong",
+        mes: res.data.message,
         timeout: 1000,
       });
+    }
+  };
+
+  const GetRelationShipByDiseaseAxios = async () => {
+    let options = {
+      url: GetRelationShipByDisease,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: params.searchName,
+      },
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+    let res = await axios(options);
+
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(
+        blob,
+        `${params.searchName}RelationShipData.xlsx`,
+        "application/octet-stream"
+      );
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetRelationShipByMiRNAAxios = async () => {
+    let options = {
+      url: GetRelationShipByMiRNA,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        mirnaName: params.searchName,
+      },
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+    let res = await axios(options);
+
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(
+        blob,
+        `${params.searchName}RelationShipData.xlsx`,
+        "application/octet-stream"
+      );
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetCalculateByDiseaseAxios = async () => {
+    let options = {
+      url: GetCalculateByDisease,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        diseaseName: params.searchName,
+      },
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+    let res = await axios(options);
+
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(
+        blob,
+        `${params.searchName}ForecastData.xlsx`,
+        "application/octet-stream"
+      );
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
+  };
+
+  const GetCalculateByMiRNAAxios = async () => {
+    let options = {
+      url: GetCalculateByMiRNA,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      params: {
+        mirnaName: params.searchName,
+      },
+      // 注意要确保传输的数据格式
+      responseType: "blob",
+    };
+    let res = await axios(options);
+
+    if (res.data.code !== "555") {
+      let blobData = res.data;
+      const blob = new Blob([blobData], {
+        type: "application/pdf;charset=utf-8",
+      });
+      download(
+        blob,
+        `${params.searchName}ForecastData.xlsx`,
+        "application/octet-stream"
+      );
     } else {
       toastController({
         mes: res.data.message,
@@ -518,7 +649,6 @@ export default function GraphSearchDetail() {
   //"Lung Neoplasms"
   //"hsa-mir-106",
   const handleSearch = () => {
-    // console.log("search");
     setFuzzySearchList(undefined);
     let searchName = searchInput.current.value;
     let idx = searchTypeSelect.current.selectedIndex;
@@ -569,7 +699,6 @@ export default function GraphSearchDetail() {
     } else {
       searchName = searchName.trim();
       searchName.replaceAll(" ", "+");
-      console.log(`SearchDetail/${t}/${searchName}`);
       navigate(`/SearchDetail/${t}/${searchName}`);
     }
   };
@@ -623,6 +752,22 @@ export default function GraphSearchDetail() {
     GetOneArticleDownloadAxios(pmid);
   };
 
+  const handleDownloadRelationship = () => {
+    if (params.type === "Disease") {
+      GetRelationShipByDiseaseAxios();
+    } else {
+      GetRelationShipByMiRNAAxios();
+    }
+  };
+
+  const handleDownloadCalculate = () => {
+    if (params.type === "Disease") {
+      GetCalculateByDiseaseAxios();
+    } else {
+      GetCalculateByMiRNAAxios();
+    }
+  };
+
   // 优化函数
   const fuzzySearch = () => {
     let searchName = searchInput.current.value;
@@ -656,45 +801,45 @@ export default function GraphSearchDetail() {
   //页面效果函数
 
   // div可修改的最小高度
-  const minHeight = 90;
+  // const minHeight = 90;
   // 是否开启尺寸修改
-  let reSizeable = false;
-  let lastClientY;
-  let dragBox, dragLine;
+  // let reSizeable = false;
+  // let lastClientY;
+  // let dragBox, dragLine;
 
-  function handleMouseDown(event) {
-    // 禁止用户选择网页中文字
-    document.onselectstart = () => false;
-    // 禁止用户拖动元素
-    document.ondragstart = () => false;
+  // function handleMouseDown(event) {
+  //   // 禁止用户选择网页中文字
+  //   document.onselectstart = () => false;
+  //   // 禁止用户拖动元素
+  //   document.ondragstart = () => false;
 
-    dragBox = document.getElementById("dragBox");
-    dragLine = document.getElementById("dragLine");
-    document.addEventListener("touchmove", handleMouseMove);
-    document.addEventListener("touchend", handleMouseUp);
-    dragLine.style.backgroundColor = "#818a92";
+  //   dragBox = document.getElementById("dragBox");
+  //   dragLine = document.getElementById("dragLine");
+  //   document.addEventListener("touchmove", handleMouseMove);
+  //   document.addEventListener("touchend", handleMouseUp);
+  //   dragLine.style.backgroundColor = "#818a92";
 
-    reSizeable = true;
-    lastClientY = event.changedTouches[0].clientY;
-  }
+  //   reSizeable = true;
+  //   lastClientY = event.changedTouches[0].clientY;
+  // }
 
-  function handleMouseMove(event) {
-    if (reSizeable) {
-      dragBox.style.height =
-        Math.max(
-          minHeight,
-          dragBox.offsetHeight + (lastClientY - event.changedTouches[0].clientY)
-        ) + "px";
-      // offsetHeight 是鼠标所点击的位置与对应元素（dragBox）的垂直距离
-      // lastClientY - event.clientY 计算出变动的垂直距离
-      lastClientY = event.changedTouches[0].clientY;
-    }
-  }
+  // function handleMouseMove(event) {
+  //   if (reSizeable) {
+  //     dragBox.style.height =
+  //       Math.max(
+  //         minHeight,
+  //         dragBox.offsetHeight + (lastClientY - event.changedTouches[0].clientY)
+  //       ) + "px";
+  //     // offsetHeight 是鼠标所点击的位置与对应元素（dragBox）的垂直距离
+  //     // lastClientY - event.clientY 计算出变动的垂直距离
+  //     lastClientY = event.changedTouches[0].clientY;
+  //   }
+  // }
 
-  function handleMouseUp() {
-    dragLine.style.backgroundColor = "#e5e7eb";
-    reSizeable = false;
-  }
+  // function handleMouseUp() {
+  //   dragLine.style.backgroundColor = "#e5e7eb";
+  //   reSizeable = false;
+  // }
 
   //---------------------------------------------------
   return (
@@ -709,15 +854,15 @@ export default function GraphSearchDetail() {
         backgroundPosition: "center",
       }}
     >
-      {/* (关系图)关系图+图例 */}
+      {/* (中间关系图)关系图+图例 */}
       <div
         id="graph"
         ref={graphDom}
-        className={`h-96 w-full flex justify-center items-center bg-blue-50 shadow-inner
+        className={`h-107 w-full flex justify-center items-center bg-blue-50 shadow-inner
         md:h-full ${showGraph === true ? "" : "hidden"}`}
       ></div>
 
-      {/* 相关论文选项列表 + 搜索框 + 时间/类型选择器*/}
+      {/* (左边)相关论文选项列表 + 搜索框 + 时间/类型选择器*/}
       <div
         className={`h-fit w-full select-none 
         transition-all duration-1000 shadow-2xl  
@@ -747,16 +892,17 @@ export default function GraphSearchDetail() {
             }`}
           ></Svg1>
         </div>
+
         {/* 论文选择方块滚动面板 container */}
         <div
           id="selectContainer"
           className="h-full w-full bg-gray-50 flex flex-col justify-start items-center 
           md:overflow-y-scroll shadow-lg"
         >
-          {/* 论文顶部的搜索框以及时间选择器 */}
+          {/* 论文顶部的搜索框、时间选择器 、数据下载接口*/}
           <div
             className="sticky top-0 z-50 py-1 h-fit w-full bg-blue-100 
-           flex flex-col justify-center items-center"
+           flex flex-col justify-center items-center shadow"
           >
             {/* 搜索框 */}
             <div className="h-8 w-11/12 rounded flex justify-between items-center">
@@ -835,7 +981,7 @@ export default function GraphSearchDetail() {
             </div>
 
             {/* 时间以及类型选择器 */}
-            <div className="min-h-0 h-9 w-full px-2 flex justify-around items-center">
+            <div className="min-h-0 h-8 w-full px-2 flex justify-around items-center">
               <select
                 className="h-auto w-1/4"
                 ref={searchTypeSelect}
@@ -886,6 +1032,32 @@ export default function GraphSearchDetail() {
                   })}
               </select>
             </div>
+
+            {/* 实体已证实关系数据下载 */}
+            <div className="h-6 w-11/12 px-1 flex justify-items-start items-center">
+              <span className="text-sky-700 font-bold text-sm">
+                RelationShip data:
+              </span>
+              <div
+                className="h-6 w-8 inline-block mx-1 p-2"
+                onClick={handleDownloadRelationship}
+              >
+                <DownloadSvg></DownloadSvg>
+              </div>
+            </div>
+
+            {/* 实体预测关系数据下载 */}
+            <div className="h-6 w-11/12 px-1 flex justify-items-start items-center">
+              <span className="text-sky-700 font-bold text-sm">
+                Forecast data:
+              </span>
+              <div
+                className="h-6 w-8 inline-block mx-1 p-2"
+                onClick={handleDownloadCalculate}
+              >
+                <DownloadSvg></DownloadSvg>
+              </div>
+            </div>
           </div>
 
           {/* 非sticky的选项列表 */}
@@ -899,6 +1071,7 @@ export default function GraphSearchDetail() {
                   }`}
                   onClick={() => {
                     setPaperSelectedId(item.pmid);
+                    setPhoneShowRight(true);
                   }}
                 >
                   <p
@@ -916,111 +1089,6 @@ export default function GraphSearchDetail() {
                 </PaperBox>
               );
             })}
-          {/* 手机端的论文详情 */}
-          {paperList !== undefined &&
-            paperList !== null &&
-            paperSelectedId !== undefined &&
-            paperList.map((item) => {
-              if (item.pmid === paperSelectedId) {
-                return (
-                  // 手机端论文详情
-                  <div
-                    id="dragBox"
-                    className={`h-64 w-full z-50 sticky bottom-12 md:hidden`}
-                  >
-                    {/* 论文内容上的拖动条 */}
-                    <div
-                      id="dragLine"
-                      onTouchStart={handleMouseDown}
-                      className="h-5 w-full p-0 flex justify-center items-center bg-gray-200"
-                    >
-                      <div className="h-1 w-12 rounded-full m-0 bg-gray-400 "></div>
-                    </div>
-                    {/* 手机端论文内容滚动面板 container */}
-                    <div className="h-full w-full px-1 pb-3 cursor-default overflow-y-scroll text-justify text-sm bg-green-50">
-                      <h1 className="text-lg font-bold block  mb-1">
-                        {item.title}
-                      </h1>
-                      {/* {item.authors !== undefined &&
-                        item.authors !== null &&
-                        item.authors.map((aut) => {
-                          return (
-                            <p className="text-gray-600 inline pr-1">{aut}</p>
-                          );
-                        })} */}
-                      <p className="text-gray-600 inline pr-1">
-                        {item.authors}
-                      </p>
-                      <div className="h-2"></div>
-                      <p className=" text-gray-600">{item.date}</p>
-                      <div className="h-2"></div>
-                      <div className="inline-block h-5 w-fit mr-2">
-                        Open in:
-                      </div>
-                      {item.pmid !== undefined && (
-                        <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
-                          <div
-                            className=" h-fit w-fit text-xs leading-7 mx-auto cursor-pointer"
-                            onClick={() => {
-                              window.open(
-                                `https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`,
-                                "_blank"
-                              );
-                            }}
-                          >
-                            pmid
-                          </div>
-                        </div>
-                      )}
-                      {item.doi !== undefined && (
-                        <div
-                          className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block cursor-pointer"
-                          onClick={() => {
-                            window.open(`${item.url}`, "_blank");
-                          }}
-                        >
-                          <div className=" h-fit w-fit leading-6 mx-auto">
-                            doi
-                          </div>
-                        </div>
-                      )}
-                      {/* 下载一篇文章的pdf */}
-                      <div className="h-fit w-full pt-2">
-                        <span className="font-bold text-sky-700">
-                          download this article:{" "}
-                        </span>
-                        <div
-                          className="inline-block h-full w-fit "
-                          onClick={() => {
-                            handleDownloadOneArticle(item.pmid);
-                          }}
-                        >
-                          <DownloadSvg></DownloadSvg>
-                        </div>
-                      </div>
-                      {/* 下载几篇论文 excel */}
-                      <div className="h-fit w-full pt-2">
-                        <span className="font-bold text-red-600">
-                          download ALL articles:{" "}
-                        </span>
-                        <div
-                          className="inline-block h-full w-fit "
-                          onClick={() => {
-                            PostArticleListDownloadAxios();
-                          }}
-                        >
-                          <DownloadSvg></DownloadSvg>
-                        </div>
-                      </div>
-                      <div className="h-1 w-full"></div>
-                      <p className="text-sky-800 font-bold">Abstract:</p>
-                      <p dangerouslySetInnerHTML={{ __html: item.abs }} />
-                    </div>
-                  </div>
-                );
-              }
-              return <></>;
-            })}
 
           {/* 底部的选择页面按钮 */}
           <div
@@ -1031,7 +1099,6 @@ export default function GraphSearchDetail() {
               <PageButton
                 content={1}
                 onClick={() => {
-                  console.log("click");
                   goToPage(1);
                 }}
               ></PageButton>
@@ -1041,7 +1108,6 @@ export default function GraphSearchDetail() {
               <PageButton
                 content={page_now - 1}
                 onClick={() => {
-                  console.log("click");
                   goToPage(parseInt(page_now - 1));
                 }}
               ></PageButton>
@@ -1071,7 +1137,6 @@ export default function GraphSearchDetail() {
               <PageButton
                 content={page_end}
                 onClick={() => {
-                  console.log("click");
                   goToPage(parseInt(page_end));
                 }}
               ></PageButton>
@@ -1080,7 +1145,7 @@ export default function GraphSearchDetail() {
         </div>
       </div>
 
-      {/* 论文题目和摘要（详情） */}
+      {/* （右边）平板电脑版的论文题目和摘要（详情） */}
       {paperList !== undefined &&
         paperList !== null &&
         paperSelectedId !== undefined &&
@@ -1125,6 +1190,144 @@ export default function GraphSearchDetail() {
                     md:overflow-y-scroll"
                 >
                   <h1 className="text-xl font-bold block text-sky-700 mb-2">
+                    <span dangerouslySetInnerHTML={{ __html: item.title }} />
+                  </h1>
+                  {item.authors !== undefined &&
+                    item.authors !== null &&
+                    item.authors.map((aut) => {
+                      return (
+                        <p className="text-gray-600 inline pr-2">
+                          {aut}{" "}
+                          <span className="font-bold text-red-600">|</span>
+                        </p>
+                      );
+                    })}
+                  {/* <p className="text-gray-600 inline pr-2">{item.authors}</p>; */}
+                  <p className="pt-1 text-gray-600">{item.date}</p>
+                  <div className="h-4 w-full"></div>
+                  <div className="inline-block font-bold h-6 w-fit mr-3">
+                    Open in:
+                  </div>
+                  {item.pmid !== undefined && (
+                    <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
+                      <div
+                        className=" h-fit w-fit text-xs leading-7 mx-auto cursor-pointer"
+                        onClick={() => {
+                          window.open(
+                            `https://pubmed.ncbi.nlm.nih.gov/${item.pmid}`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        pmid
+                      </div>
+                    </div>
+                  )}
+                  {item.doi !== undefined && (
+                    <div
+                      className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block cursor-pointer"
+                      onClick={() => {
+                        window.open(`${item.url}`, "_blank");
+                      }}
+                    >
+                      <div className=" h-fit w-fit leading-6 mx-auto">doi</div>
+                    </div>
+                  )}
+                  <div className="h-3"></div>
+                  <p className="text-sky-700">
+                    <span className="font-bold">pmid: </span>
+                    {item.pmid}
+                  </p>
+                  <p className="text-sky-700">
+                    <span className="font-bold">doi: </span>
+                    {item.doi}
+                  </p>
+                  <p className="text-sky-700">
+                    <span className="font-bold">Library: </span>
+                    {item.library}
+                  </p>
+                  {/* 下载一篇文章的pdf */}
+                  <div className="h-fit w-full pt-2">
+                    <span className="font-bold text-sky-700">
+                      download this article:{" "}
+                    </span>
+                    <div
+                      className="inline-block h-full w-fit "
+                      onClick={() => {
+                        handleDownloadOneArticle(item.pmid);
+                      }}
+                    >
+                      <DownloadSvg></DownloadSvg>
+                    </div>
+                  </div>
+                  {/* 下载几篇论文 excel */}
+                  <div className="h-fit w-full pt-2">
+                    <span className="font-bold text-red-600">
+                      download ALL articles:{" "}
+                    </span>
+                    <div
+                      className="inline-block h-full w-fit "
+                      onClick={() => {
+                        PostArticleListDownloadAxios();
+                      }}
+                    >
+                      <DownloadSvg></DownloadSvg>
+                    </div>
+                  </div>
+                  <div className="h-4 w-full"></div>
+                  <p className="text-sky-800 font-bold">Abstract: </p>
+                  <p>
+                    <span className="px-4"> </span>
+
+                    <p dangerouslySetInnerHTML={{ __html: item.abs }} />
+                  </p>
+
+                  <div className="h-4 w-full"></div>
+                  {item.keywords !== null && (
+                    <>
+                      <p className="text-sky-800 font-bold">Keywords:</p>
+                      <p>
+                        <span className="px-4"> </span>
+                        {item.keywords}
+                      </p>
+                    </>
+                  )}
+                </div>
+              </div>
+            );
+          }
+          return <></>;
+        })}
+
+      {/* （手机版右边）手机版的论文题目和摘要（详情） */}
+      {paperList !== undefined &&
+        paperList !== null &&
+        paperSelectedId !== undefined &&
+        paperList.map((item) => {
+          if (item.pmid === paperSelectedId) {
+            return (
+              // 论文详情
+              <div
+                className={`h-full min-h-screen block z-50 md:hidden bg-gray-50
+                transition-all duration-1000 fixed overflow-y-scroll top-0 right-0
+                ${phoneShowRight === true ? "w-full" : "w-0 "}
+                `}
+              >
+                {/* 返回按钮 */}
+                <div
+                  className={`fixed h-7 w-7 top-2 left-2 rounded-full flex justify-center items-center
+                 bg-blue-200 bg-opacity-80 ${
+                   phoneShowRight === false && "hidden"
+                 }`}
+                  onClick={() => {
+                    setPhoneShowRight(false);
+                  }}
+                >
+                  <LeftSvg></LeftSvg>
+                </div>
+                {/* 论文内容滚动面板 container */}
+                <div className="h-full w-full bg-gray-50 pl-3 py-9 ">
+                  <h1 className="text-lg font-bold block text-sky-700 mb-2">
                     <span dangerouslySetInnerHTML={{ __html: item.title }} />
                   </h1>
                   {item.authors !== undefined &&

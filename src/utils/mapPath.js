@@ -17,3 +17,13 @@ export const GetArticles = "/article/like";
 export const GetOneArticleDownload = "/download/GetOneArticle/";
 
 export const PostArticleListDownload = "/download/GetArticleList";
+
+export const PostSendMessage = "/email/sendMessage";
+
+export const GetRelationShipByMiRNA = "/download/GetRelationShipByMiRNA";
+
+export const GetRelationShipByDisease = "/download/GetRelationShipByDisease";
+
+export const GetCalculateByDisease = "/download/GetCalculateByDisease";
+
+export const GetCalculateByMiRNA = "/download/GetCalculateByMiRNA";

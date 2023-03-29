@@ -1,15 +1,14 @@
-// import React, { useState, useEffect, useRef, useContext } from "react";
-// import { ToastContext, GraphContext } from "../../App";
-// import { useNavigate, useParams, useLocation } from "react-router-dom";
-// import styled from "styled-components";
-// import axios from "axios";
-
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
+import { ToastContext } from "../../App";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import axios from "axios";
 import { useForm } from "react-hook-form";
 import bgimg from "../../img/img16.jpg";
+import { PostSendMessage } from "../../utils/mapPath";
 
 export default function About() {
+  const navigate = useNavigate();
+  const toastController = useContext(ToastContext);
   const [successMessage, setSuccessMessage] = useState("");
   const {
     register,
@@ -20,6 +19,35 @@ export default function About() {
   const onSubmit = (data) => {
     console.log(data);
     setSuccessMessage("Thank you for contacting us!");
+    PostSendMessageAxios(data);
+  };
+
+  const PostSendMessageAxios = async (data) => {
+    let options = {
+      url: PostSendMessage,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        name: data.name,
+        email: data.email,
+        message: data.message,
+      },
+    };
+
+    let res = await axios(options);
+    if (res.data.code === "0") {
+      toastController({
+        mes: "发送成功！",
+        timeout: 1000,
+      });
+    } else {
+      toastController({
+        mes: res.data.message,
+        timeout: 1000,
+      });
+    }
   };
 
   return (

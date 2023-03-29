@@ -47,6 +47,12 @@ code {
   width: 7px;
   height: 3px;
 }
+/* 平板 */
+@media screen and (max-width: 760px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
 
 /* 滚动条有滑块的轨道部分 */
 ::-webkit-scrollbar-track-piece {
