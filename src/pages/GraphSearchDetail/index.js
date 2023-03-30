@@ -4,7 +4,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import axios from "axios";
 import bgimg from "../../img/img2.jpg";
-import { Svg1, LeftSvg } from "../../svg";
+import { Svg1, LeftSvg, DownloadSvg, SearchSvg } from "../../svg";
 import * as echarts from "echarts/core";
 import download from "downloadjs";
 import { TooltipComponent, LegendComponent } from "echarts/components";
@@ -13,7 +13,7 @@ import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import PageButton from "../../Component/PageButton";
 import yearSelectOptions from "../../data/yearData";
-import { DownloadSvg } from "../../svg/index";
+
 import {
   GetDieaseSearch,
   GetMirnaSearch,
@@ -954,29 +954,7 @@ export default function GraphSearchDetail() {
               </div>
 
               <div className="h-fit w-fit p-2" onClick={handleSearch}>
-                <svg
-                  t="1657012954779"
-                  viewBox="0 0 1024 1024"
-                  version="1.1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  p-id="1911"
-                  width="22"
-                  height="22"
-                >
-                  <path
-                    d="M947.942255 886.008182 720.970894 659.243529c48.977481-62.368466 78.178547-140.907217 
-                  78.178547-226.249931 0-202.907293-165.033707-367.395578-368.613312-367.395578-203.580628 
-                  0-368.616382 164.489308-368.616382 367.395578 0 202.90627 165.035754 367.395578 368.616382 
-                  367.395578 85.758176 0 164.673503-29.192879 227.295749-78.146824l226.938616 226.728838c12.769838
-                   12.727882 33.475416 12.727882 46.246277 0l16.925485-16.870226C960.713117 919.374104 960.713117
-                    898.736065 947.942255 886.008182zM430.536129 711.482287c-154.315598 
-                    0-279.414781-124.682697-279.414781-278.487665 0-153.805992 125.099183-278.488689 
-                    279.414781-278.488689 154.315598 0 279.410688 124.68372 279.410688 278.488689C709.946816 
-                    586.79959 584.851727 711.482287 430.536129 711.482287z"
-                    p-id="1912"
-                    fill="#8a8a8a"
-                  ></path>
-                </svg>
+                <SearchSvg></SearchSvg>
               </div>
             </div>
 

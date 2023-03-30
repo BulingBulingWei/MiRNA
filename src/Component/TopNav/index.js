@@ -22,6 +22,19 @@ export default function TopNav() {
         </div>
       </div>
 
+      {/* RNA visualization */}
+      <div
+        className="h-full w-fit px-2 shrink-0 flex justify-center items-center rounded 
+        transition-all hover:bg-gray-200 duration-300 cursor-pointer"
+        onClick={() => {
+          navigate(`/RNAVisualization`);
+        }}
+      >
+        <div>
+          <p className="text-gray-500 font-bold">Mi-RNA</p>
+        </div>
+      </div>
+
       {/* Paper */}
       <div
         className="h-full w-fit px-2  flex justify-center items-center rounded 
@@ -33,17 +46,6 @@ export default function TopNav() {
         <div>
           <p className="text-gray-500 font-bold">Paper</p>
         </div>
-      </div>
-
-      {/* Pubmed */}
-      <div
-        className="h-full w-fit px-2  flex justify-center items-center rounded 
-        transition-all hover:bg-gray-200 duration-300 cursor-pointer"
-        onClick={() => {
-          window.open("https://pubmed.ncbi.nlm.nih.gov/", "_blank");
-        }}
-      >
-        <p className="text-gray-500 font-bold">Pubmed</p>
       </div>
 
       {/* About */}
@@ -59,18 +61,16 @@ export default function TopNav() {
         </div>
       </div>
 
-      {/* Contact */}
-      {/* <div
+      {/* Pubmed */}
+      <div
         className="h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-gray-200 duration-300 cursor-pointer"
         onClick={() => {
-          navigate(`/`);
+          window.open("https://pubmed.ncbi.nlm.nih.gov/", "_blank");
         }}
       >
-        <div>
-          <p className="text-gray-500 font-bold">Contact</p>
-        </div>
-      </div> */}
+        <p className="text-gray-500 font-bold">Pubmed</p>
+      </div>
 
       {/* 显示图选择器 */}
       <div className="h-full w-fit flex px-2 justify-start items-center  ">

@@ -63,9 +63,9 @@ export default function About() {
       {/* 中间的绿色背景容器 */}
       <div
         className="h-full w-full overflow-y-scroll mx-auto px-2 pt-1 bg-opacity-60
-     sm:w-5/6 md:w-4/5 lg:w-2/3 xl:w-1/2 sm:px-14 md:px-20 lg:px-28 xl:px-32 bg-green-50"
+     sm:w-5/6 md:w-4/5 lg:w-2/3 2xl:w-1/2 sm:px-14 md:px-20 lg:px-28 xl:px-32 bg-green-50"
       >
-        {/* 联系我们的表单框 */}
+        {/* (上方)联系我们的表单框 */}
         <div className=" mx-auto mt-8 mb-20 w-5/6 ">
           <h2 className="text-2xl font-bold mb-6">Contact Us</h2>
           {successMessage && (
@@ -140,7 +140,7 @@ export default function About() {
             </div>
           </form>
         </div>
-        {/* 系统简介以及版本更新信息 */}
+        {/* (下方)系统简介以及版本更新信息 */}
         <div
           className="min-h-fit h-fit mx-auto mb-10 flex flex-col justify-start items-center
          py-8 pl-8 pr-4 bg-gray-100 rounded-md bg-opacity-70 text-gray-600 "
@@ -173,6 +173,18 @@ export default function About() {
             </p>
           </div>
           <p className="text-sky-700 font-bold leading-10">系统更新记录：</p>
+          {/* 以下是项目更新历史 */}
+          {/* 2023-03-29 */}
+          <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
+            {/* 小圆点 */}
+            <div className="h-6 w-6 absolute top-4 -left-3 rounded-full bg-blue-300 border-4 border-gray-100"></div>
+            {/* 框框内的更新时间与内容 */}
+            <p className="font-bold text-sky-700 mb-1">2023-03-29</p>
+            <ul className="font-mono font-bold">
+              <li>- 相关已证实和预测的关系数据可以下载啦~</li>
+              <li>- 手机端的网站页面也更加友好了</li>
+            </ul>
+          </div>
           {/* 2023-03-26 */}
           <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
             {/* 小圆点 */}

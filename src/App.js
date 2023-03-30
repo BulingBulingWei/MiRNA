@@ -10,7 +10,7 @@ const PaperSearhDetail = lazy(() => import("./pages/PaperSearhDetail"));
 const About = lazy(() => import("./pages/About"));
 const Loading = lazy(() => import("./pages/Loading"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
-// const  = lazy(() => import(""));
+const RNAVisualization = lazy(() => import("./pages/RNAVisualization"));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
@@ -58,6 +58,11 @@ function App() {
                         element={<PaperSearhDetail />}
                       ></Route>
                       <Route path="/About" element={<About />}></Route>
+                      <Route
+                        path="/RNAVisualization"
+                        element={<RNAVisualization />}
+                      ></Route>
+                      {/*  */}
                     </Route>
                     <Route path="*" element={<GoWrong404 />}></Route>
                   </Routes>

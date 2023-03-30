@@ -44,8 +44,8 @@ code {
 
 /* 整个滚动条 */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 3px;
+  width: 10px;
+  height: 15px;
 }
 /* 平板 */
 @media screen and (max-width: 760px) {
