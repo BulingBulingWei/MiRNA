@@ -11,8 +11,7 @@ const About = lazy(() => import("./pages/About"));
 const Loading = lazy(() => import("./pages/Loading"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
 const RNAVisualization = lazy(() => import("./pages/RNAVisualization"));
-// const  = lazy(() => import(""));
-// const  = lazy(() => import(""));
+const RNASearch = lazy(() => import("./pages/RNASearch"));
 // const  = lazy(() => import(""));
 // const  = lazy(() => import(""));
 
@@ -60,6 +59,10 @@ function App() {
                       <Route path="/About" element={<About />}></Route>
                       <Route
                         path="/RNAVisualization"
+                        element={<RNASearch />}
+                      ></Route>
+                      <Route
+                        path="/RNAVisualization/:mirnaName"
                         element={<RNAVisualization />}
                       ></Route>
                       {/*  */}

@@ -51,6 +51,7 @@ code {
 @media screen and (max-width: 760px) {
   ::-webkit-scrollbar {
     display: none;
+    /* 平板 */
   }
 }
 
@@ -111,4 +112,27 @@ input[type="number"] {
 .Slide2-exit-done {
   opacity: 0;
   transform: translateY(-100%);
+}
+
+/* mirna序列可视化图动画 */
+
+.Seq-node-enter {
+  opacity: 0;
+  height: 0;
+  transform: scale(0.9);
+}
+.Seq-node-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms, transform 300ms, height 300ms;
+}
+
+.Seq-node-exit {
+  opacity: 1;
+  height: 0;
+}
+.Seq-node-exit-active {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 300ms, transform 300ms, height 300ms;
 }
