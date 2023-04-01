@@ -9,7 +9,6 @@ import {
 import bgimg from "../../img/img2.jpg";
 
 export default function PaperSearch() {
-  // type：0为疾病 ， 1为mirna
   const navigate = useNavigate();
   const toastController = useContext(ToastContext);
   const [DiseaseFuzzyList, setDiseaseFuzzyList] = useState([]);

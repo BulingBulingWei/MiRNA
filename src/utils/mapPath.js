@@ -29,3 +29,5 @@ export const GetCalculateByDisease = "/download/GetCalculateByDisease";
 export const GetCalculateByMiRNA = "/download/GetCalculateByMiRNA";
 
 export const GetGeneMirnaRelationship = "/GeneMirnaRelationship/GetByMirnaName";
+
+export const GetMirnaStruct = "/mirnaStruct/GetByMirnaName";

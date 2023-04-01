@@ -17,8 +17,6 @@ import img10 from "../../img/img30.jpg";
 
 export default function RNASearch() {
   const navigate = useNavigate();
-  // const params = useParams();
-  // const location = useLocation();
   const searchInput = useRef(null);
   const mirnaSelectList = mirnaName();
   const toastController = useContext(ToastContext);
@@ -67,6 +65,13 @@ export default function RNASearch() {
 
   const handleSearchInputChange = throttle(fuzzySearch, 1000);
 
+  const handleInputEnter = (event) => {
+    if (searchInput.current.value === "") return;
+    if (event.keyCode === 13) {
+      navigate(`/RNAVisualization/${searchInput.current.value}`);
+    }
+  };
+
   return (
     <div
       className="h-full w-full flex justify-center items-center"
@@ -80,7 +85,7 @@ export default function RNASearch() {
       {/* 左边粉色背景容器 */}
       <div
         className="h-full w-full md:w-fit overflow-y-scroll px-2 py-5 bg-opacity-60
-       bg-red-50 ss:px-8 sm:px-12"
+       bg-red-50 ss:px-8 sm:px-12 cursor-default"
       >
         {/* 搜索选项栏 */}
         <div
@@ -93,13 +98,19 @@ export default function RNASearch() {
                 items-center bg-red-200 "
           >
             {/* 输入框和模塑搜索选项列表 */}
-            <div className="h-full w-5/6">
+            <div className="h-full w-5/6 relative">
               <input
                 type="text"
                 placeholder="Mi-RNA name"
                 className="h-full w-full rounded px-2"
                 ref={searchInput}
                 onChange={handleSearchInputChange}
+                onKeyUp={handleInputEnter}
+                onBlur={() => {
+                  setTimeout(() => {
+                    setFuzzySearchList(null);
+                  }, 1500);
+                }}
               />
               {/* 模糊搜索 */}
               {fuzzySearchList !== null &&
@@ -136,6 +147,7 @@ export default function RNASearch() {
             <div
               className="h-full flex-grow ml-2 flex justify-center items-center bg-gray-50 rounded"
               onClick={() => {
+                if (searchInput.current.value === "") return;
                 navigate(`/RNAVisualization/${searchInput.current.value}`);
               }}
             >

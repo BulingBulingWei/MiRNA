@@ -72,6 +72,19 @@ export default function TopNav() {
         <p className="text-gray-500 font-bold">Pubmed</p>
       </div>
 
+      {/* Help */}
+      <div
+        className="h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-gray-200 duration-300 cursor-pointer"
+        onClick={() => {
+          navigate(`/Help`);
+        }}
+      >
+        <div>
+          <p className="text-gray-500 font-bold">Help</p>
+        </div>
+      </div>
+
       {/* 显示图选择器 */}
       <div className="h-full w-fit flex px-2 justify-start items-center  ">
         {/* 背景 */}
