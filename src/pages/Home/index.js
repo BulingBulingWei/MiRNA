@@ -1,9 +1,8 @@
-// import React from "react";
+import React from "react";
 import TopNav from "../../Component/TopNav";
-import Search from "../PaperSearch";
-import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
-export default function Home() {
+export default function Home(props) {
   return (
     <div
       className="h-screen w-screen flex flex-col justify-start"
@@ -11,7 +10,7 @@ export default function Home() {
     >
       {/* 导航栏 */}
       <nav className="w-full h-10 shrink-0 overflow-x-auto md:h-12 2xl:h-14 ">
-        <TopNav></TopNav>
+        <TopNav setLocation={props.setLocation}></TopNav>
       </nav>
       {/* 页面 ,显示搜索框页面或者是搜索详情页面*/}
       <div

@@ -165,3 +165,23 @@
 //       }
 //       return <></>;
 //     })}
+
+import { CSSTransition } from "react-transition-group";
+import React, { useState, useRef, useContext, useEffect } from "react";
+// const [showAntimation, setShowAntimation] = useState(false);
+//   const nodeRef = useRef(null);
+//   useEffect(() => {
+//     setShowAntimation(true);
+//   }, []);
+
+// ref={nodeRef}
+
+{
+  /* <CSSTransition
+      in={showAntimation}
+      timeout={300}
+      nodeRef={nodeRef}
+      classNames="page"
+      unmountOnExit
+    ></CSSTransition> */
+}

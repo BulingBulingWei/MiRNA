@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { GraphContext } from "../../App";
+
 export default function TopNav() {
   const navigate = useNavigate();
   const { showGraph, setShowGraph } = useContext(GraphContext);

@@ -138,11 +138,6 @@ input[type="number"] {
 }
 
 /* 入场动画过程 */
-.page {
-  position: absolute;
-  left: 15px;
-  right: 15px;
-}
 
 .page-enter {
   opacity: 0;

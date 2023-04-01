@@ -1,8 +1,12 @@
 import React, { useState, Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import { TransitionGroup, CSSTransition } from "react-transition-group";
-import Toast from "./Component/toast";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 
+import Toast from "./Component/toast";
+import {
+  CSSTransition,
+  SwitchTransition,
+  TransitionGroup,
+} from "react-transition-group";
 const Home = lazy(() => import("./pages/Home"));
 const PaperSearch = lazy(() => import("./pages/PaperSearch"));
 const GraphSeach = lazy(() => import("./pages/GraphSeach"));
@@ -43,45 +47,36 @@ function App() {
         <GraphContext.Provider value={{ showGraph, setShowGraph }}>
           <ShowLeftContext.Provider value={{ showLeft, setShowLeft }}>
             <ShowRightContext.Provider value={{ showRight, setShowRight }}>
-              <TransitionGroup>
-                <CSSTransition appear={true} classNames="page" timeout={300}>
-                  <Suspense fallback={<Loading />}>
-                    <BrowserRouter>
-                      <Routes>
-                        <Route path="/" element={<Home />}>
-                          <Route
-                            path="/"
-                            element={<GraphSeach key={"page"} />}
-                          ></Route>
-                          <Route
-                            path="/SearchDetail/:type/:searchName"
-                            element={<GraphSearchDetail />}
-                          ></Route>
-                          <Route
-                            path="/Paper"
-                            element={<PaperSearch />}
-                          ></Route>
-                          <Route
-                            path="/Paper/:searchName/:pageNum"
-                            element={<PaperSearhDetail />}
-                          ></Route>
-                          <Route path="/About" element={<About />}></Route>
-                          <Route
-                            path="/RNAVisualization"
-                            element={<RNASearch />}
-                          ></Route>
-                          <Route
-                            path="/RNAVisualization/:mirnaName"
-                            element={<RNAVisualization />}
-                          ></Route>
-                          <Route path="/Help" element={<Help />}></Route>
-                        </Route>
-                        <Route path="*" element={<GoWrong404 />}></Route>
-                      </Routes>
-                    </BrowserRouter>
-                  </Suspense>
-                </CSSTransition>
-              </TransitionGroup>
+              <Suspense fallback={<Loading />}>
+                <BrowserRouter>
+                  <Routes>
+                    {/* Home页面（整体框架） */}
+                    <Route path="/" element={<Home />}>
+                      <Route path="/" element={<GraphSeach />}></Route>
+                      <Route
+                        path="/SearchDetail/:type/:searchName"
+                        element={<GraphSearchDetail />}
+                      ></Route>
+                      <Route path="/Paper" element={<PaperSearch />}></Route>
+                      <Route
+                        path="/Paper/:searchName/:pageNum"
+                        element={<PaperSearhDetail />}
+                      ></Route>
+                      <Route path="/About" element={<About />}></Route>
+                      <Route
+                        path="/RNAVisualization"
+                        element={<RNASearch />}
+                      ></Route>
+                      <Route
+                        path="/RNAVisualization/:mirnaName"
+                        element={<RNAVisualization />}
+                      ></Route>
+                      <Route path="/Help" element={<Help />}></Route>
+                    </Route>
+                    <Route path="*" element={<GoWrong404 />}></Route>
+                  </Routes>
+                </BrowserRouter>
+              </Suspense>
             </ShowRightContext.Provider>
           </ShowLeftContext.Provider>
         </GraphContext.Provider>
