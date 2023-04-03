@@ -31,3 +31,15 @@ export const GetCalculateByMiRNA = "/download/GetCalculateByMiRNA";
 export const GetGeneMirnaRelationship = "/GeneMirnaRelationship/GetByMirnaName";
 
 export const GetMirnaStruct = "/mirnaStruct/GetByMirnaName";
+
+export const GetMonthArticleDiseaseTopN = "/record/getMonthArticleDiseaseTopN/";
+
+export const GetMonthArticleMiRNATopN = "/record/getMonthArticleMiRNATopN/";
+
+export const GetMonthMiRNATopN = "/record/getMonthMiRNATopN/";
+
+export const GetWeekArticleDiseaseTopN = "/record/getWeekArticleDiseaseTopN/";
+
+export const GetWeekArticleMiRNATopN = "/record/getWeekArticleMiRNATopN/";
+
+export const GetWeekMiRNATopN = "/record/getWeekMiRNATopN/";

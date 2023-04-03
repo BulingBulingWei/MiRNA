@@ -182,6 +182,7 @@ export default function PaperSearch() {
                       {DiseaseFuzzyList.map((fuzzyItem) => {
                         return (
                           <li
+                            key={fuzzyItem.name}
                             className="h-fit w-full z-50 flex px-2 justify-start items-center
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
@@ -197,6 +198,7 @@ export default function PaperSearch() {
                       {MirnaFuzzyList.map((fuzzyItem) => {
                         return (
                           <li
+                            key={fuzzyItem.name}
                             className="h-fit w-full z-50 flex px-2 justify-start items-center
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {

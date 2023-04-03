@@ -112,7 +112,6 @@ export default function GraphSearchDetail() {
   const [graphData, setGraphData] = useState({});
 
   const yearSelectOption = yearSelectOptions();
-  // const StringDom = "";
 
   //请求函数---------------------
 
@@ -152,11 +151,11 @@ export default function GraphSearchDetail() {
       ],
       series: [
         {
-          name: "Les Miserables",
+          name: "Relationship",
           type: "graph",
           layout: "force",
           data: graphData.nodes,
-          links: graphData.links,
+          edges: graphData.links,
           categories: graphData.categories,
           //可以旋转也可以缩放
           roam: true,
@@ -209,12 +208,14 @@ export default function GraphSearchDetail() {
       fontStyle: "normal",
       fontFamily: "sans-serif",
     });
+    myChart.clear();
     myChart.setOption(graphOption, true);
     myChart.hideLoading();
     window.onresize = () => myChart.resize();
     window.addEventListener("resize", () => myChart.resize());
     return () => {
       myChart.dispose();
+      myChart.clear();
       graphOption = null;
     };
   }, [graphData, showGraph, location]);
@@ -935,6 +936,7 @@ export default function GraphSearchDetail() {
                         {fuzzySearchList.map((fuzzyItem) => {
                           return (
                             <li
+                              key={fuzzyItem.name}
                               className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
                    border-b-2 border-gray-300 cursor-pointer"
                               onClick={() => {
@@ -982,7 +984,7 @@ export default function GraphSearchDetail() {
                   yearSelectOption.map((item) => {
                     if (startYear === item)
                       return (
-                        <option value={item} selected>
+                        <option key={item} value={item} selected>
                           {item}
                         </option>
                       );
@@ -1002,7 +1004,7 @@ export default function GraphSearchDetail() {
                   yearSelectOption.map((item) => {
                     if (endYear === item)
                       return (
-                        <option value={item} selected>
+                        <option key={item} value={item} selected>
                           {item}
                         </option>
                       );
@@ -1044,6 +1046,7 @@ export default function GraphSearchDetail() {
             paperList.map((item) => {
               return (
                 <PaperBox
+                  key={item.pmid}
                   selected={`${
                     item.pmid === paperSelectedId ? "true" : "false"
                   }`}
@@ -1132,6 +1135,7 @@ export default function GraphSearchDetail() {
             return (
               // 论文详情
               <div
+                key={item.pmid}
                 className={`h-fit w-full hidden md:block
                 transition-all duration-1000 
                 ${
@@ -1174,7 +1178,7 @@ export default function GraphSearchDetail() {
                     item.authors !== null &&
                     item.authors.map((aut) => {
                       return (
-                        <p className="text-gray-600 inline pr-2">
+                        <p key={aut} className="text-gray-600 inline pr-2">
                           {aut}{" "}
                           <span className="font-bold text-red-600">|</span>
                         </p>
@@ -1286,6 +1290,7 @@ export default function GraphSearchDetail() {
             return (
               // 论文详情
               <div
+                key={item.pmid}
                 className={`h-full min-h-screen block z-50 md:hidden bg-gray-50
                 transition-all duration-1000 fixed overflow-y-scroll top-0 right-0
                 ${phoneShowRight === true ? "w-full" : "w-0 "}
@@ -1312,7 +1317,7 @@ export default function GraphSearchDetail() {
                     item.authors !== null &&
                     item.authors.map((aut) => {
                       return (
-                        <p className="text-gray-600 inline pr-2">
+                        <p key={aut} className="text-gray-600 inline pr-2">
                           {aut}{" "}
                           <span className="font-bold text-red-600">|</span>
                         </p>

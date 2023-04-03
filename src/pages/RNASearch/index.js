@@ -139,13 +139,12 @@ export default function RNASearch() {
                         {fuzzySearchList.map((fuzzyItem) => {
                           return (
                             <li
+                              key={fuzzyItem.name}
                               className="h-fit w-full z-50 flex px-5 justify-start items-center hover:bg-gray-100
                         border-b-2 border-gray-300 cursor-pointer"
                               onClick={() => {
                                 searchInput.current.value = fuzzyItem.name;
-                                navigate(
-                                  `/RNAVisualization/${fuzzyItem.mirnaName}`
-                                );
+                                navigate(`/RNAVisualization/${fuzzyItem.name}`);
                               }}
                             >
                               {fuzzyItem.name}
@@ -172,13 +171,14 @@ export default function RNASearch() {
               mirnaSelectList.map((item) => {
                 return (
                   <div
+                    key={item.id}
                     className="h-9 w-full px-2 text-lg py-1 border-b-2 border-gray-100
                  bg-gray-50 bg-opacity-90 text-gray-700 hover:bg-gray-100"
                     onClick={() => {
-                      navigate(`/RNAVisualization/${item.mirnaName}`);
+                      navigate(`/RNAVisualization/${item.name}`);
                     }}
                   >
-                    {item.mirnaName}
+                    {item.name}
                   </div>
                 );
               })}
@@ -203,14 +203,14 @@ export default function RNASearch() {
               backgroundPosition: "center",
             }}
             onClick={() => {
-              navigate(`/RNAVisualization/hsa-mir-15b`);
+              navigate(`/RNAVisualization/hsa-mir-557`);
             }}
           >
             <p
-              className="text-white text-4xl"
+              className="text-white text-2xl"
               style={{ writingMode: "vertical-rl" }}
             >
-              hsa-mir-15b
+              hsa-mir-557
             </p>
           </div>
           {/* 跳转图片2 小*/}
@@ -224,10 +224,10 @@ export default function RNASearch() {
               backgroundPosition: "center",
             }}
             onClick={() => {
-              navigate(`/RNAVisualization/hsa-mir-15b`);
+              navigate(`/RNAVisualization/hsa-mir-621`);
             }}
           >
-            <p className="text-gray-50 text-lg">hsa-mir-1-1</p>
+            <p className="text-gray-50 text-lg">hsa-mir-621</p>
           </div>
           {/* 跳转图片3 宽*/}
           <div
@@ -240,11 +240,11 @@ export default function RNASearch() {
               backgroundPosition: "center",
             }}
             onClick={() => {
-              navigate(`/RNAVisualization/hsa-mir-15b`);
+              navigate(`/RNAVisualization/hsa-mir-1825`);
             }}
           >
-            <p className="text-white text-5xl absolute bottom-3 left-4">
-              hsa-mir-15b
+            <p className="text-white text-4xl absolute bottom-3 left-4">
+              hsa-mir-1825
             </p>
           </div>
           {/* 跳转图片4 大正方形*/}
@@ -258,11 +258,11 @@ export default function RNASearch() {
               backgroundPosition: "center",
             }}
             onClick={() => {
-              navigate(`/RNAVisualization/hsa-mir-15b`);
+              navigate(`/RNAVisualization/hsa-mir-421`);
             }}
           >
             <p className="text-gray-700 text-5xl absolute bottom-8 left-5">
-              hsa-mir-15b
+              hsa-mir-421
             </p>
           </div>
           {/* 跳转图片5 长*/}
@@ -276,14 +276,14 @@ export default function RNASearch() {
               backgroundPosition: "center",
             }}
             onClick={() => {
-              navigate(`/RNAVisualization/hsa-mir-15b`);
+              navigate(`/RNAVisualization/hsa-mir-544a`);
             }}
           >
             <p
-              className="text-white text-4xl"
+              className="text-white text-2xl"
               style={{ writingMode: "vertical-rl" }}
             >
-              hsa-mir-1-1
+              hsa-mir-544a
             </p>
           </div>
           {/* 跳转图片6 小*/}
@@ -297,10 +297,10 @@ export default function RNASearch() {
               backgroundPosition: "center",
             }}
             onClick={() => {
-              navigate(`/RNAVisualization/hsa-mir-15b`);
+              navigate(`/RNAVisualization/hsa-mir-636`);
             }}
           >
-            <p className="text-white text-lg">hsa-mir-15b</p>
+            <p className="text-white text-lg">hsa-mir-636</p>
           </div>
         </div>
       </div>

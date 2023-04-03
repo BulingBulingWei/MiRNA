@@ -2,20 +2,22 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate, useParams, useLocation, Outlet } from "react-router-dom";
 import download from "downloadjs";
-
 import axios from "axios";
 import {
   GetGeneMirnaRelationship,
   GetMirnaFuzzySearchName,
   GetMirnaStruct,
 } from "../../utils/mapPath";
-
 import bgimg from "../../img/img13.jpg";
 import { SearchSvg, DownloadSvg } from "../../svg";
 import mirnaName from "../../data/mirnaName";
-
 import * as echarts from "echarts/core";
-import { TooltipComponent, LegendComponent } from "echarts/components";
+import {
+  TooltipComponent,
+  LegendComponent,
+  DataZoomComponent,
+  GridComponent,
+} from "echarts/components";
 import { GraphChart } from "echarts/charts";
 import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
@@ -25,14 +27,14 @@ echarts.use([
   GraphChart,
   CanvasRenderer,
   LabelLayout,
+  DataZoomComponent,
+  GridComponent,
 ]);
 
 export default function RNAVisualization() {
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
-  // const mirnaSelectList = ;
-
   const searchInput = useRef(null);
   const scrollBox = useRef(null);
   const mirnaGeneGraphDom = useRef(null);
@@ -40,14 +42,6 @@ export default function RNAVisualization() {
   const toastController = useContext(ToastContext);
   const [fuzzySearchList, setFuzzySearchList] = useState([]);
   const [mirnaSelectList, setMirnaSelectList] = useState(mirnaName());
-
-  const data = {
-    seq1: "-  uaa    -       ag        uc  u      -u     u      --     cg",
-    seq2: " gc   agcu gcgucgu  gugaguaa  ag uguggg  ggcuu ucgaag  ucuca  ",
-    seq3: " ||   |||| |||||||  ||||||||  || ||||||  ||||| ||||||  |||||  ",
-    seq4: " cg   uuga ugcggcg  CACUUCUU  UC AVAVUC  ccgaa ggcuuc  agagu  ",
-    seq5: "g  ---    g       GA        UC  U      Uc     a      ag     -c",
-  };
   const [rnaSequenceData, setRnaSequenceData] = useState(null);
   const [mirnaGeneData, setMirnaGeneData] = useState(null);
 
@@ -92,17 +86,23 @@ export default function RNAVisualization() {
           inactiveBorderWidth: "auto",
         },
       ],
+
       series: [
         {
-          name: mirnaGeneData.geneNodes.geneMirnaRelationship,
+          name: "Relationship",
           type: "graph",
           layout: "force",
+          large: true,
+          zoom: 1,
           data: mirnaGeneData.geneNodes,
-          links: mirnaGeneData.links,
+          edges: mirnaGeneData.links,
           categories: mirnaGeneData.categories,
+          animationThreshold: 200,
+          animationDuration: 1000,
+          animationDurationUpdate: 300,
           //可以旋转也可以缩放
           roam: true,
-          draggable: true,
+          draggable: false,
           label: {
             show: true,
             position: "right",
@@ -129,7 +129,7 @@ export default function RNAVisualization() {
             repulsion: 300,
             edgeLength: [20, 50],
             //可以旋转也可以缩放
-            roam: true,
+            // roam: true,
             layoutAnimation: false,
           },
         },
@@ -150,12 +150,14 @@ export default function RNAVisualization() {
       fontStyle: "normal",
       fontFamily: "sans-serif",
     });
+    myChart.clear();
     myChart.setOption(graphOption, true);
     myChart.hideLoading();
     window.onresize = () => myChart.resize();
     window.addEventListener("resize", () => myChart.resize());
     return () => {
       myChart.dispose();
+      myChart.clear();
       graphOption = null;
     };
   }, [mirnaGeneData, location]);
@@ -262,7 +264,7 @@ export default function RNAVisualization() {
     for (let i = 0; i < len; ++i) {
       if (seq[i] === " ") {
         list.push(
-          <div className=" w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8 "></div>
+          <div className=" w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 "></div>
         );
       } else {
         let color = "";
@@ -278,14 +280,14 @@ export default function RNAVisualization() {
 
         if (seq[i] === "|") {
           list.push(
-            <div className={`h-10 lg:h-14 xl:h-18 2xl:20 w-5 xl:w-6 2xl:w-8`}>
+            <div className={`h-10 lg:h-12 xl:h-14 2xl:18 w-5 xl:w-5 2xl:w-8`}>
               <div className="h-full w-1 mx-auto bg-slate-600 rounded-full"></div>
             </div>
           );
         } else {
           list.push(
             <div
-              className={` w-5 h-5 xl:w-6 xl:h-6 2xl:w-8 2xl:h-8 ${color} rounded-full 
+              className={` w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
               text-center border-2 flex justify-center items-center
              text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
             >
@@ -312,10 +314,10 @@ export default function RNAVisualization() {
       <div
         className={`${
           rnaSequenceData !== null && rnaSequenceData !== undefined
-            ? "h-1/2 md:h-1/3"
+            ? "h-1/2 min-h-fit md:h-1/3"
             : "h-0"
         } w-full flex justify-center items-center cursor-default 
-          select-none bg-gray-50 transition-all duration-500
+          select-none bg-gray-50 
           border-b-4 border-red-100`}
       >
         {rnaSequenceData !== null && rnaSequenceData !== undefined && (
@@ -389,6 +391,7 @@ export default function RNAVisualization() {
                       {fuzzySearchList.map((fuzzyItem) => {
                         return (
                           <li
+                            key={fuzzyItem.name}
                             className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
                    border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
@@ -419,13 +422,14 @@ export default function RNAVisualization() {
             mirnaSelectList.map((item) => {
               return (
                 <div
+                  key={item.id}
                   className="h-8 w-full px-5  bg-gray-50 bg-opacity-90 text-gray-700 hover:bg-gray-100"
                   onClick={() => {
-                    if (item.mirnaName === params.mirnaName) return;
-                    navigate(`/RNAVisualization/${item.mirnaName}`);
+                    if (item.name === params.mirnaName) return;
+                    navigate(`/RNAVisualization/${item.name}`);
                   }}
                 >
-                  {item.mirnaName}
+                  {item.name}
                 </div>
               );
             })}

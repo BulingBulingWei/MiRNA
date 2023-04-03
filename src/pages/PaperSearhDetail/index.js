@@ -370,6 +370,7 @@ export default function PaperSearhDetail() {
                       {DiseaseFuzzyList.map((fuzzyItem) => {
                         return (
                           <li
+                            key={fuzzyItem.name}
                             className="h-fit w-full z-50 flex px-2 justify-start items-center
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
@@ -385,6 +386,7 @@ export default function PaperSearhDetail() {
                       {MirnaFuzzyList.map((fuzzyItem) => {
                         return (
                           <li
+                            key={fuzzyItem.name}
                             className="h-fit w-full z-50 flex px-2 justify-start items-center
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
@@ -437,6 +439,7 @@ export default function PaperSearhDetail() {
             paperList.map((item) => {
               return (
                 <PaperBox
+                  key={item.pmid}
                   selected={`${
                     item.pmid === paperSelectedId ? "true" : "false"
                   }`}
@@ -525,6 +528,7 @@ export default function PaperSearhDetail() {
             )}
           </div>
         </div>
+
         {/* 右边：论文详情，以及手机端的回退按钮栏 */}
         <div
           className={`h-full w-full absolute top-0 right-0 bg-opacity-100 z-50
@@ -553,6 +557,7 @@ export default function PaperSearhDetail() {
                   // 论文详情
 
                   <div
+                    key={item.pmid}
                     className="h-fit w-full bg-gray-50 pl-3 pt-5 pb-16 shadow-lg 
                      lg:px-12 lg:py-12"
                   >
@@ -563,7 +568,7 @@ export default function PaperSearhDetail() {
                       item.authors !== null &&
                       item.authors.map((aut) => {
                         return (
-                          <p className="text-gray-600 inline pr-2">
+                          <p key={aut} className="text-gray-600 inline pr-2">
                             {aut}{" "}
                             <span className="font-bold text-red-500">|</span>{" "}
                           </p>

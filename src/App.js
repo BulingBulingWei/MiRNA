@@ -18,7 +18,8 @@ const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
 const RNAVisualization = lazy(() => import("./pages/RNAVisualization"));
 const RNASearch = lazy(() => import("./pages/RNASearch"));
 const Help = lazy(() => import("./pages/Help"));
-// const  = lazy(() => import(""));
+const Trending = lazy(() => import("./pages/Trending"));
+// const Help = lazy(() => import("./optimize/index"));
 
 function App() {
   const [toastConfig, setToastConfig] = useState({});
@@ -72,6 +73,7 @@ function App() {
                         element={<RNAVisualization />}
                       ></Route>
                       <Route path="/Help" element={<Help />}></Route>
+                      <Route path="/Trending" element={<Trending />}></Route>
                     </Route>
                     <Route path="*" element={<GoWrong404 />}></Route>
                   </Routes>
