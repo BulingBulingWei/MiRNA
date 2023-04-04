@@ -2,7 +2,7 @@
   "name": "mirna",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://172.16.103.216:9999",
+  "proxy": "http://43.139.60.187:9999",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
@@ -17,7 +17,9 @@
     "react-scripts": "5.0.1",
     "react-transition-group": "^4.4.5",
     "styled-components": "^5.3.6",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "web-worker": "^1.2.0",
+    "worker-echarts": "^0.0.3"
   },
   "scripts": {
     "start": "react-scripts start",

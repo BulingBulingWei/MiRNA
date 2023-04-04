@@ -17,8 +17,8 @@ const Loading = lazy(() => import("./pages/Loading"));
 const GoWrong404 = lazy(() => import("./pages/GoWrong404"));
 const RNAVisualization = lazy(() => import("./pages/RNAVisualization"));
 const RNASearch = lazy(() => import("./pages/RNASearch"));
-const Help = lazy(() => import("./pages/Help"));
 const Trending = lazy(() => import("./pages/Trending"));
+const Help = lazy(() => import("./pages/Help"));
 // const Help = lazy(() => import("./optimize/index"));
 
 function App() {

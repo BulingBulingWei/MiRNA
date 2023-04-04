@@ -208,11 +208,11 @@ export default function GraphSeach() {
                   className="h-full w-full px-2 rounded-sm outline-none text-xl text-gray-600"
                   placeholder="Search"
                   ref={searchInput}
-                  // onBlur={() => {
-                  //   setTimeout(() => {
-                  //     setFuzzySearchList([]);
-                  //   }, 200);
-                  // }}
+                  onBlur={() => {
+                    setTimeout(() => {
+                      setFuzzySearchList([]);
+                    }, 1500);
+                  }}
                   onChange={handleSearchInputChange}
                   onKeyUp={enterKeyUp}
                 ></input>
@@ -298,7 +298,12 @@ export default function GraphSeach() {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
-            ></div>
+              onClick={() => {
+                navigate(`/SearchDetail/Disease/Lung+Neoplasms`);
+              }}
+            >
+              <p className="ml-3 mt-3 text-2xl font-bold">Lung Neoplasms</p>
+            </div>
 
             <div
               className="h-32 w-11/12 mx-auto rounded transition-all 
@@ -310,7 +315,12 @@ export default function GraphSeach() {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
-            ></div>
+              onClick={() => {
+                navigate(`/SearchDetail/Disease/Lung+Neoplasms`);
+              }}
+            >
+              <p className="ml-3 mt-3 text-2xl font-bold">Breast Neoplasms</p>
+            </div>
 
             <div
               className="h-32 w-11/12 mx-auto rounded transition-all 
@@ -322,7 +332,12 @@ export default function GraphSeach() {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
-            ></div>
+              onClick={() => {
+                navigate(`/SearchDetail/Disease/Leukemia`);
+              }}
+            >
+              <p className="ml-3 mt-3 text-2xl font-bold">Leukemia</p>
+            </div>
 
             <div
               className="h-32 w-11/12 mx-auto rounded transition-all 
@@ -334,7 +349,12 @@ export default function GraphSeach() {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
-            ></div>
+              onClick={() => {
+                navigate(`/SearchDetail/Disease/Lymphoma`);
+              }}
+            >
+              <p className="ml-3 mt-3 text-2xl font-bold">Lymphoma</p>
+            </div>
           </div>
         </div>
       </div>

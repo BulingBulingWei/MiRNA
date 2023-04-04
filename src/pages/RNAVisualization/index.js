@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate, useParams, useLocation, Outlet } from "react-router-dom";
-import download from "downloadjs";
+import WorkerEcharts from "worker-echarts";
 import axios from "axios";
 import {
   GetGeneMirnaRelationship,
@@ -53,11 +53,24 @@ export default function RNAVisualization() {
 
   useEffect(() => {
     if (mirnaGeneData === null) return;
-    let myChart;
+    // let myChart;
     let graphOption = {
       tooltip: {},
       animationDuration: 1000,
       animationEasingUpdate: "quinticInOut",
+      color: [
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#91c7ae",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+      ],
       legend: [
         {
           data:
@@ -135,29 +148,32 @@ export default function RNAVisualization() {
         },
       ],
     };
-    myChart = echarts.init(mirnaGeneGraphDom.current);
-    myChart.showLoading("default", {
-      text: "loading",
-      color: "#c23531",
-      textColor: "#000",
-      maskColor: "rgba(255, 255, 255, 0.8)",
-      zlevel: 0,
-      fontSize: 12,
-      showSpinner: true,
-      spinnerRadius: 10,
-      lineWidth: 5,
-      fontWeight: "normal",
-      fontStyle: "normal",
-      fontFamily: "sans-serif",
-    });
-    myChart.clear();
-    myChart.setOption(graphOption, true);
-    myChart.hideLoading();
-    window.onresize = () => myChart.resize();
-    window.addEventListener("resize", () => myChart.resize());
+    let workerEchart = new WorkerEcharts();
+    workerEchart.init(mirnaGeneGraphDom.current);
+    // myChart = echarts.init(mirnaGeneGraphDom.current);
+    // myChart.showLoading("default", {
+    //   text: "loading",
+    //   color: "#c23531",
+    //   textColor: "#000",
+    //   maskColor: "rgba(255, 255, 255, 0.8)",
+    //   zlevel: 0,
+    //   fontSize: 12,
+    //   showSpinner: true,
+    //   spinnerRadius: 10,
+    //   lineWidth: 5,
+    //   fontWeight: "normal",
+    //   fontStyle: "normal",
+    //   fontFamily: "sans-serif",
+    // });
+    // myChart.clear();
+    workerEchart.setOption(graphOption);
+    // myChart.setOption(graphOption, true);
+    // myChart.hideLoading();
+    // window.onresize = () => myChart.resize();
+    // window.addEventListener("resize", () => myChart.resize());
     return () => {
-      myChart.dispose();
-      myChart.clear();
+      workerEchart.dispose();
+      workerEchart.clean();
       graphOption = null;
     };
   }, [mirnaGeneData, location]);
