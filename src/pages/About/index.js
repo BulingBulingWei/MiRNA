@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
-import axios from "axios";
 import { useForm } from "react-hook-form";
 import bgimg from "../../img/img16.jpg";
-import { PostSendMessage } from "../../utils/mapPath";
+import { PostSendMessage, axiosInstance as axios } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
 
 export default function About() {
@@ -190,6 +189,17 @@ export default function About() {
             </div>
             <p className="text-sky-700 font-bold leading-10">系统更新记录：</p>
             {/* 以下是项目更新历史 */}
+            {/* 2023-04-01 */}
+            <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
+              {/* 小圆点 */}
+              <div className="h-6 w-6 absolute top-4 -left-3 rounded-full bg-blue-300 border-4 border-gray-100"></div>
+              {/* 框框内的更新时间与内容 */}
+              <p className="font-bold text-sky-700 mb-1">2023-04-01</p>
+              <ul className="font-mono font-bold">
+                <li>- 更新了网站内的很多背景图片</li>
+                <li>- 对 Mi-RNA 的序列可视化展示做了一些调整</li>
+              </ul>
+            </div>
             {/* 2023-03-29 */}
             <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
               {/* 小圆点 */}

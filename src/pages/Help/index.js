@@ -221,7 +221,7 @@ export default function Help() {
               <p className="text-lg text-gray-700 font-bold pb-2">关于我们：</p>
               <p>
                 <span className="px-4"></span>
-                如果您对我们的系统有任何的建议或者不满，欢迎您随时像我们联系，
+                如果您对我们的系统有任何的建议或者不满，欢迎您随时向我们联系，
                 您可以在此页中留下您的姓名（Name），邮箱（Email），以及意见（Message），
                 最后点击提交按钮给我们留言。
                 <br />

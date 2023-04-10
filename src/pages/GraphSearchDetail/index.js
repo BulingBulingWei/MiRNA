@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext, GraphContext } from "../../App";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import axios from "axios";
 import bgimg from "../../img/img2.jpg";
 import { Svg1, LeftSvg, DownloadSvg, SearchSvg } from "../../svg";
 import * as echarts from "echarts/core";
@@ -27,6 +26,7 @@ import {
   GetRelationShipByMiRNA,
   GetCalculateByDisease,
   GetCalculateByMiRNA,
+  axiosInstance as axios,
 } from "../../utils/mapPath";
 
 echarts.use([
@@ -859,7 +859,7 @@ export default function GraphSearchDetail() {
       <div
         id="graph"
         ref={graphDom}
-        className={`h-107 w-full flex justify-center items-center bg-blue-50 shadow-inner
+        className={`h-107 w-full flex justify-center items-center bg-sky-50 shadow-inner
         md:h-full ${showGraph === true ? "" : "hidden"}`}
       ></div>
 

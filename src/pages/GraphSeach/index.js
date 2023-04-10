@@ -1,17 +1,23 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   GetDiseaseFuzzySearchName,
   GetMirnaFuzzySearchName,
+  axiosInstance as axios,
 } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
-import bgimg from "../../img/img1.jpg";
-import img1 from "../../img/cap.jpg";
-import img2 from "../../img/img1.jpg";
-import img3 from "../../img/img2.jpg";
-import img4 from "../../img/img8.jpg";
+// import bgimg from "../../img/img1.jpg";
+// import img1 from "../../img/cap.jpg";
+// import img2 from "../../img/img1.jpg";
+// import img3 from "../../img/img2.jpg";
+// import img4 from "../../img/img8.jpg";
+
+import bgimg from "../../bg/bg22.jpg";
+import img1 from "../../bg/bg18.jpg";
+import img2 from "../../bg/bg5.jpg";
+import img3 from "../../bg/bg9.jpg";
+import img4 from "../../bg/bg21.jpg";
 
 export default function GraphSeach() {
   const [showAntimation, setShowAntimation] = useState(false);
@@ -143,7 +149,7 @@ export default function GraphSeach() {
         <div
           className="h-full w-full flex flex-col justify-start items-center"
           style={{
-            background: "rgba(39, 39, 39,0.55)",
+            background: "rgba(39, 39, 39,0.2)",
           }}
         >
           {/* 上方 */}

@@ -1,13 +1,13 @@
 import React, { useState, useRef, useContext, useEffect } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import {
   GetDiseaseFuzzySearchName,
   GetMirnaFuzzySearchName,
+  axiosInstance as axios,
 } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
-import bgimg from "../../img/img2.jpg";
+import bgimg from "../../bg/bg13.jpg";
 
 export default function PaperSearch() {
   const [showAntimation, setShowAntimation] = useState(false);
@@ -133,7 +133,7 @@ export default function PaperSearch() {
         <div
           className="h-full w-full flex flex-col justify-start items-center"
           style={{
-            background: "rgba(39, 39, 39,0.35)",
+            background: "rgba(39, 39, 39,0.3)",
           }}
         >
           {/* 上方 */}
@@ -262,12 +262,12 @@ export default function PaperSearch() {
                 搜____
               </span>
             </p>
-            <p className="align-top leading-1 text-purple-300 pr-16 md:pr-60 xl:pr-80 text-4xl md:text-6xl xl:text-8xl">
+            <p className="align-top leading-1 text-amber-400 pr-16 md:pr-60 xl:pr-80 text-4xl md:text-6xl xl:text-8xl">
               The theses
             </p>
             <p className=" text-white text-4xl xl:ml-10 md:text-6xl xl:text-7xl">
               are{" "}
-              <span className=" text-red-200 italic text-4xl md:text-6xl xl:text-7xl ">
+              <span className=" text-red-300 italic text-4xl md:text-6xl xl:text-7xl ">
                 AS
               </span>{" "}
               You

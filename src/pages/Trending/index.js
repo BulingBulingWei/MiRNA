@@ -1,6 +1,5 @@
 import React, { useState, useRef, useContext, useEffect } from "react";
 import { ToastContext } from "../../App";
-import axios from "axios";
 import {
   GetMonthArticleDiseaseTopN,
   GetMonthArticleMiRNATopN,
@@ -8,6 +7,7 @@ import {
   GetWeekArticleDiseaseTopN,
   GetWeekArticleMiRNATopN,
   GetWeekMiRNATopN,
+  axiosInstance as axios,
 } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
 import * as echarts from "echarts/core";

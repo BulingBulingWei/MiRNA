@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export const GetDieaseSearch = "/search/ByDiseaseName";
 
 export const GetMirnaSearch = "/search/ByMirnaName";
@@ -43,3 +45,9 @@ export const GetWeekArticleDiseaseTopN = "/record/getWeekArticleDiseaseTopN/";
 export const GetWeekArticleMiRNATopN = "/record/getWeekArticleMiRNATopN/";
 
 export const GetWeekMiRNATopN = "/record/getWeekMiRNATopN/";
+
+export const axiosInstance = axios.create({
+  // "proxy": "http://43.139.60.187:9999",
+  baseURL: "/mirna-disease/",
+  // baseURL: "/",
+});

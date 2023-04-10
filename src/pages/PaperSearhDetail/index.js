@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { ToastContext, GraphContext } from "../../App";
+import { ToastContext } from "../../App";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import axios from "axios";
 import download from "downloadjs";
 import PageButton from "../../Component/PageButton";
 import bgimg from "../../img/img1.jpg";
@@ -13,6 +12,7 @@ import {
   GetMirnaFuzzySearchName,
   GetOneArticleDownload,
   PostArticleListDownload,
+  axiosInstance as axios,
 } from "../../utils/mapPath";
 
 const PaperBox = styled.div`
@@ -78,6 +78,12 @@ export default function PaperSearhDetail() {
   const [DiseaseFuzzyList, setDiseaseFuzzyList] = useState([]);
   const [MirnaFuzzyList, setMirnaFuzzyList] = useState([]);
 
+  useEffect(() => {
+    let name = params.searchName.replaceAll("+", " ");
+    setSearchContext(name);
+    GetArticlesAxios({ message: name, pageNum: params.pageNum });
+  }, [location]);
+
   const GetArticlesAxios = async ({ message, pageNum }) => {
     let options = {
       url: GetArticles,
@@ -105,7 +111,7 @@ export default function PaperSearhDetail() {
         });
       } else {
         //向上取整
-        console.log(res.data.data.articles);
+        // console.log(res.data.data.articles);
         setPaperList(res.data.data.articles);
         let pe = Math.ceil(res.data.data.count / maxSize);
         setPage_end(parseInt(pe));
@@ -116,7 +122,7 @@ export default function PaperSearhDetail() {
     //请求不成功
     else {
       toastController({
-        mes: res.data.message,
+        mes: "请求失败",
         timeout: 1000,
       });
     }
@@ -190,12 +196,6 @@ export default function PaperSearhDetail() {
     }
   };
 
-  useEffect(() => {
-    let name = params.searchName.replaceAll("+", " ");
-    setSearchContext(name);
-    GetArticlesAxios({ message: name, pageNum: params.pageNum });
-  }, [location]);
-
   const handleSearch = () => {
     setDiseaseFuzzyList(undefined);
     setMirnaFuzzyList(undefined);
@@ -227,7 +227,7 @@ export default function PaperSearhDetail() {
       return;
     }
     if (pageNum > 0 && pageNum <= page_end) {
-      navigate(`/Paper/` + params.searchName + `/` + pageNum);
+      navigate(`/Paper/` + params.searchName + `/${pageNum}`);
     } else {
       toastController({
         mes: `error page`,

@@ -2,8 +2,10 @@ import React, { useState, useRef, useContext, useEffect } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate } from "react-router-dom";
 
-import axios from "axios";
-import { GetMirnaFuzzySearchName } from "../../utils/mapPath";
+import {
+  GetMirnaFuzzySearchName,
+  axiosInstance as axios,
+} from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
 import { SearchSvg } from "../../svg";
 import mirnaName from "../../data/mirnaName";

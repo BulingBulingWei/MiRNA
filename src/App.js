@@ -1,12 +1,8 @@
 import React, { useState, Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Toast from "./Component/toast";
-import {
-  CSSTransition,
-  SwitchTransition,
-  TransitionGroup,
-} from "react-transition-group";
+
 const Home = lazy(() => import("./pages/Home"));
 const PaperSearch = lazy(() => import("./pages/PaperSearch"));
 const GraphSeach = lazy(() => import("./pages/GraphSeach"));

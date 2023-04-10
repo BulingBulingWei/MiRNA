@@ -1,6 +1,4 @@
-import React, { useEffect } from "react";
-import { ToastContext, GraphContext } from "../../App";
-import Toast from "../toast";
+import React from "react";
 
 //props: 1.string:显示内容  2.string:背景色
 

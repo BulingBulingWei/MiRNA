@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
-import { useNavigate, useParams, useLocation, Outlet } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import WorkerEcharts from "worker-echarts";
-import axios from "axios";
 import {
   GetGeneMirnaRelationship,
   GetMirnaFuzzySearchName,
   GetMirnaStruct,
+  axiosInstance as axios,
 } from "../../utils/mapPath";
-import bgimg from "../../img/img13.jpg";
-import { SearchSvg, DownloadSvg } from "../../svg";
+import bgimg from "../../bg/bg16.jpg";
+import { SearchSvg } from "../../svg";
 import mirnaName from "../../data/mirnaName";
 import * as echarts from "echarts/core";
 import {
@@ -58,19 +58,6 @@ export default function RNAVisualization() {
       tooltip: {},
       animationDuration: 1000,
       animationEasingUpdate: "quinticInOut",
-      color: [
-        "#c23531",
-        "#2f4554",
-        "#61a0a8",
-        "#d48265",
-        "#91c7ae",
-        "#749f83",
-        "#ca8622",
-        "#bda29a",
-        "#6e7074",
-        "#546570",
-        "#c4ccd3",
-      ],
       legend: [
         {
           data:
@@ -284,15 +271,17 @@ export default function RNAVisualization() {
         );
       } else {
         let color = "";
-        if (seq[i] === "a" || seq[i] === "A")
-          color = "bg-red-100 border-red-300";
-        else if (seq[i] === "u" || seq[i] === "U")
-          color = "bg-yellow-200 border-yellow-300";
-        else if (seq[i] === "c" || seq[i] === "C")
-          color = "bg-blue-100 border-blue-400";
-        else if (seq[i] === "g" || seq[i] === "G")
-          color = "bg-lime-200 border-lime-400";
-        else color = "bg-orange-200 border-orange-400";
+        if (seq[i] === "a") color = "bg-red-100 border-red-300 border-2";
+        else if (seq[i] === "A") color = "bg-red-100 border-red-500 border-4";
+        else if (seq[i] === "u")
+          color = "bg-yellow-200 border-yellow-300 border-2";
+        else if (seq[i] === "U")
+          color = "bg-yellow-200 border-yellow-500 border-4";
+        else if (seq[i] === "c") color = "bg-blue-100 border-blue-400 border-2";
+        else if (seq[i] === "C") color = "bg-blue-100 border-blue-600 border-4";
+        else if (seq[i] === "g") color = "bg-lime-200 border-lime-400 border-2";
+        else if (seq[i] === "G") color = "bg-lime-200 border-lime-700 border-4";
+        else color = "bg-orange-200 border-orange-400 border-2";
 
         if (seq[i] === "|") {
           list.push(
@@ -304,7 +293,7 @@ export default function RNAVisualization() {
           list.push(
             <div
               className={` w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
-              text-center border-2 flex justify-center items-center
+              text-center flex justify-center items-center 
              text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
             >
               {seq[i]}

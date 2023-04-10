@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import React, { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { GraphContext } from "../../App";
 
 export default function TopNav() {
@@ -21,6 +21,33 @@ export default function TopNav() {
         <div>
           <p className="text-gray-500 font-bold">Home</p>
         </div>
+      </div>
+
+      {/* 显示图选择器 */}
+      <div className="h-full w-fit flex pr-2 justify-start items-center  ">
+        {/* 背景 */}
+        <div
+          className={`h-6 w-9 relative rounded-full transform transition-all duration-500 cursor-pointer mr-2
+         ${showGraph === true ? "bg-blue-200" : "bg-gray-200"}`}
+          onClick={() => {
+            setShowGraph(!showGraph);
+          }}
+        >
+          {/* 选择小球 */}
+          <div
+            className={`h-6 w-6 absolute rounded-full transform transition-all duration-500 cursor-pointer
+            ${
+              showGraph === true ? "bg-blue-400 right-0" : "bg-gray-400 left-0"
+            }`}
+          ></div>
+        </div>
+        <span
+          className={` font-semibold ${
+            showGraph === true ? "text-blue-500" : "text-gray-500"
+          }`}
+        >
+          Grapg?
+        </span>
       </div>
 
       {/* RNA visualization */}
@@ -97,33 +124,6 @@ export default function TopNav() {
         <div>
           <p className="text-gray-500 font-bold">Help</p>
         </div>
-      </div>
-
-      {/* 显示图选择器 */}
-      <div className="h-full w-fit flex px-2 justify-start items-center  ">
-        {/* 背景 */}
-        <div
-          className={`h-6 w-9 relative rounded-full transform transition-all duration-500 cursor-pointer mr-2
-         ${showGraph === true ? "bg-blue-200" : "bg-gray-200"}`}
-          onClick={() => {
-            setShowGraph(!showGraph);
-          }}
-        >
-          {/* 选择小球 */}
-          <div
-            className={`h-6 w-6 absolute rounded-full transform transition-all duration-500 cursor-pointer
-            ${
-              showGraph === true ? "bg-blue-400 right-0" : "bg-gray-400 left-0"
-            }`}
-          ></div>
-        </div>
-        <span
-          className={` font-semibold ${
-            showGraph === true ? "text-blue-500" : "text-gray-500"
-          }`}
-        >
-          Grapg?
-        </span>
       </div>
     </div>
   );
