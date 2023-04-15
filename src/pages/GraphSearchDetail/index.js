@@ -1261,7 +1261,7 @@ export default function GraphSearchDetail() {
                   <p>
                     <span className="px-4"> </span>
 
-                    <p dangerouslySetInnerHTML={{ __html: item.abs }} />
+                    <span dangerouslySetInnerHTML={{ __html: item.abs }} />
                   </p>
 
                   <div className="h-4 w-full"></div>
@@ -1269,8 +1269,9 @@ export default function GraphSearchDetail() {
                     <>
                       <p className="text-sky-800 font-bold">Keywords:</p>
                       <p>
-                        <span className="px-4"> </span>
-                        {item.keywords}
+                        {item.keywords.map((keyword) => {
+                          return <p>{keyword}</p>;
+                        })}
                       </p>
                     </>
                   )}
@@ -1400,7 +1401,7 @@ export default function GraphSearchDetail() {
                   <p>
                     <span className="px-4"> </span>
 
-                    <p dangerouslySetInnerHTML={{ __html: item.abs }} />
+                    <span dangerouslySetInnerHTML={{ __html: item.abs }} />
                   </p>
 
                   <div className="h-4 w-full"></div>
@@ -1408,8 +1409,9 @@ export default function GraphSearchDetail() {
                     <>
                       <p className="text-sky-800 font-bold">Keywords:</p>
                       <p>
-                        <span className="px-4"> </span>
-                        {item.keywords}
+                        {item.keywords.map((keyword) => {
+                          return <p>{keyword}</p>;
+                        })}
                       </p>
                     </>
                   )}

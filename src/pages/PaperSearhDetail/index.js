@@ -656,7 +656,8 @@ export default function PaperSearhDetail() {
                       Abstract:
                     </p>
                     <p>
-                      <p dangerouslySetInnerHTML={{ __html: item.abs }} />
+                      <span className="px-4"> </span>
+                      <span dangerouslySetInnerHTML={{ __html: item.abs }} />
                     </p>
 
                     <div className="h-4 w-full"></div>
@@ -664,8 +665,9 @@ export default function PaperSearhDetail() {
                       <>
                         <p className="text-sky-800 font-bold">Keywords:</p>
                         <p>
-                          <span className="px-4"></span>
-                          {item.keywords}
+                          {item.keywords.map((keyword) => {
+                            return <p>{keyword}</p>;
+                          })}
                         </p>
                       </>
                     )}
