@@ -7,6 +7,7 @@ import {
   axiosInstance as axios,
 } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
+// import logo from "../../LogoSvg.svg";
 // import bgimg from "../../img/img1.jpg";
 // import img1 from "../../img/cap.jpg";
 // import img2 from "../../img/img1.jpg";

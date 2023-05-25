@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { GraphContext } from "../../App";
+import logo from "../../bg/miRTarDis-v3.png";
 
 export default function TopNav() {
   const navigate = useNavigate();
@@ -18,9 +19,15 @@ export default function TopNav() {
           navigate(`/`);
         }}
       >
-        <div>
-          <p className="text-gray-500 font-bold">Home</p>
-        </div>
+        <div
+          className="h-full w-20"
+          style={{
+            backgroundImage: `url(${logo})`,
+            backgroundRepeat: "repeat-y",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        ></div>
       </div>
 
       {/* 显示图选择器 */}
