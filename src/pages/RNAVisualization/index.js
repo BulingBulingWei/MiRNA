@@ -261,42 +261,112 @@ export default function RNAVisualization() {
     }
   };
 
-  const paintSequence = (seq) => {
+  const paintSequence = (seq, baseSeq) => {
     let len = seq.length;
     let list = [];
     for (let i = 0; i < len; ++i) {
+      // 空格
       if (seq[i] === " ") {
         list.push(
-          <div className=" w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 "></div>
+          <div className="mx-1 w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 "></div>
         );
       } else {
         let color = "";
         if (seq[i] === "a") color = "bg-red-100 border-red-300 border-2";
-        else if (seq[i] === "A") color = "bg-red-100 border-red-500 border-4";
+        else if (seq[i] === "A") color = "bg-red-100 border-red-500 border-2";
         else if (seq[i] === "u")
           color = "bg-yellow-200 border-yellow-300 border-2";
         else if (seq[i] === "U")
-          color = "bg-yellow-200 border-yellow-500 border-4";
+          color = "bg-yellow-200 border-yellow-500 border-2";
         else if (seq[i] === "c") color = "bg-blue-100 border-blue-400 border-2";
-        else if (seq[i] === "C") color = "bg-blue-100 border-blue-600 border-4";
+        else if (seq[i] === "C") color = "bg-blue-100 border-blue-600 border-2";
         else if (seq[i] === "g") color = "bg-lime-200 border-lime-400 border-2";
-        else if (seq[i] === "G") color = "bg-lime-200 border-lime-700 border-4";
+        else if (seq[i] === "G") color = "bg-lime-200 border-lime-700 border-2";
         else color = "bg-orange-200 border-orange-400 border-2";
 
+        // 链接（键）
         if (seq[i] === "|") {
           list.push(
-            <div className={`h-10 lg:h-12 xl:h-14 2xl:18 w-5 xl:w-5 2xl:w-8`}>
-              <div className="h-full w-1 mx-auto bg-slate-600 rounded-full"></div>
+            <div className="px-1 h-fit w-fit ">
+              <div className={`h-10 lg:h-10 w-5 xl:w-5 2xl:w-8`}>
+                <div className="h-full w-1 mx-auto bg-slate-600 rounded-full"></div>
+              </div>
             </div>
           );
-        } else {
+        }
+        // 大写（成熟序列）
+        else if (seq[i] >= "A" && seq[i] <= "Z") {
           list.push(
-            <div
-              className={` w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
+            <div className="p-1 h-fit w-fit bg-red-200">
+              <div
+                className={`w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
               text-center flex justify-center items-center 
              text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
+              >
+                {seq[i]}
+              </div>
+            </div>
+          );
+        }
+        // 不确定序列
+        else if (seq[i] === "-") {
+          let havebackgroundColor = undefined;
+          let j = i;
+          let seqLen = seq.length;
+          while (--j >= 0 && seq[j] !== " " && seq[j] !== "-") {
+            if (seq[j] >= "A" && seq[j] <= "Z") havebackgroundColor = true;
+            else havebackgroundColor = false;
+          }
+          j = i;
+          if (havebackgroundColor === undefined) {
+            while (++j < seqLen && seq[j] !== " " && seq[j] !== "-") {
+              if (seq[j] >= "A" && seq[j] <= "Z") havebackgroundColor = true;
+              else havebackgroundColor = false;
+            }
+          }
+          j = i;
+          if (havebackgroundColor === undefined && baseSeq !== undefined) {
+            while (j >= 0 && baseSeq[j] === " ") --j;
+            if (j >= 0 && baseSeq[j] >= "A" && baseSeq[j] <= "Z")
+              havebackgroundColor = true;
+            else {
+              j = i;
+              let len = baseSeq.length;
+              while (j < len && baseSeq[j] === " ") ++j;
+              if (j < len && baseSeq[j] >= "A" && baseSeq[j] <= "Z")
+                havebackgroundColor = true;
+              else if (j < len && baseSeq[j] >= "a" && baseSeq[j] <= "z")
+                havebackgroundColor = false;
+            }
+          }
+
+          list.push(
+            <div
+              className={`p-1 h-fit w-fit ${
+                havebackgroundColor === true ? "bg-red-200" : ""
+              } `}
             >
-              {seq[i]}
+              <div
+                className={`w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
+              text-center flex justify-center items-center 
+             text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
+              >
+                {seq[i]}
+              </div>
+            </div>
+          );
+        }
+        // 小写字母（不成熟序列）
+        else {
+          list.push(
+            <div className="p-1 h-fit w-fit ">
+              <div
+                className={`w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
+              text-center flex justify-center items-center 
+             text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
+              >
+                {seq[i].toUpperCase()}
+              </div>
             </div>
           );
         }
@@ -327,27 +397,27 @@ export default function RNAVisualization() {
       >
         {rnaSequenceData !== null && rnaSequenceData !== undefined && (
           <div
-            className="h-full min-w-full w-fit px-2 py-6 md:px-10 bg-orange-50
+            className="h-full min-w-full w-fit px-2 py-6 md:px-10 bg-gray-50
               flex flex-col justify-center items-start overflow-x-scroll overflow-y-hidden"
             ref={scrollBox}
             onWheel={(event) => {
               scrollBox.current.scrollLeft += event.deltaY;
             }}
           >
-            <div className="h-fit w-fit py-1 flex gap-1 justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.first)}
+            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
+              {paintSequence(rnaSequenceData.first, rnaSequenceData.second)}
             </div>
-            <div className="h-fit w-fit py-1 flex gap-1 justify-start items-center bg-blue-5">
+            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
               {paintSequence(rnaSequenceData.second)}
             </div>
-            <div className="h-fit w-fit py-1 flex gap-1 justify-start items-center bg-blue-5">
+            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
               {paintSequence(rnaSequenceData.third)}
             </div>
-            <div className="h-fit w-fit py-1 flex gap-1 justify-start items-center bg-blue-5">
+            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
               {paintSequence(rnaSequenceData.fourth)}
             </div>
-            <div className="h-fit w-fit py-1 flex gap-1 justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.fifth)}
+            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
+              {paintSequence(rnaSequenceData.fifth, rnaSequenceData.fourth)}
             </div>
           </div>
         )}

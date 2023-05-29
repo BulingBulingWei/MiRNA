@@ -731,7 +731,7 @@ export default function Trending() {
          py-2 px-5 pt-8 lg:py-3 lg:pt-12 lg:px-10 xl:px-14  mb-3 lg:mb-8 xl:mb-12"
         >
           <h1>
-            Mi-RNA & Disease Monthly Trending Data{" "}
+            MiRNA & Disease Monthly Trending Data{" "}
             <span className="text-xl text-sky-700">(月度数据)</span>
           </h1>
         </div>
@@ -742,7 +742,7 @@ export default function Trending() {
         >
           {/* 月度疾病搜索数据图 */}
           <div
-            className="h-80 lg:h-96 w-full p-2 rounded bg-blue-200 flex flex-col
+            className="h-80 lg:h-96 w-full p-1 rounded bg-blue-800 flex flex-col
           justify-between items-center"
           >
             {/* 图表标题 */}
@@ -760,13 +760,13 @@ export default function Trending() {
 
           {/* 月度mirna搜索数据图 */}
           <div
-            className="h-80 lg:h-96 w-full p-2 rounded bg-blue-200 flex flex-col
+            className="h-80 lg:h-96 w-full p-1 rounded bg-blue-800 flex flex-col
           justify-between items-center"
           >
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                Mi-RNA Search Trending Data
+                MiRNA Search Trending Data
               </p>
             </div>
             {/* 图表 */}
@@ -778,13 +778,13 @@ export default function Trending() {
 
           {/* 月度mirna结构搜索数据图 */}
           <div
-            className="h-80 lg:h-96 w-full p-2 rounded bg-blue-200 flex flex-col
+            className="h-80 lg:h-96 w-full p-1 rounded bg-blue-800 flex flex-col
           justify-between items-center"
           >
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                Mi-RNA Struct Search Trending Data
+                MiRNA Struct Search Trending Data
               </p>
             </div>
             {/* 图表 */}
@@ -801,7 +801,7 @@ export default function Trending() {
          py-2 px-5 pt-8 lg:py-3 lg:pt-12 lg:px-10 xl:px-14  mb-3 lg:mb-8 xl:mb-12"
         >
           <h1>
-            Mi-RNA & Disease Weekly Trending Data{" "}
+            MiRNA & Disease Weekly Trending Data{" "}
             <span className="text-xl text-sky-700">(本周数据)</span>
           </h1>
         </div>
@@ -812,7 +812,7 @@ export default function Trending() {
         >
           {/* 本周疾病搜索数据图 */}
           <div
-            className="h-80 lg:h-96 w-full p-2 rounded bg-amber-200 flex flex-col
+            className="h-80 lg:h-96 w-full p-1 rounded bg-amber-700 flex flex-col
           justify-between items-center"
           >
             {/* 图表标题 */}
@@ -824,43 +824,43 @@ export default function Trending() {
             {/* 图表 */}
             <div
               ref={WDSTDGraph}
-              className="h-fit min-h-0 flex-grow w-full bg-amber-50"
+              className="h-fit min-h-0 flex-grow w-full bg-orange-50"
             ></div>
           </div>
 
           {/* 本周mirna搜索数据图 */}
           <div
-            className="h-80 lg:h-96 w-full p-2 rounded bg-amber-200 flex flex-col
+            className="h-80 lg:h-96 w-full p-1 rounded bg-amber-700 flex flex-col
           justify-between items-center"
           >
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                Mi-RNA Search Trending Data
+                MiRNA Search Trending Data
               </p>
             </div>
             {/* 图表 */}
             <div
               ref={WMSTDGraph}
-              className="h-fit min-h-0 flex-grow w-full bg-amber-50"
+              className="h-fit min-h-0 flex-grow w-full bg-orange-50"
             ></div>
           </div>
 
           {/* 本周mirna结构搜索数据图 */}
           <div
-            className="h-80 lg:h-96 w-full p-2 rounded bg-amber-200 flex flex-col
+            className="h-80 lg:h-96 w-full p-1 rounded bg-amber-700 flex flex-col
           justify-between items-center"
           >
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                Mi-RNA Struct Search Trending Data
+                MiRNA Struct Search Trending Data
               </p>
             </div>
             {/* 图表 */}
             <div
               ref={WMSSTDGraph}
-              className="h-fit min-h-0 flex-grow w-full bg-amber-50"
+              className="h-fit min-h-0 flex-grow w-full bg-orange-50"
             ></div>
           </div>
         </div>

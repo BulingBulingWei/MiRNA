@@ -166,6 +166,7 @@
 //       return <></>;
 //     })}
 
+//开场动画
 import { CSSTransition } from "react-transition-group";
 import React, { useState, useRef, useContext, useEffect } from "react";
 // const [showAntimation, setShowAntimation] = useState(false);
@@ -185,3 +186,11 @@ import React, { useState, useRef, useContext, useEffect } from "react";
       unmountOnExit
     ></CSSTransition> */
 }
+
+//背景图片
+// style={{
+//   backgroundImage: `url(${bgimg})`,
+//   backgroundRepeat: "none",
+//   backgroundSize: "cover",
+//   backgroundPosition: "center",
+// }}

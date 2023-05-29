@@ -15,6 +15,7 @@ const RNAVisualization = lazy(() => import("./pages/RNAVisualization"));
 const RNASearch = lazy(() => import("./pages/RNASearch"));
 const Trending = lazy(() => import("./pages/Trending"));
 const Help = lazy(() => import("./pages/Help"));
+const MirnaForm = lazy(() => import("./pages/MirnaForm"));
 
 function App() {
   const [toastConfig, setToastConfig] = useState({});
@@ -57,6 +58,10 @@ function App() {
                       <Route
                         path="/Paper/:searchName/:pageNum"
                         element={<PaperSearhDetail />}
+                      ></Route>
+                      <Route
+                        path="/MirnaForm/:mirnaName"
+                        element={<MirnaForm />}
                       ></Route>
                       <Route path="/About" element={<About />}></Route>
                       <Route

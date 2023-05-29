@@ -323,7 +323,7 @@ export default function GraphSeach() {
                 backgroundPosition: "center",
               }}
               onClick={() => {
-                navigate(`/SearchDetail/Disease/Lung+Neoplasms`);
+                navigate(`/SearchDetail/Disease/Breast+Neoplasms`);
               }}
             >
               <p className="ml-3 mt-3 text-2xl font-bold">Breast Neoplasms</p>

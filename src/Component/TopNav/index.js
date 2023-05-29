@@ -83,6 +83,19 @@ export default function TopNav() {
         </div>
       </div>
 
+      {/* MirnaForm */}
+      <div
+        className="h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-gray-200 duration-300 cursor-pointer"
+        onClick={() => {
+          navigate(`/MirnaForm/hsa-mir-25`);
+        }}
+      >
+        <div>
+          <p className="text-gray-500 font-bold">New</p>
+        </div>
+      </div>
+
       {/* About */}
       <div
         className="h-full w-fit px-2  flex justify-center items-center rounded 
