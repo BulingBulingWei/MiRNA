@@ -90,16 +90,17 @@ export default function RNASearch() {
       <div
         className="h-full w-full flex justify-center items-center"
         style={{
-          backgroundImage: `url(${img6})`,
-          backgroundRepeat: "none",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundColor: "#cfe9ed",
+          // backgroundImage: `url(${img6})`,
+          // backgroundRepeat: "none",
+          // backgroundSize: "cover",
+          // backgroundPosition: "center",
         }}
       >
         {/* 左边粉色背景容器 */}
         <div
           className="h-full w-full md:w-fit overflow-y-scroll px-2 py-5 bg-opacity-60
-       bg-red-50 ss:px-8 sm:px-12 cursor-default"
+       bg-red-50 ss:px-8 sm:px-12 cursor-default z-10"
         >
           {/* 搜索选项栏 */}
           <div

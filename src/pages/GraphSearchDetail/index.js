@@ -80,7 +80,7 @@ export default function GraphSearchDetail() {
   const maxSize = 20;
   //一些useContext
   const toastController = useContext(ToastContext);
-  const { showGraph } = useContext(GraphContext);
+  const { showGraph, setShowGraph } = useContext(GraphContext);
 
   //一些input的 dom标识
   const searchInput = useRef(null);
@@ -927,7 +927,7 @@ export default function GraphSearchDetail() {
                   fuzzySearchList.length > 0 && (
                     <div
                       className="h-fit w-full max-h-96 absolute top-8 rounded border-2 
-                border-blue-200 overflow-y-scroll bg-gray-50"
+                border-blue-200 overflow-y-scroll bg-gray-50 z-10"
                     >
                       <ul
                         className="h-fit w-full flex-shrink-0 rounded border-2 border-blue-200
@@ -1013,8 +1013,35 @@ export default function GraphSearchDetail() {
               </select>
             </div>
 
+            {/* 显示图选择器 */}
+            <div className="h-fit w-fit flex pr-2 py-1 justify-start items-center  ">
+              {/* 背景 */}
+              <div
+                className={`h-5 w-9 relative rounded-full transform transition-all duration-500 cursor-pointer mr-2
+         ${showGraph === true ? "bg-blue-200" : "bg-gray-200"}`}
+                onClick={() => {
+                  setShowGraph(!showGraph);
+                }}
+              >
+                {/* 选择小球 */}
+                <div
+                  className={`h-5 w-5 absolute rounded-full transform transition-all duration-500 cursor-pointer
+            ${
+              showGraph === true ? "bg-blue-400 right-0" : "bg-gray-400 left-0"
+            }`}
+                ></div>
+              </div>
+              <span
+                className={` font-semibold ${
+                  showGraph === true ? "text-blue-500" : "text-gray-500"
+                }`}
+              >
+                Grapg?
+              </span>
+            </div>
+
             {/* 实体已证实关系数据下载 */}
-            <div className="h-6 w-11/12 px-1 flex justify-items-start items-center">
+            <div className="h-6 w-fit px-1 flex justify-items-start items-center ">
               <span className="text-sky-700 font-bold text-sm">
                 RelationShip data:
               </span>
@@ -1027,7 +1054,7 @@ export default function GraphSearchDetail() {
             </div>
 
             {/* 实体预测关系数据下载 */}
-            <div className="h-6 w-11/12 px-1 flex justify-items-start items-center">
+            <div className="h-6 w-fit px-1 flex justify-items-start items-center ">
               <span className="text-sky-700 font-bold text-sm">
                 Forecast data:
               </span>

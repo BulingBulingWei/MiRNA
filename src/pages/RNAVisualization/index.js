@@ -379,10 +379,11 @@ export default function RNAVisualization() {
     <div
       className="h-full min-h-fit w-full flex flex-col justify-start items-center "
       style={{
-        backgroundImage: `url(${bgimg})`,
-        backgroundRepeat: "none",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundColor: "#cfe9ed",
+        // backgroundImage: `url(${bgimg})`,
+        // backgroundRepeat: "none",
+        // backgroundSize: "cover",
+        // backgroundPosition: "center",
       }}
     >
       {/* （上方）基因序列可视化 */}

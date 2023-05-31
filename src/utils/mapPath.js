@@ -68,8 +68,14 @@ export const GetMirnaAllMessage = "/mirnaStruct/getAllMessage";
 //查看mirna结构可视化页面特用的模糊查询接口
 export const GetMirnaLikeName = "/mirnaStruct/getMirnaLike";
 
+//根据多种条件下载数据集
+export const POSTMirnaRelationshipData = "/relation/getMirnaRelationshipData";
+
+export const PostDownloadRelationshipData = "/download/getMirnaRelationship";
+//
 export const axiosInstance = axios.create({
   // "proxy": "http://43.139.60.187:9999",
+  // http://172.16.103.216:9999
   // baseURL: "/mirna-disease/",
   baseURL: "/",
 });

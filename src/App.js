@@ -2,7 +2,6 @@ import React, { useState, Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Toast from "./Component/toast";
-
 const Home = lazy(() => import("./pages/Home"));
 const PaperSearch = lazy(() => import("./pages/PaperSearch"));
 const GraphSeach = lazy(() => import("./pages/GraphSeach"));
@@ -15,7 +14,8 @@ const RNAVisualization = lazy(() => import("./pages/RNAVisualization"));
 const RNASearch = lazy(() => import("./pages/RNASearch"));
 const Trending = lazy(() => import("./pages/Trending"));
 const Help = lazy(() => import("./pages/Help"));
-const MirnaForm = lazy(() => import("./pages/MirnaForm"));
+const MirnaStruct = lazy(() => import("./pages/MirnaStruct"));
+const DownloadData = lazy(() => import("./pages/DownloadData"));
 
 function App() {
   const [toastConfig, setToastConfig] = useState({});
@@ -60,8 +60,8 @@ function App() {
                         element={<PaperSearhDetail />}
                       ></Route>
                       <Route
-                        path="/MirnaForm/:mirnaName"
-                        element={<MirnaForm />}
+                        path="/MirnaStruct/:mirnaName"
+                        element={<MirnaStruct />}
                       ></Route>
                       <Route path="/About" element={<About />}></Route>
                       <Route
@@ -71,6 +71,10 @@ function App() {
                       <Route
                         path="/RNAVisualization/:mirnaName"
                         element={<RNAVisualization />}
+                      ></Route>
+                      <Route
+                        path="/DownloadData"
+                        element={<DownloadData />}
                       ></Route>
                       <Route path="/Help" element={<Help />}></Route>
                       <Route path="/Trending" element={<Trending />}></Route>

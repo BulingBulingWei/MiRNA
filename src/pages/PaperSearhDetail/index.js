@@ -184,10 +184,6 @@ export default function PaperSearhDetail() {
         type: "application/pdf;charset=utf-8",
       });
       download(blob, `${params.searchName}.xlsx`, "application/octet-stream");
-      toastController({
-        mes: "chenggong",
-        timeout: 1000,
-      });
     } else {
       toastController({
         mes: res.data.message,

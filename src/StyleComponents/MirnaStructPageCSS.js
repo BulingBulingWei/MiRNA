@@ -83,7 +83,6 @@ export const GItem = styled.div`
   border-radius: 0.12rem;
   border-width: 0.1rem;
   border-color: #dedede;
-  border-radius: 0.28rem;
   margin-bottom: 0.8rem;
 `;
 

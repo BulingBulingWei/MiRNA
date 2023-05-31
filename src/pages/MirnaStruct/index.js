@@ -20,11 +20,11 @@ import {
   CompareInfoValue,
   CompareInfoItem,
   CompareInfoframe,
-} from "../../StyleComponents/MirnaFormPageCSS";
+} from "../../StyleComponents/MirnaStructPageCSS";
 
 import { SearchSvg } from "../../svg";
 
-export default function MirnaForm() {
+export default function MirnaStruct() {
   const location = useLocation();
   const params = useParams();
   const searchInput = useRef(null);
@@ -101,7 +101,7 @@ export default function MirnaForm() {
   const handleInputEnter = (event) => {
     if (searchInput.current.value === "") return;
     if (event.keyCode === 13) {
-      navigate(`/MirnaForm/${searchInput.current.value}`);
+      navigate(`/MirnaStruct/${searchInput.current.value}`);
     }
   };
 
@@ -174,7 +174,7 @@ export default function MirnaForm() {
                 className="h-full flex-grow ml-2 flex justify-center items-center bg-blue-800 rounded"
                 onClick={() => {
                   if (searchInput.current.value === "") return;
-                  navigate(`/MirnaForm/${searchInput.current.value}`);
+                  navigate(`/MirnaStruct/${searchInput.current.value}`);
                 }}
               >
                 <SearchSvg></SearchSvg>

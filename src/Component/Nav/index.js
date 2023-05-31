@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { DropDownSvg } from "../../svg/index";
 import logo from "../../bg/miRTarDis-v3.png";
 
 export default function TopNav() {
@@ -10,9 +9,6 @@ export default function TopNav() {
     if (path.search(str) !== -1) return true;
     return false;
   }
-
-  const [MiRNADrop, setMiRNADrop] = useState(false);
-  const [AboutDrop, setAboutDrop] = useState(false);
 
   return (
     <div className="h-full w-full min-w-full relative">
@@ -59,8 +55,7 @@ export default function TopNav() {
         {/* MiRNA visualization */}
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
-        transition-all hover:bg-sky-100 duration-300 cursor-pointer border-2
-        ${MiRNADrop === true ? " border-sky-200" : " border-gray-50"}
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
         ${isFocus(location, "RNAVisualization") === true ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/RNAVisualization`);
@@ -69,17 +64,19 @@ export default function TopNav() {
           <div>
             <p className="text-gray-500 font-bold">MiRNA</p>
           </div>
-          <div
-            className="h-full w-fit pl-2 flex justify-center items-center"
-            onMouseEnter={() => {
-              setMiRNADrop(true);
-            }}
-            onClick={(event) => {
-              event.stopPropagation();
-              setMiRNADrop((drop) => !drop);
-            }}
-          >
-            <DropDownSvg></DropDownSvg>
+        </div>
+
+        {/* MirnaForm */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "MirnaStruct") === true ? "bg-sky-100" : ""}`}
+          onClick={() => {
+            navigate(`/MirnaStruct/hsa-mir-25`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">Struct</p>
           </div>
         </div>
 
@@ -100,8 +97,7 @@ export default function TopNav() {
         {/* About */}
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
-        transition-all hover:bg-sky-100 duration-300 cursor-pointer border-2
-        ${AboutDrop === true ? " border-sky-200" : " border-gray-50"}      
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer       
           ${isFocus(location, "About") === true ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/About`);
@@ -110,71 +106,12 @@ export default function TopNav() {
           <div>
             <p className="text-gray-500 font-bold">About</p>
           </div>
-          <div
-            className="h-full w-fit pl-2 flex justify-center items-center"
-            onMouseEnter={() => {
-              setAboutDrop(true);
-            }}
-            onClick={(event) => {
-              event.stopPropagation();
-              setAboutDrop((drop) => !drop);
-            }}
-          >
-            <DropDownSvg></DropDownSvg>
-          </div>
         </div>
 
-        {/* Pubmed */}
-        <div
-          className="h-full w-fit px-2  flex justify-center items-center rounded 
-        transition-all hover:bg-sky-100 duration-300 cursor-pointer"
-          onClick={() => {
-            window.open("https://pubmed.ncbi.nlm.nih.gov/", "_blank");
-          }}
-        >
-          <p className="text-gray-500 font-bold">Pubmed</p>
-        </div>
-      </div>
-
-      {/* MiRNA下拉的选项 */}
-      <div
-        className={` w-fit z-50 absolute flex flex-col transition-all duration-500
-        ${MiRNADrop === true ? "opacity-100" : "opacity-0"}`}
-        style={{ left: "16.2rem" }}
-        onMouseLeave={() => {
-          setMiRNADrop(false);
-        }}
-      >
-        {/* MirnaForm */}
-        <div
-          className={`h-10 w-full px-6 flex justify-center items-center rounded 
-        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
-        border-2 border-gray-300
-        ${isFocus(location, "Paper") === true ? "bg-sky-100" : ""}`}
-          onClick={() => {
-            navigate(`/MirnaStruct/hsa-mir-25`);
-          }}
-        >
-          <div>
-            <p className="text-gray-500 font-bold">Struct</p>
-          </div>
-        </div>
-      </div>
-
-      {/* About下拉的选项 */}
-      <div
-        className={`h-fit w-fit z-50 absolute flex flex-col transition-all duration-500
-        ${AboutDrop === true ? " opacity-100" : " opacity-0"}`}
-        style={{ left: "28rem" }}
-        onMouseLeave={() => {
-          setAboutDrop(false);
-        }}
-      >
         {/* Trending */}
         <div
-          className={`h-10 w-full px-2 flex justify-center items-center rounded 
-        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
-        border-2 border-gray-300 
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
             ${isFocus(location, "Trending") === true ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/Trending`);
@@ -187,9 +124,8 @@ export default function TopNav() {
 
         {/* Help */}
         <div
-          className={`h-10 w-full px-3  flex justify-center items-center rounded 
-        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
-        border-2 border-gray-300
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
             ${isFocus(location, "Help") === true ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/Help`);
@@ -198,6 +134,17 @@ export default function TopNav() {
           <div>
             <p className="text-gray-500 font-bold">Help</p>
           </div>
+        </div>
+
+        {/* Pubmed */}
+        <div
+          className="h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer"
+          onClick={() => {
+            window.open("https://pubmed.ncbi.nlm.nih.gov/", "_blank");
+          }}
+        >
+          <p className="text-gray-500 font-bold">Pubmed</p>
         </div>
       </div>
     </div>
