@@ -74,8 +74,6 @@ export const POSTMirnaRelationshipData = "/relation/getMirnaRelationshipData";
 export const PostDownloadRelationshipData = "/download/getMirnaRelationship";
 //
 export const axiosInstance = axios.create({
-  // "proxy": "http://43.139.60.187:9999",
-  // http://172.16.103.216:9999
   // baseURL: "/mirna-disease/",
   baseURL: "/",
 });

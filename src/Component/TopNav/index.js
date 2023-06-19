@@ -139,7 +139,7 @@ export default function TopNav() {
       {/* MiRNA下拉的选项 */}
       <div
         className={` w-fit z-50 absolute flex flex-col transition-all duration-500
-        ${MiRNADrop === true ? "opacity-100" : "opacity-0"}`}
+        ${MiRNADrop === true ? "opacity-100" : "opacity-0 hidden"}`}
         style={{ left: "16.2rem" }}
         onMouseLeave={() => {
           setMiRNADrop(false);
@@ -164,7 +164,7 @@ export default function TopNav() {
       {/* About下拉的选项 */}
       <div
         className={`h-fit w-fit z-50 absolute flex flex-col transition-all duration-500
-        ${AboutDrop === true ? " opacity-100" : " opacity-0"}`}
+        ${AboutDrop === true ? " opacity-100" : " opacity-0 hidden"}`}
         style={{ left: "28rem" }}
         onMouseLeave={() => {
           setAboutDrop(false);

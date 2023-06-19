@@ -21,7 +21,6 @@ import {
   SelectedLabelBox,
   MirnaSelectedLabel,
   DisSelectedLabel,
-  CancelLabelBox,
   Filter,
   Label,
   DataFrame,
@@ -37,9 +36,9 @@ import PageButton from "../../Component/PageButton";
 import { SearchSvg, CancelSvg } from "../../svg";
 
 export default function DownloadData() {
-  const location = useLocation();
+  // const location = useLocation();
   // const params = useParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const toastController = useContext(ToastContext);
 
   // useRef
@@ -48,7 +47,7 @@ export default function DownloadData() {
   const relevanceInput = useRef(null);
   const pageSizeInput = useRef(null);
   const volumnSizeInput = useRef(null);
-  const [relevanceSelect, setRelevanceSelect] = useState(1);
+  const [relevanceSelect, setRelevanceSelect] = useState(0.9);
   const [pageSizeSelect, setPageSizeSelect] = useState(50);
   const [volumnSizeSelect, setVolumnSizeSelect] = useState(100);
 
@@ -259,11 +258,11 @@ export default function DownloadData() {
 
   return (
     <div
-      className={`h-full w-full relative flex flex-col items-center justify-start  bg-gray-50 overflow-y-scroll`}
+      className={`h-full w-full relative flex flex-col items-center justify-between  bg-gray-50`}
     >
       {/* 选择疾病和mirna */}
       <div
-        className="h-fit w-full flex flex-col justify-center items-center sticky top-0 z-10"
+        className="h-fit w-full flex flex-col justify-center items-center lg:sticky top-0 z-10"
         style={{
           backgroundColor: `#9dcdc1`,
         }}
@@ -272,9 +271,9 @@ export default function DownloadData() {
         <MirnaSelectBox style={{ zIndex: 20 }}>
           {/*left: 搜索框 & button */}
           <InputBox>
-            <div className="h-8 w-full flex justify-start items-center ">
+            <div className="h-8 w-full flex justify-start items-center">
               {/* 输入框和模糊搜索选项 */}
-              <div className="mx-2 font-bold z-30">MiRNA:</div>
+              <div className="mr-2 font-bold z-30">MiRNA:</div>
               <div className="h-full  flex-grow relative">
                 <input
                   type="text"
@@ -309,6 +308,7 @@ export default function DownloadData() {
                                     mes: `最多只能筛选10项`,
                                     timeout: 2000,
                                   });
+                                  // console.log(MirnaFuzzySearchList);
                                   return;
                                 }
                                 if (
@@ -458,120 +458,164 @@ export default function DownloadData() {
         </DisSelectBox>
       </div>
 
-      {/* 过滤器 */}
-      <Filter>
-        <p className="font-bold text-xl text-gray-700 mx-auto">Data Filter</p>
-        <Label>Resource:</Label>
-        <ResourceBtn
-          style={{
-            backgroundColor: `${ResourceSelect === "HMDD" ? "#b9dfd4" : ""}`,
-          }}
-          onClick={() => {
-            setPage_now(1);
-            setResourceSelect("HMDD");
-          }}
-        >
-          HMDD
-        </ResourceBtn>
-        <ResourceBtn
-          style={{
-            backgroundColor: `${
-              ResourceSelect === "Predict Model" ? "#b9dfd4" : ""
-            }`,
-          }}
-          onClick={() => {
-            setPage_now(1);
-            setResourceSelect("Predict Model");
-          }}
-        >
-          Predict Model
-        </ResourceBtn>
-        <Label>
-          Relevance(at lease):{" "}
-          <span className="font-normal text-sky-700 pl-2">
-            {relevanceSelect}
-          </span>
-        </Label>
-        <input
-          type="range"
-          ref={relevanceInput}
-          defaultValue={1}
-          max={1}
-          min={0}
-          step={0.1}
-          name="RelevanceBar"
-          id="RelevanceBar"
-          list="RelevanceMarks"
-          className="h-8 mx-auto w-5/6 "
-          onChange={() => {
-            setPage_now(1);
-            setRelevanceSelect(parseFloat(relevanceInput.current.value));
-          }}
-        />
+      <div
+        className="h-fit w-full flex flex-col lg:flex-row justify-center items-center
+         lg:items-start lg:justify-between lg:overflow-y-scroll flex-grow bg-gray-50"
+      >
+        {/* 过滤器 */}
+        <Filter>
+          <p className="font-bold text-xl text-gray-700 mx-auto">Data Filter</p>
+          <Label>Resource:</Label>
+          <ResourceBtn
+            style={{
+              backgroundColor: `${ResourceSelect === "HMDD" ? "#b9dfd4" : ""}`,
+            }}
+            onClick={() => {
+              setPage_now(1);
+              setResourceSelect("HMDD");
+            }}
+          >
+            HMDD
+          </ResourceBtn>
+          <ResourceBtn
+            style={{
+              backgroundColor: `${
+                ResourceSelect === "Predict Model" ? "#b9dfd4" : ""
+              }`,
+            }}
+            onClick={() => {
+              setPage_now(1);
+              setResourceSelect("Predict Model");
+            }}
+          >
+            Predict Model
+          </ResourceBtn>
+          <Label>
+            Relevance(lease):{" "}
+            <span className="font-normal text-sky-700 pl-2">
+              {relevanceSelect}
+            </span>
+          </Label>
+          <input
+            type="range"
+            ref={relevanceInput}
+            defaultValue={0.9}
+            max={1}
+            min={0}
+            step={0.1}
+            name="RelevanceBar"
+            id="RelevanceBar"
+            list="RelevanceMarks"
+            className="h-8 mx-auto w-5/6 "
+            onChange={() => {
+              setPage_now(1);
+              setRelevanceSelect(parseFloat(relevanceInput.current.value));
+            }}
+          />
 
-        <datalist
-          id="RelevanceMarks"
-          className="h-8 w-5/6 flex mx-auto justify-between"
-        >
-          <option value={0} label="0"></option>
-          <option value={0.2} label="0.2"></option>
-          <option value={0.4} label="0.4"></option>
-          <option value={0.6} label="0.6"></option>
-          <option value={0.8} label="0.8"></option>
-          <option value={1} label="1"></option>
-        </datalist>
+          <datalist
+            id="RelevanceMarks"
+            className="h-8 w-5/6 flex mx-auto justify-between"
+          >
+            <option value={0} label="0"></option>
+            <option value={0.2} label="0.2"></option>
+            <option value={0.4} label="0.4"></option>
+            <option value={0.6} label="0.6"></option>
+            <option value={0.8} label="0.8"></option>
+            <option value={1} label="1"></option>
+          </datalist>
 
-        <Label>
-          Data volume:
-          <span className="font-normal text-sky-700 pl-2">
-            {pageSizeSelect}
-          </span>
-        </Label>
-        <input
-          type="range"
-          ref={pageSizeInput}
-          defaultValue={30}
-          max={100}
-          min={20}
-          step={10}
-          name="rangeBar"
-          id="rangeBar"
-          list="volumeMarks"
-          className="h-8 mx-auto w-5/6"
-          onChange={() => {
-            setPage_now(1);
-            setPageSizeSelect(parseInt(pageSizeInput.current.value));
-          }}
-        />
+          <Label>
+            Data volume:
+            <span className="font-normal text-sky-700 pl-2">
+              {pageSizeSelect}
+            </span>
+          </Label>
+          <input
+            type="range"
+            ref={pageSizeInput}
+            defaultValue={50}
+            max={100}
+            min={20}
+            step={10}
+            name="rangeBar"
+            id="rangeBar"
+            list="volumeMarks"
+            className="h-8 mx-auto w-5/6"
+            onChange={() => {
+              setPage_now(1);
+              setPageSizeSelect(parseInt(pageSizeInput.current.value));
+            }}
+          />
 
-        <datalist
-          id="volumeMarks"
-          className="h-8 w-5/6 flex mx-auto justify-between"
-        >
-          {/* <option value={10} label="10"></option> */}
-          <option value={20} label="20"></option>
-          {/* <option value={30} label="30"></option> */}
-          <option value={40} label="40"></option>
-          {/* <option value={50} label="50"></option> */}
-          <option value={60} label="60"></option>
-          {/* <option value={70} label="70"></option> */}
-          <option value={80} label="80"></option>
-          {/* <option value={90} label="90"></option> */}
-          <option value={100} label="100"></option>
-        </datalist>
-        <DownloadBtn
-          onClick={() => {
-            setShowDownloadWin(true);
-          }}
-        >
-          Download
-        </DownloadBtn>
-      </Filter>
+          <datalist
+            id="volumeMarks"
+            className="h-8 w-5/6 flex mx-auto justify-between"
+          >
+            {/* <option value={10} label="10"></option> */}
+            <option value={20} label="20"></option>
+            {/* <option value={30} label="30"></option> */}
+            <option value={40} label="40"></option>
+            {/* <option value={50} label="50"></option> */}
+            <option value={60} label="60"></option>
+            {/* <option value={70} label="70"></option> */}
+            <option value={80} label="80"></option>
+            {/* <option value={90} label="90"></option> */}
+            <option value={100} label="100"></option>
+          </datalist>
+          <DownloadBtn
+            onClick={() => {
+              setShowDownloadWin(true);
+            }}
+          >
+            Download
+          </DownloadBtn>
+        </Filter>
 
+        {/* 中间的数据显示 */}
+        <div className="h-fit w-full px-3 mt-6 mb-20 lg:w-3/4 xl:4/5">
+          <DataFrame>
+            <DataRow
+              style={{
+                backgroundColor: "#cfe9ed",
+                position: "sticky",
+                top: "0rem",
+                borderTopWidth: "1rem",
+                borderTopColor: "#f9fafb",
+              }}
+            >
+              <DataSpace style={{ width: "15%" }}>miRNA</DataSpace>
+              <DataSpace style={{ width: "26%" }}>Disease</DataSpace>
+              <DataSpace style={{ width: "22%" }}>Resource</DataSpace>
+              <DataSpace style={{ width: "17%" }}>Pmid</DataSpace>
+              <DataSpace>Relevance</DataSpace>
+            </DataRow>
+            {RelationshipData !== null &&
+              RelationshipData !== undefined &&
+              RelationshipData.map((data) => {
+                return (
+                  <DataRow>
+                    <DataSpace style={{ width: "15%" }}>
+                      {data.mirnaName}
+                    </DataSpace>
+                    <DataSpace style={{ width: "26%" }}>
+                      {data.disease}
+                    </DataSpace>
+                    <DataSpace style={{ width: "22%" }}>
+                      {data.resource}
+                    </DataSpace>
+                    <DataSpace style={{ width: "17%" }}>{data.pmid}</DataSpace>
+                    <DataSpace>{data.relevance}</DataSpace>
+                  </DataRow>
+                );
+              })}
+          </DataFrame>
+        </div>
+      </div>
       {/* DownloadWin */}
       {showDownloadWin === true && (
         <div
-          className="fixed h-full w-full z-20 bg-gray-600 bg-opacity-30 "
+          className="fixed h-screen w-screen z-50 bg-gray-600 bg-opacity-30 "
           onClick={(event) => {
             event.preventDefault();
             setShowDownloadWin(false);
@@ -702,43 +746,6 @@ export default function DownloadData() {
           </DownloadWin>
         </div>
       )}
-
-      {/* 中间的论文显示 */}
-      <div className="h-fit w-full pl-100 pr-20 mt-6 mb-12 ">
-        <DataFrame>
-          <DataRow
-            style={{
-              backgroundColor: "#cfe9ed",
-              position: "stick",
-              top: "20rem",
-            }}
-          >
-            <DataSpace style={{ width: "15%" }}>miRNA</DataSpace>
-            <DataSpace style={{ width: "26%" }}>Disease</DataSpace>
-            <DataSpace style={{ width: "22%" }}>Resource</DataSpace>
-            <DataSpace style={{ width: "17%" }}>Pmid</DataSpace>
-            <DataSpace>Relevance</DataSpace>
-          </DataRow>
-          {RelationshipData !== null &&
-            RelationshipData !== undefined &&
-            RelationshipData.map((data) => {
-              return (
-                <DataRow>
-                  <DataSpace style={{ width: "15%" }}>
-                    {data.mirnaName}
-                  </DataSpace>
-                  <DataSpace style={{ width: "26%" }}>{data.disease}</DataSpace>
-                  <DataSpace style={{ width: "22%" }}>
-                    {data.resource}
-                  </DataSpace>
-                  <DataSpace style={{ width: "17%" }}>{data.pmid}</DataSpace>
-                  <DataSpace>{data.relevance}</DataSpace>
-                </DataRow>
-              );
-            })}
-        </DataFrame>
-      </div>
-
       <Footer>
         {page_now > 2 && (
           <PageButton

@@ -48,21 +48,38 @@ export const MirnaSelectBox = styled.div`
   justify-content: center;
   align-items: start;
   margin: 0.4rem 0;
-s
+  flex-direction: column;
+
+  @media (min-width: ${media.lg}) {
+    flex-direction: row;
+    justify-content: start;
+    margin: 0.4rem 0;
+  }
 `;
 
 export const DisSelectBox = styled(MirnaSelectBox)``;
 
 export const InputBox = styled.div`
   height: fit-content;
-  width: 20rem;
-  padding: 0 1.5rem;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (min-width: ${media.lg}) {
+    width: 20rem;
+    padding-left: 2rem;
+  }
 `;
 
 export const SelectedLabelBox = styled.div`
   height: fit-content;
-  width: 80%;
-  padding-right: 1rem;
+  width: 100%;
+  padding: 0.4rem 1.5rem;
+
+  @media (min-width: ${media.lg}) {
+    width: 80%;
+    padding: 0.2rem 1rem 0 0.8rem;
+  }
 `;
 
 export const MirnaSelectedLabel = styled.div`
@@ -125,19 +142,44 @@ export const CancelLabelBox = styled.div`
 //左边悬浮的过滤器
 export const Filter = styled.div`
   height: fit-content;
-  min-height: 25rem;
-  width: 20rem;
-  position: fixed;
+  max-height: 80%;
+  position: relative;
+  width: 85%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  top: 12rem;
-  left: 3rem;
+  top: 1rem;
   border-width: 2px;
   border-color: #cce5df;
   border-radius: 0.5rem;
   background-color: #f1f8f7;
   padding: 1rem 1rem;
+  margin: 0.5rem 2rem;
+
+  @media (min-width: ${media.md}) {
+    width: 60%;
+  }
+
+  @media (min-width: ${media.md}) {
+    width: 50%;
+  }
+
+  @media (min-width: ${media.lg}) {
+    top: 2rem;
+    position: sticky;
+    position: relative;
+    width: 25%;
+    overflow-y: scroll;
+  }
+
+  @media (min-width: ${media.xl}) {
+    top: 2rem;
+    position: sticky;
+    position: relative;
+    width: 20%;
+    overflow-y: scroll;
+    margin: 0 2rem 1rem 4rem;
+  }
 `;
 
 export const DataFrame = styled(CompareInfoframe)`
@@ -147,6 +189,7 @@ export const DataFrame = styled(CompareInfoframe)`
 export const DataRow = styled(CompareInfoItem)`
   min-height: 1.8rem;
   padding: 0;
+
   &:hover {
     background-color: #e7f3f0;
   }
@@ -227,18 +270,22 @@ export const DownloadBtn = styled(ResourceBtn)`
 `;
 
 export const DownloadWin = styled.div`
-  position: relative;
-  height: 20rem;
-  width: 25rem;
-  top: 20rem;
-  left: 25rem;
-  // margin-top: 40rem;
-  // margin: auto;
+  height: fit-content;
+  width: 80%;
+  margin: 5rem auto;
   background-color: #e4f4fd;
   font-weight: 700;
   color: rgb(31 41 55);
   border-radius: 0.25rem;
   padding: 1.5rem 1.8rem;
+
+  @media (min-width: ${media.lg}) {
+    position: relative;
+    height: 20rem;
+    width: 25rem;
+    top: 10%;
+    left: 30%;
+  }
 `;
 
 export const FileTypeBtn = styled.div`
