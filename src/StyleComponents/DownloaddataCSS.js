@@ -156,7 +156,7 @@ export const Filter = styled.div`
   padding: 1rem 1rem;
   margin: 0.5rem 2rem;
 
-  @media (min-width: ${media.md}) {
+  @media (min-width: ${media.sm}) {
     width: 60%;
   }
 
@@ -167,7 +167,6 @@ export const Filter = styled.div`
   @media (min-width: ${media.lg}) {
     top: 2rem;
     position: sticky;
-    position: relative;
     width: 25%;
     overflow-y: scroll;
   }
@@ -175,7 +174,6 @@ export const Filter = styled.div`
   @media (min-width: ${media.xl}) {
     top: 2rem;
     position: sticky;
-    position: relative;
     width: 20%;
     overflow-y: scroll;
     margin: 0 2rem 1rem 4rem;

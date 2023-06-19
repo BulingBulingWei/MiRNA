@@ -612,6 +612,7 @@ export default function DownloadData() {
           </DataFrame>
         </div>
       </div>
+
       {/* DownloadWin */}
       {showDownloadWin === true && (
         <div
@@ -746,6 +747,7 @@ export default function DownloadData() {
           </DownloadWin>
         </div>
       )}
+
       <Footer>
         {page_now > 2 && (
           <PageButton
