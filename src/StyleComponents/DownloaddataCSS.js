@@ -281,8 +281,6 @@ export const DownloadWin = styled.div`
     position: relative;
     height: 20rem;
     width: 25rem;
-    top: 10%;
-    left: 30%;
   }
 `;
 

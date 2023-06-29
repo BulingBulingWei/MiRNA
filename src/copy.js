@@ -167,30 +167,75 @@
 //     })}
 
 //开场动画
-import { CSSTransition } from "react-transition-group";
-import React, { useState, useRef, useContext, useEffect } from "react";
-// const [showAntimation, setShowAntimation] = useState(false);
-//   const nodeRef = useRef(null);
-//   useEffect(() => {
-//     setShowAntimation(true);
-//   }, []);
+// import { CSSTransition } from "react-transition-group";
+// import React, { useState, useRef, useContext, useEffect } from "react";
+// // const [showAntimation, setShowAntimation] = useState(false);
+// //   const nodeRef = useRef(null);
+// //   useEffect(() => {
+// //     setShowAntimation(true);
+// //   }, []);
 
-// ref={nodeRef}
+// // ref={nodeRef}
 
-{
-  /* <CSSTransition
-      in={showAntimation}
-      timeout={300}
-      nodeRef={nodeRef}
-      classNames="page"
-      unmountOnExit
-    ></CSSTransition> */
-}
+// {
+//   /* <CSSTransition
+//       in={showAntimation}
+//       timeout={300}
+//       nodeRef={nodeRef}
+//       classNames="page"
+//       unmountOnExit
+//     ></CSSTransition> */
+// }
 
-//背景图片
-// style={{
-//   backgroundImage: `url(${bgimg})`,
-//   backgroundRepeat: "none",
-//   backgroundSize: "cover",
-//   backgroundPosition: "center",
-// }}
+// //背景图片
+// // style={{
+// //   backgroundImage: `url(${bgimg})`,
+// //   backgroundRepeat: "none",
+// //   backgroundSize: "cover",
+// //   backgroundPosition: "center",
+// // }}
+
+// {/* -3p 和 -5p 的基因集合 */}
+// <div className="w-full h-fit my-5 flex flex-col justify-start items-center">
+// <div className="h-fit w-11/12 p-3 text-2xl font-bold text-blue-900">
+//   -3p 和 -5p 的基因集合
+// </div>
+// <div className="relative h-fit w-11/12 p-2 mx-16 pb-60 border-2 border-gray-300">
+//   {/* 1 */}
+//   <div className=" h-40 w-64 relative p-2 ml-10 mt-10 flex justify-between items-center rounded-lg bg-blue-200">
+//     {/* left -3p */}
+//     <div className="relative h-full w-32 p-10 bg-green-50">
+//       {gene3p.map((gene) => {
+//         return <p className="h-fit w-fit">{gene}</p>;
+//       })}
+//     </div>
+//     {/* right */}
+//     <div className="relative h-full w-32 p-10 bg-green-50">
+//       {/* 2 */}
+//       <div
+//         className="h-44 w-60 absolute left-0 top-10 p-1 flex justify-between items-center rounded-lg
+//           border-4 border-amber-300"
+//         style={{ top: "25%" }}
+//       >
+//         {/* union gene */}
+//         <div className=" h-full w-1/2 flex flex-col justify-between items-center bg-red-200 bg-opacity-60">
+//           <div
+//             className="w-full bg-sky-100 p-2"
+//             style={{ height: "62%" }}
+//           >
+//             {unionGene.map((gene) => {
+//               return <p className="h-fit w-fit">{gene}</p>;
+//             })}
+//           </div>
+//         </div>
+//         {/* -5p */}
+//         <div className="h-full w-1/2 p-2 pl-6 bg-red-200 bg-opacity-60">
+//           {gene5p.map((gene) => {
+//             return <p className="h-fit w-fit">{gene}</p>;
+//           })}
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// </div>
+// </div>

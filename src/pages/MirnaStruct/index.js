@@ -33,6 +33,46 @@ export default function MirnaStruct() {
   const [fuzzySearchList, setFuzzySearchList] = useState([]);
   const [MirnaAllMessage, setMirnaAllMessage] = useState(undefined);
 
+  const [unionGene, setUnionGene] = useState([
+    "dsfcin",
+    "asiucbuerd",
+    "wfeuhcnu",
+    "wuhcd",
+    "acniu",
+  ]);
+  const [gene3p, setGene3p] = useState([
+    "rt6uhytg",
+    "ththdf",
+    "htyhs",
+    "AHTRFG",
+    "rfraG",
+    "dsfdsgv",
+    "WGWF",
+    "GRTGR",
+    "ytjt",
+    "stht",
+    "h5gegaq",
+  ]);
+  const [gene5p, setGene5p] = useState([
+    "qt4et5",
+    "sgtr",
+    "shth",
+    "sththy",
+    "shthgfd5grh",
+    "wg5g",
+    "a5rghew",
+    "ergagfgdge",
+    "argagagr",
+    "agrgthgrt",
+    "gfjuk",
+    "ftjhnr",
+    "atrbth",
+    "adfgf",
+    "argfv",
+    "arygf",
+    "htds",
+  ]);
+
   useEffect(() => {
     GetMirnaAllMessageAxios();
   }, [location]);
@@ -275,8 +315,12 @@ export default function MirnaStruct() {
                 <CompareInfoframe>
                   <CompareInfoItem>
                     <CompareInfoLabel></CompareInfoLabel>
-                    <CompareInfoValue>MiRNA-3p</CompareInfoValue>
-                    <CompareInfoValue>MiRNA-5p</CompareInfoValue>
+                    <CompareInfoValue style={{ fontWeight: "700" }}>
+                      MiRNA-3p
+                    </CompareInfoValue>
+                    <CompareInfoValue style={{ fontWeight: "700" }}>
+                      MiRNA-5p
+                    </CompareInfoValue>
                   </CompareInfoItem>
                   {Object.keys(MirnaAllMessage.mirna_3P).map((key, index) => {
                     return (
@@ -299,3 +343,20 @@ export default function MirnaStruct() {
     </div>
   );
 }
+
+// kjads chui dshfnus rycx fnsrgf h yrexg fcnyu rgf ern yuug
+//                     tggggg gggggu serhueh xwunh t fuerh grhnc uxf eiure uin
+//                     chiurncu treh nasfjie hxfuewr hfjsabg fye ruhfgj skahgruy
+//                     ahsf jsb agnye hgb alhgue bglh aghaeb EF UH BF YW4 7GFHSBY
+//                     HYHAGR Yb h abf gahggua hgrb atn hgjk h tgiungi hdug nuri5ug
+//                     ho sd ji riu wghj fshbg iugfs shfui rhe fib eyugf jhsgf wu
+//                     rih ushf shyug fyesf buvwgh abhg hhaos haahsn nhahk ghhhhaa
+//                     aamamin ja dheudb ehbdghcs ugveud afgyue bdy gzjhcy eghzabu
+//                     dygefb sfhiu hdbw fuhsbrhf bs yrghcbsuh gfyw eruhe syfgs
+//                     jhfbsi anfuywgn uidhw
+
+//<p>
+//               kjads<br></br> chui <br></br>dshfnus <br></br>rycx<br></br>{" "}
+//             fnsrgfh<br></br> yrexg <br></br>fcnyu <br></br>rgfern<br></br>{" "}
+//            yuug
+//         </p>

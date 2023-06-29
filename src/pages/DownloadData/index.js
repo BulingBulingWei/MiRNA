@@ -33,7 +33,7 @@ import {
   Footer,
 } from "../../StyleComponents/DownloaddataCSS";
 import PageButton from "../../Component/PageButton";
-import { SearchSvg, CancelSvg } from "../../svg";
+import { SearchSvg, CancelSvg, LinkSvg } from "../../svg";
 
 export default function DownloadData() {
   // const location = useLocation();
@@ -584,28 +584,44 @@ export default function DownloadData() {
                 borderTopColor: "#f9fafb",
               }}
             >
-              <DataSpace style={{ width: "15%" }}>miRNA</DataSpace>
-              <DataSpace style={{ width: "26%" }}>Disease</DataSpace>
-              <DataSpace style={{ width: "22%" }}>Resource</DataSpace>
-              <DataSpace style={{ width: "17%" }}>Pmid</DataSpace>
-              <DataSpace>Relevance</DataSpace>
+              <DataSpace style={{ width: "16%" }}>miRNA</DataSpace>
+              <DataSpace style={{ width: "24%" }}>Disease</DataSpace>
+              <DataSpace style={{ width: "20%" }}>Resource</DataSpace>
+              <DataSpace style={{ width: "15%" }}>Pmid</DataSpace>
+              <DataSpace style={{ width: "15%" }}>Relevance</DataSpace>
+              <DataSpace style={{ width: "10%" }}>PubMed Link</DataSpace>
             </DataRow>
             {RelationshipData !== null &&
               RelationshipData !== undefined &&
               RelationshipData.map((data) => {
                 return (
                   <DataRow>
-                    <DataSpace style={{ width: "15%" }}>
+                    <DataSpace style={{ width: "16%" }}>
                       {data.mirnaName}
                     </DataSpace>
-                    <DataSpace style={{ width: "26%" }}>
+                    <DataSpace style={{ width: "24%" }}>
                       {data.disease}
                     </DataSpace>
-                    <DataSpace style={{ width: "22%" }}>
+                    <DataSpace style={{ width: "20%" }}>
                       {data.resource}
                     </DataSpace>
-                    <DataSpace style={{ width: "17%" }}>{data.pmid}</DataSpace>
-                    <DataSpace>{data.relevance}</DataSpace>
+                    <DataSpace style={{ width: "15%" }}>{data.pmid}</DataSpace>
+                    <DataSpace style={{ width: "15%" }}>
+                      {data.relevance}
+                    </DataSpace>
+                    <DataSpace style={{ width: "10%" }}>
+                      <div
+                        className="h-full w-fit px-1 flex justify-start items-center"
+                        onClick={() => {
+                          window.open(
+                            `https://pubmed.ncbi.nlm.nih.gov/?term=${data.mirnaName}+AND+${data.disease}&size=200`,
+                            "_blank"
+                          );
+                        }}
+                      >
+                        <LinkSvg></LinkSvg>
+                      </div>
+                    </DataSpace>
                   </DataRow>
                 );
               })}
