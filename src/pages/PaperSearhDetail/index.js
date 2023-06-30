@@ -122,7 +122,7 @@ export default function PaperSearhDetail() {
     //请求不成功
     else {
       toastController({
-        mes: "请求失败",
+        mes: res.data.message,
         timeout: 1000,
       });
     }

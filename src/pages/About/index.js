@@ -189,6 +189,18 @@ export default function About() {
             </div>
             <p className="text-sky-700 font-bold leading-10">系统更新记录：</p>
             {/* 以下是项目更新历史 */}
+            {/* 2023-05-29 */}
+            <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
+              {/* 小圆点 */}
+              <div className="h-6 w-6 absolute top-4 -left-3 rounded-full bg-blue-300 border-4 border-gray-100"></div>
+              {/* 框框内的更新时间与内容 */}
+              <p className="font-bold text-sky-700 mb-1">2023-05-29</p>
+              <ul className="font-mono font-bold">
+                <li>- 新增了mirna结构的多种可视化图</li>
+                <li>- 新增了-3p和-5p两支的对比</li>
+                <li>- 新增了关系数据的下载页面</li>
+              </ul>
+            </div>
             {/* 2023-04-01 */}
             <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
               {/* 小圆点 */}
