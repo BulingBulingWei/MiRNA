@@ -74,8 +74,8 @@ export const POSTMirnaRelationshipData = "/relation/getMirnaRelationshipData";
 export const PostDownloadRelationshipData = "/download/getMirnaRelationship";
 //
 export const axiosInstance = axios.create({
-  // baseURL: "/mirna-disease/",
-  baseURL: "/",
+  baseURL: "/mirna-disease/",
+  // baseURL: "/",
   headers: {
     token: "MirTarDis",
   },

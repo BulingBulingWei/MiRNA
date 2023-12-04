@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "homepage": "/",
-  "proxy": "http://192.168.43.195:9999",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.4",
