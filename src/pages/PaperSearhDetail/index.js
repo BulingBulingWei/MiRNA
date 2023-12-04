@@ -149,14 +149,6 @@ export default function PaperSearhDetail() {
         type: "application/pdf;charset=utf-8",
       });
       download(blob, `${pmid}.pdf`, "application/pdf;charset=utf-8");
-
-      // const href = "http://172.16.103.216:9999" + GetOneArticleDownload + pmid;
-      // const downloadOneArticleElement = document.createElement("a");
-      // downloadOneArticleElement.href = href;
-      // downloadOneArticleElement.target = "downloadFile";
-      // downloadOneArticleElement.click();
-      // document.body.removeChild(downloadOneArticleElement);
-      // window.URL.revokeObjectURL(href);
     } else {
       toastController({
         mes: res.data.code,
