@@ -1,17 +1,15 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
-import styled from "styled-components";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
-  GetMirnaLikeName as GetMirnaFuzzySearchName,
+  GetDrugFuzzyName as GetMirnaFuzzySearchName,
   GetMirnaAllMessage,
   axiosInstance as axios,
 } from "../../utils/mapPath";
 import {
-  Label,
   InfoValue,
   InfoLabel,
-  InfoListframe,
+  HalfInfoListframe,
   InfoItem,
   Gframe,
   GItem,
@@ -21,7 +19,7 @@ import {
   CompareInfoItem,
   CompareInfoframe,
 } from "../../StyleComponents/MirnaStructPageCSS";
-
+import { useDebounce } from "../../utils/tools";
 import { SearchSvg } from "../../svg";
 
 export default function MirnaStruct() {
@@ -32,46 +30,6 @@ export default function MirnaStruct() {
   const toastController = useContext(ToastContext);
   const [fuzzySearchList, setFuzzySearchList] = useState([]);
   const [MirnaAllMessage, setMirnaAllMessage] = useState(undefined);
-
-  const [unionGene, setUnionGene] = useState([
-    "dsfcin",
-    "asiucbuerd",
-    "wfeuhcnu",
-    "wuhcd",
-    "acniu",
-  ]);
-  const [gene3p, setGene3p] = useState([
-    "rt6uhytg",
-    "ththdf",
-    "htyhs",
-    "AHTRFG",
-    "rfraG",
-    "dsfdsgv",
-    "WGWF",
-    "GRTGR",
-    "ytjt",
-    "stht",
-    "h5gegaq",
-  ]);
-  const [gene5p, setGene5p] = useState([
-    "qt4et5",
-    "sgtr",
-    "shth",
-    "sththy",
-    "shthgfd5grh",
-    "wg5g",
-    "a5rghew",
-    "ergagfgdge",
-    "argagagr",
-    "agrgthgrt",
-    "gfjuk",
-    "ftjhnr",
-    "atrbth",
-    "adfgf",
-    "argfv",
-    "arygf",
-    "htds",
-  ]);
 
   useEffect(() => {
     GetMirnaAllMessageAxios();
@@ -93,7 +51,7 @@ export default function MirnaStruct() {
       setMirnaAllMessage(res.data.data);
     } else {
       toastController({
-        mes: "请求失败",
+        mes: "request failure",
         timeout: 1000,
       });
     }
@@ -123,20 +81,7 @@ export default function MirnaStruct() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
-
-  const handleSearchInputChange = throttle(GetMirnaFuzzy, 1000);
+  const handleSearchInputChange = useDebounce(GetMirnaFuzzy, 1000);
 
   const handleInputEnter = (event) => {
     if (searchInput.current.value === "") return;
@@ -180,35 +125,33 @@ export default function MirnaStruct() {
                     }, 1500);
                   }}
                 />
-                {fuzzySearchList !== null &&
-                  fuzzySearchList !== undefined &&
-                  fuzzySearchList.length > 0 && (
-                    <div
-                      className="h-fit w-full max-h-72 absolute top-10 rounded border-2
+                {!!fuzzySearchList && fuzzySearchList.length > 0 && (
+                  <div
+                    className="h-fit w-full max-h-72 absolute top-10 rounded border-2
                 border-purple-300 overflow-y-scroll bg-gray-50"
-                    >
-                      <ul
-                        className="h-fit w-full flex-shrink-0 rounded border-2 border-purple-300
+                  >
+                    <ul
+                      className="h-fit w-full flex-shrink-0 rounded border-2 border-purple-300
                 text-gray-600 shadow p-0"
-                      >
-                        {fuzzySearchList.map((fuzzyItem) => {
-                          return (
-                            <li
-                              key={fuzzyItem}
-                              className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
+                    >
+                      {fuzzySearchList.map((fuzzyItem) => {
+                        return (
+                          <li
+                            key={fuzzyItem}
+                            className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
                                border-b-2 border-gray-300 cursor-pointer"
-                              onClick={() => {
-                                searchInput.current.value = fuzzyItem;
-                                setFuzzySearchList(undefined);
-                              }}
-                            >
-                              {fuzzyItem}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
+                            onClick={() => {
+                              searchInput.current.value = fuzzyItem;
+                              setFuzzySearchList(undefined);
+                            }}
+                          >
+                            {fuzzyItem}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
               </div>
               <div
                 className="h-full flex-grow ml-2 flex justify-center items-center bg-blue-800 rounded"
@@ -230,18 +173,17 @@ export default function MirnaStruct() {
         </div>
 
         {/* 详细信息和数据可视化图 */}
-        {MirnaAllMessage !== null && MirnaAllMessage !== undefined && (
+        {!!MirnaAllMessage && (
           <div className="w-full h-fit my-5 flex flex-col justify-start items-center">
             <div className="h-fit w-11/12 p-3  text-2xl font-bold text-blue-900">
-              {params.mirnaName}的基本信息
+              Basic information of {params.mirnaName}
             </div>
             <div
               className="h-fit w-11/12 flex flex-col md:flex-row justify-between items-start
              p-2 mx-16 border-2 border-gray-300"
             >
-              <InfoListframe>
-                {MirnaAllMessage.mainMirna !== null &&
-                  MirnaAllMessage.mainMirna !== undefined &&
+              <HalfInfoListframe>
+                {!!MirnaAllMessage.mainMirna &&
                   Object.keys(MirnaAllMessage.mainMirna).map((key, index) => {
                     if (
                       key === "url" ||
@@ -256,15 +198,15 @@ export default function MirnaStruct() {
                       </InfoItem>
                     );
                   })}
-              </InfoListframe>
+              </HalfInfoListframe>
               <Gframe>
-                {MirnaAllMessage.structUrl_2D !== null && (
+                {!!MirnaAllMessage.structUrl_2D && (
                   <GItem>
-                    <GLabel>2D平面结构图</GLabel>
+                    <GLabel>2D plane structure diagram</GLabel>
                     <div className="h-52 w-4/5 overflow-hidden">
                       <a
                         href={`${MirnaAllMessage.structUrl_2D}`}
-                        title="点击查看图片详情"
+                        title="Click to view image details"
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -278,13 +220,13 @@ export default function MirnaStruct() {
                   </GItem>
                 )}
 
-                {MirnaAllMessage.structUrl_3D !== null && (
+                {!!MirnaAllMessage.structUrl_3D && (
                   <GItem>
                     <GLabel>Chord diagram</GLabel>
                     <div className="h-80 w-full flex justify-center items-center  overflow-hidden">
                       <a
                         href={`${MirnaAllMessage.structUrl_3D}`}
-                        title="点击查看图片详情"
+                        title="Click to view image details"
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -309,17 +251,17 @@ export default function MirnaStruct() {
           MirnaAllMessage.mirna_5P !== null && (
             <div className="w-full h-fit my-5 flex flex-col justify-start items-center">
               <div className="h-fit w-11/12 p-3 text-2xl font-bold text-blue-900">
-                MiRNA的两支对比
+                Comparison of Two Branches of miRNA
               </div>
               <div className="h-fit w-11/12 flex justify-between items-start p-2 mx-16 border-2 border-gray-300">
                 <CompareInfoframe>
                   <CompareInfoItem>
                     <CompareInfoLabel></CompareInfoLabel>
                     <CompareInfoValue style={{ fontWeight: "700" }}>
-                      MiRNA-3p
+                      miRNA-3p
                     </CompareInfoValue>
                     <CompareInfoValue style={{ fontWeight: "700" }}>
-                      MiRNA-5p
+                      miRNA-5p
                     </CompareInfoValue>
                   </CompareInfoItem>
                   {Object.keys(MirnaAllMessage.mirna_3P).map((key, index) => {
@@ -343,20 +285,3 @@ export default function MirnaStruct() {
     </div>
   );
 }
-
-// kjads chui dshfnus rycx fnsrgf h yrexg fcnyu rgf ern yuug
-//                     tggggg gggggu serhueh xwunh t fuerh grhnc uxf eiure uin
-//                     chiurncu treh nasfjie hxfuewr hfjsabg fye ruhfgj skahgruy
-//                     ahsf jsb agnye hgb alhgue bglh aghaeb EF UH BF YW4 7GFHSBY
-//                     HYHAGR Yb h abf gahggua hgrb atn hgjk h tgiungi hdug nuri5ug
-//                     ho sd ji riu wghj fshbg iugfs shfui rhe fib eyugf jhsgf wu
-//                     rih ushf shyug fyesf buvwgh abhg hhaos haahsn nhahk ghhhhaa
-//                     aamamin ja dheudb ehbdghcs ugveud afgyue bdy gzjhcy eghzabu
-//                     dygefb sfhiu hdbw fuhsbrhf bs yrghcbsuh gfyw eruhe syfgs
-//                     jhfbsi anfuywgn uidhw
-
-//<p>
-//               kjads<br></br> chui <br></br>dshfnus <br></br>rycx<br></br>{" "}
-//             fnsrgfh<br></br> yrexg <br></br>fcnyu <br></br>rgfern<br></br>{" "}
-//            yuug
-//         </p>

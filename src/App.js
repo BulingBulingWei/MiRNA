@@ -16,6 +16,11 @@ const Trending = lazy(() => import("./pages/Trending"));
 const Help = lazy(() => import("./pages/Help"));
 const MirnaStruct = lazy(() => import("./pages/MirnaStruct"));
 const DownloadData = lazy(() => import("./pages/DownloadData"));
+const DownloadFiles = lazy(() => import("./pages/DownloadFiles"));
+const DownloadMirnaDrugData = lazy(() => import("./pages/DLmirnaDrugData"));
+const DownloadMirnaGeneData = lazy(() => import("./pages/DLmirnaGeneData"));
+const GeneInfo = lazy(() => import("./pages/GeneInfo"));
+const DrugInfo = lazy(() => import("./pages/DrugInfo"));
 
 function App() {
   const [toastConfig, setToastConfig] = useState({});
@@ -63,6 +68,14 @@ function App() {
                         path="/MirnaStruct/:mirnaName"
                         element={<MirnaStruct />}
                       ></Route>
+                      <Route
+                        path="/GeneInfo/:geneName"
+                        element={<GeneInfo />}
+                      ></Route>
+                      <Route
+                        path="/DrugInfo/:drugName"
+                        element={<DrugInfo />}
+                      ></Route>
                       <Route path="/About" element={<About />}></Route>
                       <Route
                         path="/RNAVisualization"
@@ -73,8 +86,20 @@ function App() {
                         element={<RNAVisualization />}
                       ></Route>
                       <Route
-                        path="/DownloadData"
+                        path="/miRNA-Disease-Data"
                         element={<DownloadData />}
+                      ></Route>
+                      <Route
+                        path="/miRNA-Drug-Data"
+                        element={<DownloadMirnaDrugData />}
+                      ></Route>
+                      <Route
+                        path="/miRNA-Gene-Data"
+                        element={<DownloadMirnaGeneData />}
+                      ></Route>
+                      <Route
+                        path="/DownloadFiles"
+                        element={<DownloadFiles />}
                       ></Route>
                       <Route path="/Help" element={<Help />}></Route>
                       <Route path="/Trending" element={<Trending />}></Route>

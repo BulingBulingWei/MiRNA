@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../../bg/miRTarDis-v3.png";
 
+// 手机端导航栏
 export default function TopNav() {
   const navigate = useNavigate();
   const location = useLocation().pathname;
@@ -11,7 +12,10 @@ export default function TopNav() {
   }
 
   return (
-    <div className="h-full w-full min-w-full relative">
+    <div
+      className="h-full w-full min-w-full relative"
+      style={{ whiteSpace: "nowrap" }}
+    >
       {/* overflow-x-auto */}
       <div
         className="h-full w-full min-w-full overflow-x-auto px-1
@@ -42,7 +46,7 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer
-        ${isFocus(location, "Paper") === true ? "bg-sky-100" : ""}`}
+        ${isFocus(location, "Paper") ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/Paper`);
           }}
@@ -56,13 +60,13 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
-        ${isFocus(location, "RNAVisualization") === true ? "bg-sky-100" : ""}`}
+        ${isFocus(location, "RNAVisualization") ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/RNAVisualization`);
           }}
         >
           <div>
-            <p className="text-gray-500 font-bold">MiRNA</p>
+            <p className="text-gray-500 font-bold">miRNA</p>
           </div>
         </div>
 
@@ -70,7 +74,7 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
-        ${isFocus(location, "MirnaStruct") === true ? "bg-sky-100" : ""}`}
+        ${isFocus(location, "MirnaStruct") ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/MirnaStruct/hsa-mir-25`);
           }}
@@ -80,17 +84,87 @@ export default function TopNav() {
           </div>
         </div>
 
-        {/* DownlowData */}
+        {/* Drug Struct Form */}
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
-        ${isFocus(location, "DownloadData") === true ? "bg-sky-100" : ""}`}
+        ${isFocus(location, "DrugInfo") ? "bg-sky-100" : ""}`}
           onClick={() => {
-            navigate(`/DownloadData`);
+            navigate(`/DrugInfo/Gefitinib`);
           }}
         >
           <div>
-            <p className="text-gray-500 font-bold">Data</p>
+            <p className="text-gray-500 font-bold">Drug</p>
+          </div>
+        </div>
+
+        {/* gene Struct Form */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "GeneInfo") ? "bg-sky-100" : ""}`}
+          onClick={() => {
+            navigate(`/GeneInfo/xxx`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">Gene</p>
+          </div>
+        </div>
+
+        {/* miRNA-Disease-Data */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "miRNA-Disease-Data") ? "bg-sky-100" : ""}`}
+          onClick={() => {
+            navigate(`/miRNA-Disease-Data`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">miRNA-Disease</p>
+          </div>
+        </div>
+
+        {/* mirna-drug */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "miRNA-Drug-Data") ? "bg-sky-100" : "bg-sky-100"}`}
+          onClick={() => {
+            navigate(`/miRNA-Drug-Data`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold ">miRNA-Drug</p>
+          </div>
+        </div>
+
+        {/* miRNA-Gene */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "miRNA-Gene-Data") ? "bg-sky-100" : ""}`}
+          onClick={() => {
+            navigate(`/miRNA-Gene-Data`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold ">miRNA-Gene</p>
+          </div>
+        </div>
+
+        {/* Downloadfiles */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "DownloadFiles") ? "bg-sky-100" : ""}`}
+          onClick={() => {
+            navigate(`/DownloadFiles`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">Download</p>
           </div>
         </div>
 
@@ -98,7 +172,7 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer       
-          ${isFocus(location, "About") === true ? "bg-sky-100" : ""}`}
+          ${isFocus(location, "About") ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/About`);
           }}
@@ -112,7 +186,7 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
-            ${isFocus(location, "Trending") === true ? "bg-sky-100" : ""}`}
+            ${isFocus(location, "Trending") ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/Trending`);
           }}
@@ -126,7 +200,7 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
-            ${isFocus(location, "Help") === true ? "bg-sky-100" : ""}`}
+            ${isFocus(location, "Help") ? "bg-sky-100" : ""}`}
           onClick={() => {
             navigate(`/Help`);
           }}

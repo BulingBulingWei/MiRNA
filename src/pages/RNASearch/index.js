@@ -16,6 +16,7 @@ import img6 from "../../img/img26.jpg";
 import img7 from "../../img/img24.jpg";
 import img8 from "../../img/img22.jpg";
 import img10 from "../../img/img30.jpg";
+import { useDebounce } from "../../utils/tools";
 
 export default function RNASearch() {
   const [showAntimation, setShowAntimation] = useState(false);
@@ -52,25 +53,12 @@ export default function RNASearch() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
-
   const fuzzySearch = () => {
     let searchName = searchInput.current.value;
     GetMirnaFuzzy(searchName);
   };
 
-  const handleSearchInputChange = throttle(fuzzySearch, 1000);
+  const handleSearchInputChange = useDebounce(fuzzySearch, 1000);
 
   const handleInputEnter = (event) => {
     if (searchInput.current.value === "") return;
@@ -116,7 +104,7 @@ export default function RNASearch() {
               <div className="h-full w-5/6 relative">
                 <input
                   type="text"
-                  placeholder="Mi-RNA name"
+                  placeholder="miRNA name"
                   className="h-full w-full rounded px-2"
                   ref={searchInput}
                   onChange={handleSearchInputChange}

@@ -12,6 +12,7 @@ import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
 import PageButton from "../../Component/PageButton";
 import yearSelectOptions from "../../data/yearData";
+import { useDebounce } from "../../utils/tools";
 
 import {
   GetDieaseSearch,
@@ -124,8 +125,8 @@ export default function GraphSearchDetail() {
       legend: [
         {
           data:
-            graphData.categories !== undefined &&
-            graphData.categories.map(function (a) {
+            !!graphData?.categories &&
+            graphData?.categories.map(function (a) {
               return a.name;
             }),
           z: 100,
@@ -269,31 +270,31 @@ export default function GraphSearchDetail() {
     };
     let res = await axios(options);
 
-    if (res.data.code === "0") {
+    if (res?.data?.code === "0") {
       setSearchContext(searchName);
       setStartYear(startTime);
       setEndYear(endTime);
-      if (res.data.data.count === 0) {
+      if (res?.data?.data.count === 0) {
         setPaperList([]);
         setPage_end(1);
         setPage_now(1);
         toastController({
-          mes: "没有查询到相关论文",
+          mes: "No relevant papers found",
           timeout: 1000,
         });
       } else {
         //向上取整
-        setPaperList(res.data.data.articles);
-        let pe = Math.ceil(res.data.data.count / maxSize);
+        setPaperList(res?.data?.data.articles);
+        let pe = Math.ceil(res?.data?.data.count / maxSize);
         setPage_end(parseInt(pe));
         setPage_now(parseInt(pageNum));
-        setPaperSelectedId(res.data.data.articles[0].pmid);
+        setPaperSelectedId(res?.data?.data.articles[0].pmid);
       }
     }
     //请求不成功
     else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -322,31 +323,31 @@ export default function GraphSearchDetail() {
     };
     let res = await axios(options);
 
-    if (res.data.code === "0") {
+    if (res?.data?.code === "0") {
       setSearchContext(searchName);
       setStartYear(startTime);
       setEndYear(endTime);
-      if (res.data.data.count === 0) {
+      if (res?.data?.data.count === 0) {
         setPaperList([]);
         setPage_end(1);
         setPage_now(1);
         toastController({
-          mes: "没有查询到相关论文",
+          mes: "No relevant papers found",
           timeout: 1000,
         });
       } else {
         //向上取整
-        setPaperList(res.data.data.articles);
-        let pe = Math.ceil(res.data.data.count / maxSize);
+        setPaperList(res?.data?.data.articles);
+        let pe = Math.ceil(res?.data?.data.count / maxSize);
         setPage_end(parseInt(pe));
         setPage_now(parseInt(pageNum));
-        setPaperSelectedId(res.data.data.articles[0].pmid);
+        setPaperSelectedId(res?.data?.data.articles[0].pmid);
       }
     }
     //请求不成功
     else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -367,11 +368,11 @@ export default function GraphSearchDetail() {
 
     let res = await axios(options);
 
-    if (res.data.code === "0") {
-      setGraphData(res.data.data);
+    if (res?.data?.code === "0") {
+      setGraphData(res?.data?.data);
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -392,11 +393,11 @@ export default function GraphSearchDetail() {
 
     let res = await axios(options);
 
-    if (res.data.code === "0") {
-      setGraphData(res.data.data);
+    if (res?.data?.code === "0") {
+      setGraphData(res?.data?.data);
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -415,11 +416,11 @@ export default function GraphSearchDetail() {
     };
 
     let res = await axios(options);
-    if (res.data.code === "0") {
-      setFuzzySearchList(res.data.data);
+    if (res?.data?.code === "0") {
+      setFuzzySearchList(res?.data?.data);
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -438,11 +439,11 @@ export default function GraphSearchDetail() {
     };
 
     let res = await axios(options);
-    if (res.data.code === "0") {
-      setFuzzySearchList(res.data.data);
+    if (res?.data?.code === "0") {
+      setFuzzySearchList(res?.data?.data);
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -463,23 +464,15 @@ export default function GraphSearchDetail() {
     };
 
     let res = await axios(options);
-    if (res.data.code !== "555") {
-      let blobData = res.data;
+    if (res?.data?.code !== "555") {
+      let blobData = res?.data;
       const blob = new Blob([blobData], {
         type: "application/pdf;charset=utf-8",
       });
       download(blob, `${pmid}.pdf`, "application/pdf;charset=utf-8");
-
-      // const href = "http://172.16.103.216:9999" + GetOneArticleDownload + pmid;
-      // const downloadOneArticleElement = document.createElement("a");
-      // downloadOneArticleElement.href = href;
-      // downloadOneArticleElement.target = "downloadFile";
-      // downloadOneArticleElement.click();
-      // document.body.removeChild(downloadOneArticleElement);
-      // window.URL.revokeObjectURL(href);
     } else {
       toastController({
-        mes: res.data.code,
+        mes: res?.data?.code,
         timeout: 1000,
       });
     }
@@ -498,15 +491,15 @@ export default function GraphSearchDetail() {
     };
 
     let res = await axios(options);
-    if (res.data.code !== "555") {
-      let blobData = res.data;
+    if (res?.data?.code !== "555") {
+      let blobData = res?.data;
       const blob = new Blob([blobData], {
         type: "application/pdf;charset=utf-8",
       });
       download(blob, `${params.searchName}.xlsx`, "application/octet-stream");
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -527,8 +520,8 @@ export default function GraphSearchDetail() {
     };
     let res = await axios(options);
 
-    if (res.data.code !== "555") {
-      let blobData = res.data;
+    if (res?.data?.code !== "555") {
+      let blobData = res?.data;
       const blob = new Blob([blobData], {
         type: "application/pdf;charset=utf-8",
       });
@@ -539,7 +532,7 @@ export default function GraphSearchDetail() {
       );
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -560,8 +553,8 @@ export default function GraphSearchDetail() {
     };
     let res = await axios(options);
 
-    if (res.data.code !== "555") {
-      let blobData = res.data;
+    if (res?.data?.code !== "555") {
+      let blobData = res?.data;
       const blob = new Blob([blobData], {
         type: "application/pdf;charset=utf-8",
       });
@@ -572,7 +565,7 @@ export default function GraphSearchDetail() {
       );
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -593,8 +586,8 @@ export default function GraphSearchDetail() {
     };
     let res = await axios(options);
 
-    if (res.data.code !== "555") {
-      let blobData = res.data;
+    if (res?.data?.code !== "555") {
+      let blobData = res?.data;
       const blob = new Blob([blobData], {
         type: "application/pdf;charset=utf-8",
       });
@@ -605,7 +598,7 @@ export default function GraphSearchDetail() {
       );
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -626,8 +619,8 @@ export default function GraphSearchDetail() {
     };
     let res = await axios(options);
 
-    if (res.data.code !== "555") {
-      let blobData = res.data;
+    if (res?.data?.code !== "555") {
+      let blobData = res?.data;
       const blob = new Blob([blobData], {
         type: "application/pdf;charset=utf-8",
       });
@@ -638,7 +631,7 @@ export default function GraphSearchDetail() {
       );
     } else {
       toastController({
-        mes: res.data.message,
+        mes: res?.data?.message,
         timeout: 1000,
       });
     }
@@ -668,14 +661,14 @@ export default function GraphSearchDetail() {
         : endTimeSelect.current.options[endTimeIdx].value;
     if (searchName === undefined || searchName === "") {
       toastController({
-        mes: "请输入搜索内容",
+        mes: "Please enter search content",
         timeout: 2000,
       });
       return;
     }
     if (startTime > endTime) {
       toastController({
-        mes: "请选择正确年份",
+        mes: "Please select the correct year",
         timeout: 2000,
       });
       return;
@@ -713,7 +706,7 @@ export default function GraphSearchDetail() {
   const goToPage = (pageNum) => {
     if (typeof parseInt(pageNum) !== "number" || pageNum < 1) {
       toastController({
-        mes: "请输入合法页数",
+        mes: "Please enter the legal number of pages",
         timeout: 1500,
       });
       return;
@@ -783,66 +776,8 @@ export default function GraphSearchDetail() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
+  const handleSearchInputChange = useDebounce(fuzzySearch, 1000);
 
-  const handleSearchInputChange = throttle(fuzzySearch, 1000);
-
-  //--------------------------------------------------
-  //页面效果函数
-
-  // div可修改的最小高度
-  // const minHeight = 90;
-  // 是否开启尺寸修改
-  // let reSizeable = false;
-  // let lastClientY;
-  // let dragBox, dragLine;
-
-  // function handleMouseDown(event) {
-  //   // 禁止用户选择网页中文字
-  //   document.onselectstart = () => false;
-  //   // 禁止用户拖动元素
-  //   document.ondragstart = () => false;
-
-  //   dragBox = document.getElementById("dragBox");
-  //   dragLine = document.getElementById("dragLine");
-  //   document.addEventListener("touchmove", handleMouseMove);
-  //   document.addEventListener("touchend", handleMouseUp);
-  //   dragLine.style.backgroundColor = "#818a92";
-
-  //   reSizeable = true;
-  //   lastClientY = event.changedTouches[0].clientY;
-  // }
-
-  // function handleMouseMove(event) {
-  //   if (reSizeable) {
-  //     dragBox.style.height =
-  //       Math.max(
-  //         minHeight,
-  //         dragBox.offsetHeight + (lastClientY - event.changedTouches[0].clientY)
-  //       ) + "px";
-  //     // offsetHeight 是鼠标所点击的位置与对应元素（dragBox）的垂直距离
-  //     // lastClientY - event.clientY 计算出变动的垂直距离
-  //     lastClientY = event.changedTouches[0].clientY;
-  //   }
-  // }
-
-  // function handleMouseUp() {
-  //   dragLine.style.backgroundColor = "#e5e7eb";
-  //   reSizeable = false;
-  // }
-
-  //---------------------------------------------------
   return (
     <div
       className={`h-fit w-full bg-blue-5 relative md:h-full ${
@@ -922,37 +857,35 @@ export default function GraphSearchDetail() {
                 ></input>
                 {/* 模糊搜索选项 */}
 
-                {fuzzySearchList !== null &&
-                  fuzzySearchList !== undefined &&
-                  fuzzySearchList.length > 0 && (
-                    <div
-                      className="h-fit w-full max-h-96 absolute top-8 rounded border-2 
+                {!!fuzzySearchList && fuzzySearchList.length > 0 && (
+                  <div
+                    className="h-fit w-full max-h-96 absolute top-8 rounded border-2 
                 border-blue-200 overflow-y-scroll bg-gray-50 z-10"
-                    >
-                      <ul
-                        className="h-fit w-full flex-shrink-0 rounded border-2 border-blue-200
+                  >
+                    <ul
+                      className="h-fit w-full flex-shrink-0 rounded border-2 border-blue-200
                 text-gray-600 shadow p-0"
-                      >
-                        {fuzzySearchList.map((fuzzyItem) => {
-                          return (
-                            <li
-                              key={fuzzyItem.name}
-                              className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
+                    >
+                      {fuzzySearchList.map((fuzzyItem) => {
+                        return (
+                          <li
+                            key={fuzzyItem?.name}
+                            className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
                    border-b-2 border-gray-300 cursor-pointer"
-                              onClick={() => {
-                                searchInput.current.value = fuzzyItem.name;
-                                setFuzzySearchList(undefined);
-                                setSearchContext(fuzzyItem.name);
-                                handleSearch();
-                              }}
-                            >
-                              {fuzzyItem.name}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
+                            onClick={() => {
+                              searchInput.current.value = fuzzyItem?.name;
+                              setFuzzySearchList(undefined);
+                              setSearchContext(fuzzyItem?.name);
+                              handleSearch();
+                            }}
+                          >
+                            {fuzzyItem?.name}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div className="h-fit w-fit p-2" onClick={handleSearch}>
@@ -980,7 +913,7 @@ export default function GraphSearchDetail() {
                   setStartYear(e.target.value);
                 }}
               >
-                {yearSelectOption !== undefined &&
+                {!!yearSelectOption &&
                   yearSelectOption.map((item) => {
                     if (startYear === item)
                       return (
@@ -991,7 +924,7 @@ export default function GraphSearchDetail() {
                     else return <option value={item}>{item}</option>;
                   })}
               </select>
-              <span className="text-sm text-gray-700">至</span>
+              <span className="text-sm text-gray-700">to</span>
               {/* end-year */}
               <select
                 className="h-auto w-1/4"
@@ -1000,7 +933,7 @@ export default function GraphSearchDetail() {
                   setEndYear(e.target.value);
                 }}
               >
-                {yearSelectOption !== undefined &&
+                {!!yearSelectOption &&
                   yearSelectOption.map((item) => {
                     if (endYear === item)
                       return (
@@ -1068,17 +1001,16 @@ export default function GraphSearchDetail() {
           </div>
 
           {/* 非sticky的选项列表 */}
-          {paperList !== undefined &&
-            paperList !== null &&
+          {!!paperList &&
             paperList.map((item) => {
               return (
                 <PaperBox
-                  key={item.pmid}
+                  key={item?.pmid}
                   selected={`${
-                    item.pmid === paperSelectedId ? "true" : "false"
+                    item?.pmid === paperSelectedId ? "true" : "false"
                   }`}
                   onClick={() => {
-                    setPaperSelectedId(item.pmid);
+                    setPaperSelectedId(item?.pmid);
                     setPhoneShowRight(true);
                   }}
                 >
@@ -1088,10 +1020,10 @@ export default function GraphSearchDetail() {
                   >
                     <span dangerouslySetInnerHTML={{ __html: item.title }} />
                   </p>
-                  {item.abs !== undefined && item.abs !== null && (
-                    <AbsBox time={item.date}>
+                  {!!item?.abs && (
+                    <AbsBox time={item?.date}>
                       <span className="text-sky-700 font-bold">Abstract: </span>
-                      <span dangerouslySetInnerHTML={{ __html: item.abs }} />
+                      <span dangerouslySetInnerHTML={{ __html: item?.abs }} />
                     </AbsBox>
                   )}
                 </PaperBox>
@@ -1154,9 +1086,8 @@ export default function GraphSearchDetail() {
       </div>
 
       {/* （右边）平板电脑版的论文题目和摘要（详情） */}
-      {paperList !== undefined &&
-        paperList !== null &&
-        paperSelectedId !== undefined &&
+      {!!paperList &&
+        !!paperSelectedId &&
         paperList.map((item) => {
           if (item.pmid === paperSelectedId) {
             return (
@@ -1201,8 +1132,7 @@ export default function GraphSearchDetail() {
                   <h1 className="text-xl font-bold block text-sky-700 mb-2">
                     <span dangerouslySetInnerHTML={{ __html: item.title }} />
                   </h1>
-                  {item.authors !== undefined &&
-                    item.authors !== null &&
+                  {!!item.authors &&
                     item.authors.map((aut) => {
                       return (
                         <p key={aut} className="text-gray-600 inline pr-2">
@@ -1217,7 +1147,7 @@ export default function GraphSearchDetail() {
                   <div className="inline-block font-bold h-6 w-fit mr-3">
                     Open in:
                   </div>
-                  {item.pmid !== undefined && (
+                  {!!item.pmid && (
                     <div className="h-7 w-7 mx-2 rounded-full text-white bg-gray-500 inline-block">
                       <div
                         className=" h-fit w-fit text-xs leading-7 mx-auto cursor-pointer"
@@ -1255,34 +1185,6 @@ export default function GraphSearchDetail() {
                     <span className="font-bold">Library: </span>
                     {item.library}
                   </p>
-                  {/* 下载一篇文章的pdf */}
-                  <div className="h-fit w-full pt-2">
-                    <span className="font-bold text-sky-700">
-                      download this article:{" "}
-                    </span>
-                    <div
-                      className="inline-block h-full w-fit "
-                      onClick={() => {
-                        handleDownloadOneArticle(item.pmid);
-                      }}
-                    >
-                      <DownloadSvg></DownloadSvg>
-                    </div>
-                  </div>
-                  {/* 下载几篇论文 excel */}
-                  <div className="h-fit w-full pt-2">
-                    <span className="font-bold text-red-600">
-                      download ALL articles:{" "}
-                    </span>
-                    <div
-                      className="inline-block h-full w-fit "
-                      onClick={() => {
-                        PostArticleListDownloadAxios();
-                      }}
-                    >
-                      <DownloadSvg></DownloadSvg>
-                    </div>
-                  </div>
                   <div className="h-4 w-full"></div>
                   <p className="text-sky-800 font-bold">Abstract: </p>
                   <p>

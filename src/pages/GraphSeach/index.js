@@ -7,12 +7,7 @@ import {
   axiosInstance as axios,
 } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
-// import logo from "../../LogoSvg.svg";
-// import bgimg from "../../img/img1.jpg";
-// import img1 from "../../img/cap.jpg";
-// import img2 from "../../img/img1.jpg";
-// import img3 from "../../img/img2.jpg";
-// import img4 from "../../img/img8.jpg";
+import { useDebounce } from "../../utils/tools";
 
 import bgimg from "../../bg/bg22.jpg";
 import img1 from "../../bg/bg18.jpg";
@@ -86,7 +81,7 @@ export default function GraphSeach() {
     let searchName = searchInput.current.value;
     if (searchName === undefined || searchName === "") {
       toastController({
-        mes: "请输入搜索内容",
+        mes: "Please enter search content",
         timeout: 2000,
       });
       return;
@@ -102,19 +97,6 @@ export default function GraphSeach() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
-
   const fuzzySearch = () => {
     let searchName = searchInput.current.value;
     let searchType = type === 0 ? "Disease" : "mi-RNA";
@@ -127,7 +109,7 @@ export default function GraphSeach() {
     }
   };
 
-  const handleSearchInputChange = throttle(fuzzySearch, 1000);
+  const handleSearchInputChange = useDebounce(fuzzySearch, 1000);
 
   return (
     <CSSTransition
@@ -224,37 +206,35 @@ export default function GraphSeach() {
                   onKeyUp={enterKeyUp}
                 ></input>
                 {/* 模糊搜索选项 */}
-                {fuzzySearchList !== null &&
-                  fuzzySearchList !== undefined &&
-                  fuzzySearchList.length > 0 && (
-                    <div
-                      className="h-fit w-full max-h-80 absolute top-9 rounded
+                {!!fuzzySearchList && fuzzySearchList.length > 0 && (
+                  <div
+                    className="h-fit w-full max-h-80 absolute top-9 rounded
                 md:top-10 xl:top-12 s24:top-14 z-20 border-2 border-blue-200
                  overflow-y-scroll bg-gray-100 "
-                    >
-                      <ul
-                        className="h-fit w-full flex-shrink-0 rounded 
+                  >
+                    <ul
+                      className="h-fit w-full flex-shrink-0 rounded 
                 text-gray-600 shadow p-0"
-                      >
-                        {fuzzySearchList.map((fuzzyItem) => {
-                          return (
-                            <li
-                              key={fuzzyItem.name}
-                              className="h-fit w-full z-50 flex px-2 justify-start items-center
+                    >
+                      {fuzzySearchList.map((fuzzyItem) => {
+                        return (
+                          <li
+                            key={fuzzyItem?.name}
+                            className="h-fit w-full z-50 flex px-2 justify-start items-center
                             hover:bg-gray-200 border-b-2 border-gray-300 cursor-pointer"
-                              onClick={() => {
-                                searchInput.current.value = fuzzyItem.name;
-                                setFuzzySearchList(undefined);
-                                handleSearch();
-                              }}
-                            >
-                              {fuzzyItem.name}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
+                            onClick={() => {
+                              searchInput.current.value = fuzzyItem?.name;
+                              setFuzzySearchList(undefined);
+                              handleSearch();
+                            }}
+                          >
+                            {fuzzyItem?.name}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
               </div>
 
               <div

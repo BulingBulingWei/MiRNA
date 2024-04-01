@@ -8,6 +8,7 @@ import {
 } from "../../utils/mapPath";
 import { CSSTransition } from "react-transition-group";
 import bgimg from "../../bg/bg13.jpg";
+import { useDebounce } from "../../utils/tools";
 
 export default function PaperSearch() {
   const [showAntimation, setShowAntimation] = useState(false);
@@ -76,7 +77,7 @@ export default function PaperSearch() {
     let searchName = searchInput.current.value;
     if (searchName === undefined || searchName === "") {
       toastController({
-        mes: "请输入搜索内容",
+        mes: "Please enter search content",
         timeout: 2000,
       });
       return;
@@ -91,26 +92,13 @@ export default function PaperSearch() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
-
   const fuzzySearch = () => {
     let searchName = searchInput.current.value;
     GetDiseaseFuzzy(searchName);
     GetMirnaFuzzy(searchName);
   };
 
-  const handleSearchInputChange = throttle(fuzzySearch, 1000);
+  const handleSearchInputChange = useDebounce(fuzzySearch, 1000);
 
   return (
     <CSSTransition
@@ -252,16 +240,6 @@ export default function PaperSearch() {
             className="min-h-fit flex-grow w-full py-8 px-5 flex flex-col justify-start items-center
          font-bold text-white tracking-widest"
           >
-            <p className="font-bold align-bottom">
-              <span className="text-2xl pr-2 md:text-4xl md:pr-4 xl:text-5xl xl:pr-8">
-                一切
-              </span>
-              <span className="text-4xl md:text-6xl xl:text-8xl ">如你所</span>
-              <span className="italic text-4xl md:text-6xl xl:text-8xl ">
-                {" "}
-                搜____
-              </span>
-            </p>
             <p className="align-top leading-1 text-amber-400 pr-16 md:pr-60 xl:pr-80 text-4xl md:text-6xl xl:text-8xl">
               The theses
             </p>

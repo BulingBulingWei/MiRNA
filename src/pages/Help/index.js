@@ -55,18 +55,20 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                Home 首页：
+                Home page：
               </p>
               <p>
                 <span className="px-4"></span>
-                首先选择要搜索的关键词的类型（Disease or
-                Mi-RNA），输入关键词后点击搜索（或按Enter） 搜索与之相关的
-                Disease and Mi-RNA
-                ，就可以查看相关的关系图以及与这些关系相关的论文。
+                Firstly, select the type of keyword to search for (Disease or Mi
+                RNA), enter the keyword, and click search (or press Enter) to
+                search for the relevant Disease and Mi RNA. This will allow you
+                to view the relevant relationship graphs and papers related to
+                these relationships.
                 <br />
                 <br />
                 <span className="px-4"></span>
-                页面下方的四张图片是近期的热搜，如果您感兴趣的话可以直接点击查看。
+                The four images below the page are recent hot searches. If you
+                are interested, you can click to view them directly.
               </p>
             </div>
           </div>
@@ -84,21 +86,27 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                Disease & Mi-RNA 关系详情页：
+                Disease & Mi-RNA Relationship Details Page：
               </p>
               <p>
                 <span className="px-4"></span>
-                左边栏是验证与搜索实体关系的论文选项，右边则是选中的论文的详细信息。
+                The left column contains options for verifying and searching for
+                entity relationships in papers, while the right column contains
+                detailed information about the selected paper.
                 <br />
-                中间是以搜索实体为中心的关系图（包括已验证和经预测的关系）。
+                <span className="px-4"></span>
+                In the middle is a relationship graph centered on the search
+                entity (including validated and predicted relationships).
                 <br />
                 <br />
                 <span className="px-4"></span>
-                您可以根据自己的喜好调节将页面中的某个部分隐藏，以达到自己想要的视觉效果。
+                You can adjust and hide a certain part of the page according to
+                your preferences to achieve the desired visual effect.
                 <br />
                 <br />
                 <span className="px-4"></span>
-                您也可以根据自己的需要选择下载数据。
+                You can also choose to download data according to your own
+                needs.
               </p>
             </div>
           </div>
@@ -116,12 +124,13 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                搜索论文页面：
+                Search paper page:
               </p>
               <p>
                 <span className="px-4"></span>
-                直接往搜索框里面输入关键词，按 Enter
-                键或者鼠标点击搜索图表，就可以查看与该关键词相关的论文了。
+                Simply enter the keyword into the search box, press Enter or
+                click on the search chart with the mouse to view papers related
+                to that keyword.
               </p>
             </div>
           </div>
@@ -138,15 +147,16 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                搜索论文详情页面：
+                Search for paper details page:
               </p>
               <p>
                 <span className="px-4"></span>
-                左边是搜索出的论文选项，右边是相应的论文信息。
+                On the left are the search options for the paper, and on the
+                right are the corresponding paper information.
                 <br />
                 <br />
                 <span className="px-4"></span>
-                您可以根据需要下载数据。
+                You can download data as needed.
               </p>
             </div>
           </div>
@@ -163,17 +173,19 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                Mi-RNA搜索页面：
+                Mi RNA search page:
               </p>
               <p>
                 <span className="px-4"></span>
-                搜索Mi-RNA的三种途径：
-                <br /> 1.在搜索框内输入要查询的Mi-RNA关键词，
-                点击搜索（或按Enter）
+                There are three ways to search for miRNA:
+                <br /> 1. Enter the miRNA keyword to be queried in the search
+                box, click search (or press Enter)
                 <br />
-                2.可通过直接点击左边的选择搜索栏直接搜索
+                2. You can search directly by clicking on the left selection
+                search bar
                 <br />
-                3.图片显示的是近期的热搜，可直接点击图片查看
+                3. The image shows recent hot searches, which can be viewed
+                directly by clicking on the image
               </p>
             </div>
           </div>
@@ -190,19 +202,23 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                Mi-RNA序列以及与基因关系展示：
+                Display of miRNA sequences and their relationship with genes:
               </p>
               <p>
                 <span className="px-4"></span>
-                要搜索Mi-RNA的相关信息：
+                To search for miRNA related information:
                 <br />
-                首先在左下栏输入Mi-RNA的名称，
+                First, enter the name of miRNA in the bottom left column,
                 <br />
-                然后点击搜索（或按Enter）；或下划选择Mi-RNA直接点击搜索。
+                Then click on search (or press Enter); Or scroll down and select
+                miRNA and click search directly.
                 <br />
-                搜索后，会在上方栏出现Mi-RNA序列图，右下栏显示Mi-RNA与基因关系图，
+                After searching, a miRNA sequence diagram will appear in the
+                upper column and a miRNA gene relationship diagram will be
+                displayed in the lower right column,
                 <br />
-                可以点击标签选择性显示某种种类的基因。
+                You can click on the tag to selectively display a certain type
+                of gene.
               </p>
             </div>
           </div>
@@ -218,16 +234,20 @@ export default function Help() {
             />
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
-              <p className="text-lg text-gray-700 font-bold pb-2">关于我们：</p>
+              <p className="text-lg text-gray-700 font-bold pb-2">
+                Regarding us:
+              </p>
               <p>
                 <span className="px-4"></span>
-                如果您对我们的系统有任何的建议或者不满，欢迎您随时向我们联系，
-                您可以在此页中留下您的姓名（Name），邮箱（Email），以及意见（Message），
-                最后点击提交按钮给我们留言。
+                If you have any suggestions or dissatisfaction with our system,
+                please feel free to contact us at any time, You can leave your
+                name, email, and comments on this page. Finally, click the
+                submit button to leave us a message.
                 <br />
                 <br />
                 <span className="px-4"></span>
-                此页下面显示的是我们系统的详细介绍以及更新信息。
+                Below this page is a detailed introduction and updated
+                information of our system.
               </p>
             </div>
           </div>
@@ -245,21 +265,24 @@ export default function Help() {
             {/* 文字教程 */}
             <div className="w-full h-fit p-5 xl:2/5 xl:h-full bg-gray-50">
               <p className="text-lg text-gray-700 font-bold pb-2">
-                数据统计页面：
+                Data statistics page:
               </p>
               <p>
                 <span className="px-4"></span>
-                页面显示Mi-RNA&Disease月度以及每周的搜索数据展示图，
-                对于每张柱状图： <br />
-                1.可缩放查看
+                The page displays a display of monthly and weekly search data
+                for miRNA & disease, For each bar chart: <br />
+                1. Scalable view
                 <br />
-                2.可调节Y轴查看特定数据
+                2. Adjustable Y-axis to view specific data
                 <br />
-                3.点击图表右上角第一个图标查看图表数据
+                3. Click on the first icon in the upper right corner of the
+                chart to view the chart data
                 <br />
-                4.点击图表右上角第二个图标更新绘图
+                4. Click on the second icon in the upper right corner of the
+                chart to update the plot
                 <br />
-                5.点击图表右上角第三个图标下载图片
+                5. Click on the third icon in the upper right corner of the
+                chart to download the image
               </p>
             </div>
           </div>

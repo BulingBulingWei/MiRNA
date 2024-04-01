@@ -21,6 +21,7 @@ import {
 import { GraphChart } from "echarts/charts";
 import { LabelLayout } from "echarts/features";
 import { CanvasRenderer } from "echarts/renderers";
+import { useDebounce } from "../../utils/tools";
 echarts.use([
   TooltipComponent,
   LegendComponent,
@@ -239,20 +240,7 @@ export default function RNAVisualization() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
-
-  const handleSearchInputChange = throttle(GetMirnaFuzzy, 1000);
+  const handleSearchInputChange = useDebounce(GetMirnaFuzzy, 1000);
 
   const handleInputEnter = (event) => {
     if (searchInput.current.value === "") return;
@@ -261,7 +249,121 @@ export default function RNAVisualization() {
     }
   };
 
-  const paintSequence = (seq, baseSeq) => {
+  const paintSequence = (colorful, seq, baseSeq) => {
+    let len = seq.length;
+    let list = [];
+    for (let i = 0; i < len; ++i) {
+      // 空格
+      if (seq[i] === " ") {
+        list.push(
+          <div className="mx-1 w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 "></div>
+        );
+      } else {
+        let color = "";
+        if (seq[i] === "a") color = "bg-red-100 border-red-300 border-2";
+        else if (seq[i] === "A") color = "bg-red-100 border-red-500 border-2";
+        else if (seq[i] === "u")
+          color = "bg-yellow-200 border-yellow-300 border-2";
+        else if (seq[i] === "U")
+          color = "bg-yellow-200 border-yellow-500 border-2";
+        else if (seq[i] === "c") color = "bg-blue-100 border-blue-400 border-2";
+        else if (seq[i] === "C") color = "bg-blue-100 border-blue-600 border-2";
+        else if (seq[i] === "g") color = "bg-lime-200 border-lime-400 border-2";
+        else if (seq[i] === "G") color = "bg-lime-200 border-lime-700 border-2";
+        else color = "bg-orange-200 border-orange-400 border-2";
+
+        // 链接（键）
+        if (seq[i] === "|") {
+          list.push(
+            <div className="px-1 h-fit w-fit ">
+              <div className={`h-10 lg:h-10 w-5 xl:w-5 2xl:w-8`}>
+                <div className="h-full w-1 mx-auto bg-slate-600 rounded-full"></div>
+              </div>
+            </div>
+          );
+        }
+        // 大写（成熟序列）
+        else if (seq[i] >= "A" && seq[i] <= "Z") {
+          list.push(
+            <div className={`p-1 h-fit w-fit ${colorful ? "bg-red-200" : ""}`}>
+              <div
+                className={`w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
+              text-center flex justify-center items-center 
+             text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
+              >
+                {seq[i]}
+              </div>
+            </div>
+          );
+        }
+        // 不确定序列
+        else if (seq[i] === "-") {
+          let havebackgroundColor = colorful;
+          let j = i;
+          let seqLen = seq.length;
+          while (--j >= 0 && seq[j] !== " " && seq[j] !== "-") {
+            if (seq[j] >= "A" && seq[j] <= "Z") havebackgroundColor = true;
+            else havebackgroundColor = false;
+          }
+          j = i;
+          if (havebackgroundColor === undefined) {
+            while (++j < seqLen && seq[j] !== " " && seq[j] !== "-") {
+              if (seq[j] >= "A" && seq[j] <= "Z") havebackgroundColor = true;
+              else havebackgroundColor = false;
+            }
+          }
+          j = i;
+          if (havebackgroundColor === undefined && baseSeq !== undefined) {
+            while (j >= 0 && baseSeq[j] === " ") --j;
+            if (j >= 0 && baseSeq[j] >= "A" && baseSeq[j] <= "Z")
+              havebackgroundColor = true;
+            else {
+              j = i;
+              let len = baseSeq.length;
+              while (j < len && baseSeq[j] === " ") ++j;
+              if (j < len && baseSeq[j] >= "A" && baseSeq[j] <= "Z")
+                havebackgroundColor = true;
+              else if (j < len && baseSeq[j] >= "a" && baseSeq[j] <= "z")
+                havebackgroundColor = false;
+            }
+          }
+
+          list.push(
+            <div
+              className={`p-1 h-fit w-fit ${
+                havebackgroundColor ? "bg-red-200" : ""
+              } `}
+            >
+              <div
+                className={`w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
+              text-center flex justify-center items-center 
+             text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
+              >
+                {seq[i]}
+              </div>
+            </div>
+          );
+        }
+        // 小写字母（不成熟序列）
+        else {
+          list.push(
+            <div className="p-1 h-fit w-fit ">
+              <div
+                className={`w-5 h-5 xl:w-5 xl:h-5 2xl:w-8 2xl:h-8 ${color} rounded-full 
+              text-center flex justify-center items-center 
+             text-sm lg:text-base 2xl:text-xl font-bold  2xl:leading-7`}
+              >
+                {seq[i].toUpperCase()}
+              </div>
+            </div>
+          );
+        }
+      }
+    }
+    return list;
+  };
+
+  const paintColorfulSequence = (seq, baseSeq) => {
     let len = seq.length;
     let list = [];
     for (let i = 0; i < len; ++i) {
@@ -389,36 +491,56 @@ export default function RNAVisualization() {
       {/* （上方）基因序列可视化 */}
       <div
         className={`${
-          rnaSequenceData !== null && rnaSequenceData !== undefined
-            ? "h-1/2 min-h-fit md:h-1/3"
-            : "h-0"
+          !!rnaSequenceData ? "h-1/3 min-h-fit md:h-1/4" : "h-0"
         } w-full flex justify-center items-center cursor-default 
           select-none bg-gray-50 
           border-b-4 border-red-100`}
       >
-        {rnaSequenceData !== null && rnaSequenceData !== undefined && (
+        {!!rnaSequenceData && (
           <div
-            className="h-full min-w-full w-fit px-2 py-6 md:px-10 bg-gray-50
+            className="h-full min-w-full w-fit px-2 py-4 md:px-10 bg-gray-50
               flex flex-col justify-center items-start overflow-x-scroll overflow-y-hidden"
             ref={scrollBox}
             onWheel={(event) => {
               scrollBox.current.scrollLeft += event.deltaY;
             }}
           >
-            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.first, rnaSequenceData.second)}
+            <div className="h-fit w-fit py-0 flex justify-start items-center bg-blue-5">
+              {paintSequence(
+                params.mirnaName.endsWith("-5p") ||
+                  (!params.mirnaName.endsWith("-5p") &&
+                    !params.mirnaName.endsWith("-3p")),
+                rnaSequenceData.first,
+                rnaSequenceData.second
+              )}
             </div>
-            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.second)}
+            <div className="h-fit w-fit py-0 flex justify-start items-center bg-blue-5">
+              {paintSequence(
+                params.mirnaName.endsWith("-5p") ||
+                  (!params.mirnaName.endsWith("-5p") &&
+                    !params.mirnaName.endsWith("-3p")),
+                rnaSequenceData.second
+              )}
             </div>
-            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.third)}
+            <div className="h-fit w-fit py-0 flex justify-start items-center bg-blue-5">
+              {paintSequence(false, rnaSequenceData.third)}
             </div>
-            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.fourth)}
+            <div className="h-fit w-fit py-0 flex justify-start items-center bg-blue-5">
+              {paintSequence(
+                params.mirnaName.endsWith("-3p") ||
+                  (!params.mirnaName.endsWith("-5p") &&
+                    !params.mirnaName.endsWith("-3p")),
+                rnaSequenceData.fourth
+              )}
             </div>
-            <div className="h-fit w-fit py-1 flex justify-start items-center bg-blue-5">
-              {paintSequence(rnaSequenceData.fifth, rnaSequenceData.fourth)}
+            <div className="h-fit w-fit py-0 flex justify-start items-center bg-blue-5">
+              {paintSequence(
+                params.mirnaName.endsWith("-3p") ||
+                  (!params.mirnaName.endsWith("-5p") &&
+                    !params.mirnaName.endsWith("-3p")),
+                rnaSequenceData.fifth,
+                rnaSequenceData.fourth
+              )}
             </div>
           </div>
         )}
@@ -453,35 +575,33 @@ export default function RNAVisualization() {
                   }, 1500);
                 }}
               />
-              {fuzzySearchList !== null &&
-                fuzzySearchList !== undefined &&
-                fuzzySearchList.length > 0 && (
-                  <div
-                    className="h-fit w-full max-h-72 absolute top-8 rounded border-2 
+              {!!fuzzySearchList && fuzzySearchList.length > 0 && (
+                <div
+                  className="h-fit w-full max-h-72 absolute top-8 rounded border-2 
                 border-blue-200 overflow-y-scroll bg-gray-50"
-                  >
-                    <ul
-                      className="h-fit w-full flex-shrink-0 rounded border-2 border-blue-200
+                >
+                  <ul
+                    className="h-fit w-full flex-shrink-0 rounded border-2 border-blue-200
                 text-gray-600 shadow p-0"
-                    >
-                      {fuzzySearchList.map((fuzzyItem) => {
-                        return (
-                          <li
-                            key={fuzzyItem.name}
-                            className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
+                  >
+                    {fuzzySearchList.map((fuzzyItem) => {
+                      return (
+                        <li
+                          key={fuzzyItem.name}
+                          className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
                    border-b-2 border-gray-300 cursor-pointer"
-                            onClick={() => {
-                              searchInput.current.value = fuzzyItem.name;
-                              setFuzzySearchList(undefined);
-                            }}
-                          >
-                            {fuzzyItem.name}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
+                          onClick={() => {
+                            searchInput.current.value = fuzzyItem.name;
+                            setFuzzySearchList(undefined);
+                          }}
+                        >
+                          {fuzzyItem.name}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
             </div>
             <div
               className="h-full flex-grow ml-2 flex justify-center items-center bg-gray-50 rounded"
@@ -493,8 +613,7 @@ export default function RNAVisualization() {
               <SearchSvg></SearchSvg>
             </div>
           </div>
-          {mirnaSelectList !== null &&
-            mirnaSelectList !== undefined &&
+          {!!mirnaSelectList &&
             mirnaSelectList.map((item) => {
               return (
                 <div

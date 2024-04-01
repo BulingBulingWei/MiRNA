@@ -18,12 +18,27 @@ export const Label = styled.div`
 export const InfoValue = styled(Label)`
   height: fit-content;
   overflow-wrap: break-word;
-  width: 60%;
+  width: ${(props) => (props.width ? props.width : "60%")};
+  /* width: 60%; */
   padding-left: 0.2rem;
 `;
 
 export const InfoLabel = styled(InfoValue)`
-  width: 40%;
+  width: ${(props) => (props.width ? props.width : "40%")};
+  /* width: 40%; */
+`;
+
+export const HalfInfoListframe = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 100%;
+  padding: 0.2rem 0.1rem;
+
+  @media (min-width: ${media.md}) {
+    width: 47%;
+    padding: 0.2rem 0.25rem;
+  }
 `;
 
 export const InfoListframe = styled.div`
@@ -32,10 +47,6 @@ export const InfoListframe = styled.div`
   height: fit-content;
   width: 100%;
   padding: 0.2rem 0.1rem;
-  @media (min-width: ${media.md}) {
-    width: 47%;
-    padding: 0.2rem 0.25rem;
-  }
 `;
 
 export const InfoItem = styled.div`
@@ -45,7 +56,7 @@ export const InfoItem = styled.div`
   width: 100%;
   justify-content: space-between;
   border-bottom-width: 2px;
-  boder-color: rgb(243 244 246);
+  border-color: rgb(243 244 246);
   padding: 0 0.2rem;
   &:nth-child(odd) {
     background: #f5f5f5;
@@ -67,6 +78,7 @@ export const Gframe = styled.div`
   height: fit-content;
   width: 100%;
   margin-top: 2.5rem;
+
   @media (min-width: ${media.md}) {
     width: 50%;
     margin-left: 2.5rem;

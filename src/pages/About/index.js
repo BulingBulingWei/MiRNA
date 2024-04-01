@@ -43,7 +43,7 @@ export default function About() {
     let res = await axios(options);
     if (res.data.code === "0") {
       toastController({
-        mes: "发送成功！",
+        mes: "Sent successfully!",
         timeout: 1000,
       });
     } else {
@@ -162,32 +162,45 @@ export default function About() {
           >
             {/* 项目简介 */}
             <div className="h-fit w-full  pb-8">
-              <p className="text-sky-700 font-bold leading-10">系统简介：</p>
-              <p className="font-mono font-bold">
-                <span className="px-4"></span>
-                本系统通过基于规则并结合机器学习的方式实现miRNA与疾病在文献中的实体识别，
-                得出miRNA与疾病的实体与对应关系，并使用基于图神经网络的链路预测，
-                深层次分析miRNA与疾病数据中隐含的功能与信息，预测miRNA与疾病之间的联系，
-                希望能够辅助科研工作者以更快更经济的方式找出与疾病相关的miRNA。
+              <p className="text-sky-700 font-bold leading-10 pb-3">
+                System Introduction:
               </p>
-              <p className="font-mono font-bold">
-                <span className="px-4"></span>
-                为此，我们提供了搜索相关关系的功能，搜索框准确输入实体，就可以看见以此为中心的
-                相关Disease以及Mirna的关系图以及证实相关关系的论文摘要，并且在关系图中能
-                看到经我们系统预测的可能与之有关的Disease或者Mirna。
+              <p className="font-mono font-bold pb-3 indent-8">
+                This system achieves entity recognition of miRNA and diseases in
+                literature through rule-based and machine learning methods,
+                obtains the entity and corresponding relationship between miRNA
+                and diseases, and uses graph neural network-based link
+                prediction to deeply analyze the implicit functions and
+                information in miRNA and disease data, predicting the
+                relationship between miRNA and diseases, I hope to assist
+                researchers in finding miRNAs related to diseases in a faster
+                and more economical way.
               </p>
-              <p className="font-mono font-bold">
-                <span className="px-4"></span>
-                同时，我们也提供了纯论文搜索功能，帮助大家更精准地找到与搜索关键词有关的论文，
-                如果想要了解论文的详情，还需点击前往原文链接。
+              <p className="font-mono font-bold pb-3 indent-8">
+                For this purpose, we provide the function of searching for
+                relevant relationships. By accurately entering entities in the
+                search box, we can see the relationship diagrams of related
+                Disagrees and mirnas centered around them, as well as the
+                abstract of the paper confirming the relevant relationships. In
+                the relationship diagrams, we can also see the possible
+                Disagrees or mirnas predicted by our system that may be related
+                to them.
               </p>
-              <p className="font-mono font-bold">
-                <span className="px-4"></span>
-                最后，希望我们可以给您带来良好的使用体验，为您提供有效的服务，
-                如有任何问题，欢迎您与我们联系。
+              <p className="font-mono font-bold pb-3 indent-8">
+                At the same time, we also provide a pure paper search function
+                to help you more accurately find papers related to search
+                keywords. If you want to learn more about the details of papers,
+                you also need to click on the link to the original text.
+              </p>
+              <p className="font-mono font-bold pb-3 indent-8">
+                Finally, we hope to bring you a good user experience and provide
+                you with effective services. If you have any questions, please
+                feel free to contact us.
               </p>
             </div>
-            <p className="text-sky-700 font-bold leading-10">系统更新记录：</p>
+            <p className="text-sky-700 font-bold leading-10">
+              System update records:
+            </p>
             {/* 以下是项目更新历史 */}
             {/* 2023-05-29 */}
             <div className="h-fit w-full m-0 p-4 pb-6 relative border-l-2 border-blue-400 ">
@@ -196,9 +209,11 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-05-29</p>
               <ul className="font-mono font-bold">
-                <li>- 新增了mirna结构的多种可视化图</li>
-                <li>- 新增了-3p和-5p两支的对比</li>
-                <li>- 新增了关系数据的下载页面</li>
+                <li>
+                  -Multiple visualizations of miRNA structures have been added
+                </li>
+                <li>-Comparison of -3p and -5p added</li>
+                <li>-Added a download page for relationship data</li>
               </ul>
             </div>
             {/* 2023-04-01 */}
@@ -208,8 +223,11 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-04-01</p>
               <ul className="font-mono font-bold">
-                <li>- 更新了网站内的很多背景图片</li>
-                <li>- 对 Mi-RNA 的序列可视化展示做了一些调整</li>
+                <li>-Updated many background images on the website</li>
+                <li>
+                  -Some adjustments have been made to the sequence visualization
+                  display of miRNA
+                </li>
               </ul>
             </div>
             {/* 2023-03-29 */}
@@ -219,8 +237,14 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-03-29</p>
               <ul className="font-mono font-bold">
-                <li>- 相关已证实和预测的关系数据可以下载啦~</li>
-                <li>- 手机端的网站页面也更加友好了</li>
+                <li>
+                  -Relevant confirmed and predicted relationship data can be
+                  downloaded now~
+                </li>
+                <li>
+                  -The website pages on mobile devices have also become more
+                  user-friendly
+                </li>
               </ul>
             </div>
             {/* 2023-03-26 */}
@@ -230,8 +254,10 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-03-26</p>
               <ul className="font-mono font-bold">
-                <li>- 增加了单篇论文与多篇论文下载的功能</li>
-                <li>- 修复了一些已知问题</li>
+                <li>
+                  -Added the function of downloading single and multiple papers
+                </li>
+                <li>-Fixed some known issues</li>
               </ul>
             </div>
             {/* 2023-03-24 */}
@@ -241,8 +267,11 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-03-24</p>
               <ul className="font-mono font-bold">
-                <li>- 系统新增搜索论文功能，快去试试吧~</li>
-                <li>- 修复了一些已知问题</li>
+                <li>
+                  -The system has added a search function for papers. Give it a
+                  try~
+                </li>
+                <li>-Fixed some known issues</li>
               </ul>
             </div>
             {/* 2023-03-23 */}
@@ -252,7 +281,10 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-03-23</p>
               <ul className="font-mono font-bold">
-                <li>- 系统新增搜索提示功能啦！再也不怕忘记实体名字~</li>
+                <li>
+                  -The system has added a search prompt function! Never be
+                  afraid to forget the physical name again~
+                </li>
               </ul>
             </div>
             {/* 2023-03-21 */}
@@ -262,7 +294,10 @@ export default function About() {
               {/* 框框内的更新时间与内容 */}
               <p className="font-bold text-sky-700 mb-1">2023-03-21</p>
               <ul className="font-mono font-bold">
-                <li>- Mirna-Disease 系统终于与大家见面了。</li>
+                <li>
+                  -The Mira Disease system has finally been introduced to
+                  everyone
+                </li>
               </ul>
             </div>
           </div>

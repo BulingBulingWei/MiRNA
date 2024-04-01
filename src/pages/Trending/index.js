@@ -731,8 +731,8 @@ export default function Trending() {
          py-2 px-5 pt-8 lg:py-3 lg:pt-12 lg:px-10 xl:px-14  mb-3 lg:mb-8 xl:mb-12"
         >
           <h1>
-            MiRNA & Disease Monthly Trending Data{" "}
-            <span className="text-xl text-sky-700">(月度数据)</span>
+            miRNA & Disease Monthly Trending Data{" "}
+            <span className="text-xl text-sky-700">(this month)</span>
           </h1>
         </div>
         {/* grid */}
@@ -766,7 +766,7 @@ export default function Trending() {
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                MiRNA Search Trending Data
+                miRNA Search Trending Data
               </p>
             </div>
             {/* 图表 */}
@@ -784,7 +784,7 @@ export default function Trending() {
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                MiRNA Struct Search Trending Data
+                miRNA Struct Search Trending Data
               </p>
             </div>
             {/* 图表 */}
@@ -801,8 +801,8 @@ export default function Trending() {
          py-2 px-5 pt-8 lg:py-3 lg:pt-12 lg:px-10 xl:px-14  mb-3 lg:mb-8 xl:mb-12"
         >
           <h1>
-            MiRNA & Disease Weekly Trending Data{" "}
-            <span className="text-xl text-sky-700">(本周数据)</span>
+            miRNA & Disease Weekly Trending Data{" "}
+            <span className="text-xl text-sky-700">(this week)</span>
           </h1>
         </div>
         {/* grid */}
@@ -836,7 +836,7 @@ export default function Trending() {
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                MiRNA Search Trending Data
+                miRNA Search Trending Data
               </p>
             </div>
             {/* 图表 */}
@@ -854,7 +854,7 @@ export default function Trending() {
             {/* 图表标题 */}
             <div className="h-12 w-full shrink-0 rounded-t bg-gray-50 px-3 py-2">
               <p className="text-lg text-gray-600 font-bold">
-                MiRNA Struct Search Trending Data
+                miRNA Struct Search Trending Data
               </p>
             </div>
             {/* 图表 */}

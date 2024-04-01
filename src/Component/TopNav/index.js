@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { DropDownSvg } from "../../svg/index";
 import logo from "../../bg/miRTarDis-v3.png";
 
+// 电脑端导航栏
 export default function TopNav() {
   const navigate = useNavigate();
   const location = useLocation().pathname;
@@ -13,9 +14,19 @@ export default function TopNav() {
 
   const [MiRNADrop, setMiRNADrop] = useState(false);
   const [AboutDrop, setAboutDrop] = useState(false);
+  const [DataDrop, setDataDrop] = useState(false);
+
+  function beforeHandleSelect() {
+    setMiRNADrop(false);
+    setAboutDrop(false);
+    setDataDrop(false);
+  }
 
   return (
-    <div className="h-full w-full min-w-full relative">
+    <div
+      className="h-full w-full min-w-full relative"
+      style={{ whiteSpace: "nowrap" }}
+    >
       {/* overflow-x-auto */}
       <div
         className="h-full w-full min-w-full overflow-x-auto px-1
@@ -28,6 +39,7 @@ export default function TopNav() {
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
        `}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/`);
           }}
         >
@@ -46,8 +58,9 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer
-        ${isFocus(location, "Paper") === true ? "bg-sky-100" : ""}`}
+        ${isFocus(location, "Paper") ? "bg-sky-100" : ""}`}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/Paper`);
           }}
         >
@@ -60,20 +73,18 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer border-2
-        ${MiRNADrop === true ? " border-sky-200" : " border-gray-50"}
-        ${isFocus(location, "RNAVisualization") === true ? "bg-sky-100" : ""}`}
+        ${MiRNADrop ? " border-sky-200" : " border-gray-50"}
+        ${isFocus(location, "RNAVisualization") ? "bg-sky-100" : ""}`}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/RNAVisualization`);
           }}
         >
           <div>
-            <p className="text-gray-500 font-bold">MiRNA</p>
+            <p className="text-gray-500 font-bold">miRNA</p>
           </div>
           <div
             className="h-full w-fit pl-2 flex justify-center items-center"
-            onMouseEnter={() => {
-              setMiRNADrop(true);
-            }}
             onClick={(event) => {
               event.stopPropagation();
               setMiRNADrop((drop) => !drop);
@@ -83,17 +94,43 @@ export default function TopNav() {
           </div>
         </div>
 
-        {/* DownlowData */}
+        {/* miRNA-Disease-Data */}
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
-        ${isFocus(location, "DownloadData") === true ? "bg-sky-100" : ""}`}
+        ${DataDrop ? " border-sky-200" : " border-gray-50"}   
+        ${isFocus(location, "miRNA-Disease-Data") ? "bg-sky-100" : ""}`}
           onClick={() => {
-            navigate(`/DownloadData`);
+            beforeHandleSelect();
+            navigate(`/miRNA-Disease-Data`);
           }}
         >
           <div>
-            <p className="text-gray-500 font-bold">Data</p>
+            <p className="text-gray-500 font-bold">miRNA-Disease</p>
+          </div>
+          <div
+            className="h-full w-fit pl-2 flex justify-center items-center"
+            onClick={(event) => {
+              event.stopPropagation();
+              setDataDrop((drop) => !drop);
+            }}
+          >
+            <DropDownSvg></DropDownSvg>
+          </div>
+        </div>
+
+        {/* DownloadFiles */}
+        <div
+          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer 
+        ${isFocus(location, "DownloadFiles") ? "bg-sky-100" : ""}`}
+          onClick={() => {
+            beforeHandleSelect();
+            navigate(`/DownloadFiles`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">Download</p>
           </div>
         </div>
 
@@ -101,9 +138,10 @@ export default function TopNav() {
         <div
           className={`h-full w-fit px-2  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer border-2
-        ${AboutDrop === true ? " border-sky-200" : " border-gray-50"}      
-          ${isFocus(location, "About") === true ? "bg-sky-100" : ""}`}
+        ${AboutDrop ? " border-sky-200" : " border-gray-50"}      
+          ${isFocus(location, "About") ? "bg-sky-100" : ""}`}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/About`);
           }}
         >
@@ -112,9 +150,6 @@ export default function TopNav() {
           </div>
           <div
             className="h-full w-fit pl-2 flex justify-center items-center"
-            onMouseEnter={() => {
-              setAboutDrop(true);
-            }}
             onClick={(event) => {
               event.stopPropagation();
               setAboutDrop((drop) => !drop);
@@ -139,7 +174,7 @@ export default function TopNav() {
       {/* MiRNA下拉的选项 */}
       <div
         className={` w-fit z-50 absolute flex flex-col transition-all duration-500
-        ${MiRNADrop === true ? "opacity-100" : "opacity-0 hidden"}`}
+        ${MiRNADrop ? "opacity-100" : "opacity-0 hidden"}`}
         style={{ left: "16.2rem" }}
         onMouseLeave={() => {
           setMiRNADrop(false);
@@ -149,9 +184,14 @@ export default function TopNav() {
         <div
           className={`h-10 w-full px-6 flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
-        border-2 border-gray-300
-        ${isFocus(location, "Paper") === true ? "bg-sky-100" : ""}`}
+        border-2 border-gray-300`}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "MirnaStruct") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/MirnaStruct/hsa-mir-25`);
           }}
         >
@@ -159,13 +199,101 @@ export default function TopNav() {
             <p className="text-gray-500 font-bold">Struct</p>
           </div>
         </div>
-      </div>
 
+        {/* Drug Info */}
+        <div
+          className={`h-10 w-full px-6 flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
+        border-2 border-gray-300`}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "DrugInfo") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
+          onClick={() => {
+            beforeHandleSelect();
+            navigate(`/DrugInfo/Gefitinib`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">Drug</p>
+          </div>
+        </div>
+
+        {/* Gene Info */}
+        <div
+          className={`h-10 w-full px-6 flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
+        border-2 border-gray-300`}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "GeneInfo") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
+          onClick={() => {
+            beforeHandleSelect();
+            navigate(`/GeneInfo/xxx`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">Gene</p>
+          </div>
+        </div>
+      </div>
+      {/* Data下拉的选项 */}
+      <div
+        className={`z-50 absolute flex flex-col transition-all duration-500
+        ${DataDrop ? "opacity-100" : "opacity-0 hidden"}`}
+        style={{ left: "23.5rem", width: "9.8rem" }}
+        onMouseLeave={() => {
+          setDataDrop(false);
+        }}
+      >
+        {/* mirna-drug */}
+        <div
+          className={`h-10 w-full px-1 flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
+        border-2 border-gray-300 `}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "miRNA-Drug-Data") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
+          onClick={() => {
+            beforeHandleSelect();
+            navigate(`/miRNA-Drug-Data`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">miRNA-Drug</p>
+          </div>
+        </div>
+
+        {/* miRNA-Gene */}
+        <div
+          className={`h-10 w-full px-1 flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
+        border-2 border-gray-300`}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "miRNA-Gene-Data") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
+          onClick={() => {
+            beforeHandleSelect();
+            navigate(`/miRNA-Gene-Data`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">miRNA-Gene</p>
+          </div>
+        </div>
+      </div>
       {/* About下拉的选项 */}
       <div
-        className={`h-fit w-fit z-50 absolute flex flex-col transition-all duration-500
-        ${AboutDrop === true ? " opacity-100" : " opacity-0 hidden"}`}
-        style={{ left: "28rem" }}
+        className={`h-fit z-50 absolute flex flex-col transition-all duration-500
+        ${AboutDrop ? " opacity-100" : " opacity-0 hidden"}`}
+        style={{ left: "41.5rem", width: "5.8rem" }}
         onMouseLeave={() => {
           setAboutDrop(false);
         }}
@@ -174,9 +302,14 @@ export default function TopNav() {
         <div
           className={`h-10 w-full px-2 flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
-        border-2 border-gray-300 
-            ${isFocus(location, "Trending") === true ? "bg-sky-100" : ""}`}
+        border-2 border-gray-300 `}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "Trending") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/Trending`);
           }}
         >
@@ -189,9 +322,14 @@ export default function TopNav() {
         <div
           className={`h-10 w-full px-3  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
-        border-2 border-gray-300
-            ${isFocus(location, "Help") === true ? "bg-sky-100" : ""}`}
+        border-2 border-gray-300`}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "Help") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
           onClick={() => {
+            beforeHandleSelect();
             navigate(`/Help`);
           }}
         >

@@ -5,7 +5,6 @@ import styled from "styled-components";
 import download from "downloadjs";
 import PageButton from "../../Component/PageButton";
 import bgimg from "../../img/img1.jpg";
-import { DownloadSvg } from "../../svg/index";
 import {
   GetArticles,
   GetDiseaseFuzzySearchName,
@@ -14,6 +13,7 @@ import {
   PostArticleListDownload,
   axiosInstance as axios,
 } from "../../utils/mapPath";
+import { useDebounce } from "../../utils/tools";
 
 const PaperBox = styled.div`
   height: fit-content;
@@ -25,7 +25,7 @@ const PaperBox = styled.div`
     props.selected === "true"
       ? "rgba(229, 245, 251, 1)"
       : "rgba(255, 255, 255, 1)"};
-  padding: 0.4rem 0.3rem;
+  padding: 0.4rem 0 0.4rem 0.3rem;
   font-weight: 400;
   transition: all 0.4s;
   border-bottom-width: 0.1rem;
@@ -106,7 +106,7 @@ export default function PaperSearhDetail() {
         setPage_end(1);
         setPage_now(1);
         toastController({
-          mes: "没有查询到相关论文",
+          mes: "No relevant papers found",
           timeout: 1000,
         });
       } else {
@@ -190,7 +190,7 @@ export default function PaperSearhDetail() {
     let message = searchInput.current.value;
     if (message === undefined || message === "") {
       toastController({
-        mes: "请输入搜索内容",
+        mes: "Please enter search content",
         timeout: 2000,
       });
       return;
@@ -209,7 +209,7 @@ export default function PaperSearhDetail() {
   const goToPage = (pageNum) => {
     if (typeof parseInt(pageNum) !== "number" || pageNum < 1) {
       toastController({
-        mes: "请输入合法页数",
+        mes: "Please enter search content",
         timeout: 1500,
       });
       return;
@@ -280,26 +280,13 @@ export default function PaperSearhDetail() {
     }
   };
 
-  function throttle(fn, timeout) {
-    var can = true;
-    return function (...args) {
-      if (can === true) {
-        can = false;
-        setTimeout(() => {
-          fn(...args);
-          can = true;
-        }, timeout);
-      }
-    };
-  }
-
   const fuzzySearch = () => {
     let searchName = searchInput.current.value;
     GetDiseaseFuzzy(searchName);
     GetMirnaFuzzy(searchName);
   };
 
-  const handleSearchInputChange = throttle(fuzzySearch, 1000);
+  const handleSearchInputChange = useDebounce(fuzzySearch, 1000);
 
   return (
     <div className="h-full w-full flex justify-center items-center bg-green-200">
@@ -315,7 +302,7 @@ export default function PaperSearhDetail() {
         {/* 左边：论文列表选项 , 以及搜索框*/}
         <div
           className="h-fit max-h-full w-full min-h-full flex flex-col justify-between items-center
-         overflow-y-scroll lg:w-1/4 bg-gray-100 bg-opacity-90 cursor-pointer"
+          lg:w-1/4 bg-gray-100 bg-opacity-90 cursor-pointer"
         >
           {/* 论文顶部的搜索框 */}
           <div
@@ -421,44 +408,46 @@ export default function PaperSearhDetail() {
           </div>
 
           {/* 可选择的论文列表 */}
-          {paperList !== undefined &&
-          paperList !== null &&
-          paperList.length > 0 ? (
-            paperList.map((item) => {
-              return (
-                <PaperBox
-                  key={item.pmid}
-                  selected={`${
-                    item.pmid === paperSelectedId ? "true" : "false"
-                  }`}
-                  onClick={() => {
-                    setPaperSelectedId(item.pmid);
-                    setShowDetail(true);
-                  }}
-                >
-                  <p
-                    className={`inline-block w-full text-gray-600
-                   font-semibold truncate`}
+          <div className="w-full flex-grow overflow-y-scroll flex flex-col items-center">
+            {!!paperList && paperList.length > 0 ? (
+              paperList.map((item) => {
+                return (
+                  <PaperBox
+                    key={item.pmid}
+                    selected={`${
+                      item.pmid === paperSelectedId ? "true" : "false"
+                    }`}
+                    onClick={() => {
+                      setPaperSelectedId(item.pmid);
+                      setShowDetail(true);
+                    }}
                   >
-                    <span dangerouslySetInnerHTML={{ __html: item.title }} />
-                  </p>
-                  {item.abs !== undefined && item.abs !== null && (
-                    <AbsBox time={item.date}>
-                      <span className="text-sky-700 font-bold">Abstract: </span>
-                      <span dangerouslySetInnerHTML={{ __html: item.abs }} />
-                    </AbsBox>
-                  )}
-                </PaperBox>
-              );
-            })
-          ) : (
-            <div
-              className="h-96 w-full flex justify-center items-center md:text-3xl 
+                    <p
+                      className={`inline-block w-full text-gray-600
+                   font-semibold truncate`}
+                    >
+                      <span dangerouslySetInnerHTML={{ __html: item.title }} />
+                    </p>
+                    {!!item.abs && (
+                      <AbsBox time={item.date}>
+                        <span className="text-sky-700 font-bold">
+                          Abstract:{" "}
+                        </span>
+                        <span dangerouslySetInnerHTML={{ __html: item?.abs }} />
+                      </AbsBox>
+                    )}
+                  </PaperBox>
+                );
+              })
+            ) : (
+              <div
+                className="h-96 w-full flex justify-center items-center md:text-3xl 
           text-gray-300 font-bold"
-            >
-              居然什么都没有
-            </div>
-          )}
+              >
+                Nothing
+              </div>
+            )}
+          </div>
 
           {/* 底部的选择页面按钮 */}
           <div
@@ -598,34 +587,6 @@ export default function PaperSearhDetail() {
                         </div>
                       </div>
                     )}
-                    {/* 下载一篇文章的pdf */}
-                    <div className="h-fit w-full pt-2">
-                      <span className="font-bold text-sky-700">
-                        download this article:{" "}
-                      </span>
-                      <div
-                        className="inline-block h-full w-fit "
-                        onClick={() => {
-                          handleDownloadOneArticle(item.pmid);
-                        }}
-                      >
-                        <DownloadSvg></DownloadSvg>
-                      </div>
-                    </div>
-                    {/* 下载几篇论文 excel */}
-                    <div className="h-fit w-full pt-2">
-                      <span className="font-bold text-red-600">
-                        download ALL articles:{" "}
-                      </span>
-                      <div
-                        className="inline-block h-full w-fit "
-                        onClick={() => {
-                          PostArticleListDownloadAxios();
-                        }}
-                      >
-                        <DownloadSvg></DownloadSvg>
-                      </div>
-                    </div>
                     <div className="h-3"></div>
                     <p className="text-sky-700">
                       <span className="font-bold">pmid: </span>
