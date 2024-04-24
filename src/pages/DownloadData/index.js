@@ -7,6 +7,7 @@ import {
   GetDiseaseFuzzySearchName,
   POSTMirnaRelationshipData,
   PostDownloadRelationshipData,
+  GetDataSourceInfo,
   axiosInstance as axios,
 } from "../../utils/mapPath";
 //组件样式
@@ -48,6 +49,8 @@ export default function DownloadData() {
   const relevanceInput = useRef(null);
   const pageSizeInput = useRef(null);
   const volumnSizeInput = useRef(null);
+  const DisFuzzyList = useRef(null);
+  const miRNAFuzzyList = useRef(null);
   const [relevanceSelect, setRelevanceSelect] = useState(0.9);
   const [pageSizeSelect, setPageSizeSelect] = useState(50);
   const [volumnSizeSelect, setVolumnSizeSelect] = useState(100);
@@ -62,6 +65,7 @@ export default function DownloadData() {
   const [count, setCount] = useState(0);
   const [graphData, setGraphData] = useState(null);
   const [hasGraph, setHasGraph] = useState(false);
+  const [allSource, setAllSource] = useState(null);
 
   //有关页数的state
   const [page_now, setPage_now] = useState(1);
@@ -69,15 +73,13 @@ export default function DownloadData() {
   const [showDownloadWin, setShowDownloadWin] = useState(false);
 
   //一些input的 dom标识
-  const [SourceSelect, setSourceSelect] = useState(["0"]);
+  const [SourceSelect, setSourceSelect] = useState([]);
   const [FileTypeSelect, setFileTypeSelect] = useState(0);
   const pageInput = useRef(null);
 
-  const SOURCE = {
-    HMDD: "0",
-  };
+  const SOURCE_TYPE = "disease";
 
-  const DOWNLOAD_TYPE = {
+  const FILETYPE = {
     xlsx: 0,
     csv: 1,
     txt: 2,
@@ -93,9 +95,15 @@ export default function DownloadData() {
     "PubMed Link": { name: "PubMed", width: "10%" },
   };
 
+  useEffect(() => {
+    if (!!!allSource) {
+      GetDataSourceInfoAxios();
+    }
+  }, []);
+
   //download
   useEffect(() => {
-    POSTMirnaRelationshipDataAxios();
+    if (!!allSource) POSTMirnaRelationshipDataAxios();
   }, [
     page_now,
     SourceSelect,
@@ -104,6 +112,43 @@ export default function DownloadData() {
     relevanceSelect,
     pageSizeSelect,
   ]);
+
+  // 获取所有的数据来源（非预测数据来源）
+  const GetDataSourceInfoAxios = async () => {
+    let options = {
+      url: GetDataSourceInfo,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      params: {
+        type: SOURCE_TYPE,
+      },
+    };
+    let res = await axios(options);
+
+    if (res?.data?.code === "0") {
+      let tmp_source = res.data?.data?.filter(
+        (item) => item?.type === SOURCE_TYPE
+      );
+      setAllSource(tmp_source);
+      let tmp_select = [];
+      res.data?.data?.forEach((item) => {
+        if (item?.type === SOURCE_TYPE) {
+          tmp_select.push(item.id);
+        }
+      });
+      setSourceSelect(tmp_select);
+      console.log("tmp", tmp_select);
+    }
+    //请求不成功
+    else {
+      toastController({
+        mes: "request failure",
+        timeout: 1000,
+      });
+    }
+  };
 
   // TODO:参数修改
   const POSTMirnaRelationshipDataAxios = async () => {
@@ -243,20 +288,6 @@ export default function DownloadData() {
     }
   };
 
-  // 节流函数
-  // function throttle(fn, timeout) {
-  //   var can = true;
-  //   return function (...args) {
-  //     if (can === true) {
-  //       can = false;
-  //       setTimeout(() => {
-  //         fn(...args);
-  //         can = true;
-  //       }, timeout);
-  //     }
-  //   };
-  // }
-
   const handleMirnaSearchInputChange = useDebounce(
     GetMirnaFuzzySearchAxios,
     1000
@@ -314,16 +345,20 @@ export default function DownloadData() {
                   placeholder="select miRNA"
                   className="h-full w-full rounded px-2 z-10"
                   ref={mirnaSearchInput}
-                  onFocus={handleMirnaSearchInputChange}
-                  onChange={handleMirnaSearchInputChange}
+                  onFocus={() => {
+                    miRNAFuzzyList.current.style.height = "fit-content";
+                    handleMirnaSearchInputChange();
+                  }}
+                  onChange={() => {
+                    miRNAFuzzyList.current.style.height = "fit-content";
+                    handleMirnaSearchInputChange();
+                  }}
                   onBlur={() => {
-                    setTimeout(() => {
-                      setMirnaFuzzySearchList([]);
-                    }, 500);
+                    miRNAFuzzyList.current.style.height = 0;
                   }}
                 />
                 {!!MirnaFuzzySearchList && MirnaFuzzySearchList.length > 0 && (
-                  <FuzzySearchList>
+                  <FuzzySearchList ref={miRNAFuzzyList}>
                     <ul
                       className="h-fit w-full flex-shrink-0 rounded border-2 
                         text-gray-600 shadow p-0 z-30 bg-gray-50"
@@ -407,16 +442,20 @@ export default function DownloadData() {
                   placeholder="select disease"
                   className="h-full w-full rounded px-2"
                   ref={disSearchInput}
-                  onFocus={handleDisSearchInputChange}
-                  onChange={handleDisSearchInputChange}
+                  onFocus={() => {
+                    DisFuzzyList.current.style.height = "fit-content";
+                    handleDisSearchInputChange();
+                  }}
+                  onChange={() => {
+                    DisFuzzyList.current.style.height = "fit-content";
+                    handleDisSearchInputChange();
+                  }}
                   onBlur={() => {
-                    setTimeout(() => {
-                      setDisFuzzySearchList(null);
-                    }, 500);
+                    DisFuzzyList.current.style.height = 0;
                   }}
                 />
                 {!!DisFuzzySearchList && DisFuzzySearchList.length > 0 && (
-                  <FuzzySearchList>
+                  <FuzzySearchList ref={DisFuzzyList}>
                     <ul
                       className="h-fit w-full flex-shrink-0 rounded border-2 
                          text-gray-600 shadow p-0 z-30 bg-gray-50"
@@ -553,16 +592,15 @@ export default function DownloadData() {
               Data Filter
             </p>
             <Label>Source:</Label>
-            {!!SOURCE &&
-              Object.keys(SOURCE).map((item) => {
+            {!!allSource &&
+              allSource.map((item) => {
                 return (
                   <ResourceBtn
-                    selected={
-                      SourceSelect.includes(SOURCE[item]) ? true : false
-                    }
+                    key={item.id}
+                    selected={SourceSelect.includes(item.id) ? true : false}
                     onClick={() => {
                       setIsPredict(false);
-                      if (SourceSelect.includes(SOURCE[item])) {
+                      if (SourceSelect.includes(item.id)) {
                         if (SourceSelect.length === 1) {
                           toastController({
                             mes: `Cannot select less than one source`,
@@ -571,17 +609,17 @@ export default function DownloadData() {
                           return;
                         }
                         const tmpList = SourceSelect.filter(
-                          (e) => e !== SOURCE[item]
+                          (e) => e !== item.id
                         );
                         setSourceSelect(tmpList);
                       } else {
-                        const tmpList = [...SourceSelect, SOURCE[item]];
+                        const tmpList = [...SourceSelect, item.id];
                         setSourceSelect(tmpList);
                       }
                       setPage_now(1);
                     }}
                   >
-                    {item}
+                    {item.label}
                   </ResourceBtn>
                 );
               })}
@@ -841,22 +879,22 @@ export default function DownloadData() {
             </p>
             {/* 四个按钮 */}
             <div className="h-fit w-full mt-3 mb-4 flex justify-around items-center">
-              {Object.keys(DOWNLOAD_TYPE).map((type) => {
+              {Object.keys(FILETYPE).map((item) => {
                 return (
                   <FileTypeBtn
                     style={{
                       backgroundColor: `${
-                        FileTypeSelect === type ? "#0d9488" : ""
+                        FileTypeSelect === item ? "#0d9488" : ""
                       }`,
-                      outlineStyle: `${FileTypeSelect === type ? "solid" : ""}`,
-                      outlineOffset: `${FileTypeSelect === type ? "2px" : "0"}`,
-                      outlineWidth: `${FileTypeSelect === type ? "3px" : "0"}`,
+                      outlineStyle: `${FileTypeSelect === item ? "solid" : ""}`,
+                      outlineOffset: `${FileTypeSelect === item ? "2px" : "0"}`,
+                      outlineWidth: `${FileTypeSelect === item ? "3px" : "0"}`,
                     }}
                     onClick={() => {
-                      setFileTypeSelect(DOWNLOAD_TYPE[type]);
+                      setFileTypeSelect(item);
                     }}
                   >
-                    {type}
+                    {item}
                   </FileTypeBtn>
                 );
               })}

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { ToastContext } from "../../App";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
-  GetDrugFuzzyName as GetMirnaFuzzySearchName,
+  GetMirnaFuzzySearchName,
   GetMirnaAllMessage,
   axiosInstance as axios,
 } from "../../utils/mapPath";
@@ -65,7 +65,7 @@ export default function MirnaStruct() {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       params: {
-        mirnaName: MirnaName,
+        MirnaName: MirnaName,
       },
     };
 
@@ -137,15 +137,18 @@ export default function MirnaStruct() {
                       {fuzzySearchList.map((fuzzyItem) => {
                         return (
                           <li
-                            key={fuzzyItem}
+                            key={fuzzyItem.id}
                             className="h-fit w-full z-50 flex px-2 justify-start items-center hover:bg-gray-100
                                border-b-2 border-gray-300 cursor-pointer"
                             onClick={() => {
-                              searchInput.current.value = fuzzyItem;
+                              searchInput.current.value = fuzzyItem.name;
                               setFuzzySearchList(undefined);
+                              navigate(
+                                `/MirnaStruct/${searchInput.current.value}`
+                              );
                             }}
                           >
-                            {fuzzyItem}
+                            {fuzzyItem.name}
                           </li>
                         );
                       })}

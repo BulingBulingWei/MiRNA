@@ -101,34 +101,6 @@ export default function DLmirnadrugData() {
     POSTMirnaRelationshipDataAxios();
   }, [page_now, SourceSelect, MirnaSelectList, DrugSelectList, pageSizeSelect]);
 
-  const countLimit = (cou, data) => {
-    let len = data.length;
-    let ans = [];
-    let sum = 0,
-      last = 0;
-    let tmparr = [];
-    function isSame(item1, item2) {
-      let keys = ["Data miRNA", "miRbase Name", "Drug"];
-      for (let k of keys) {
-        if (item1[k] !== item2[k]) return false;
-      }
-      return true;
-    }
-    for (let i = 1; i < len; ++i) {
-      if (isSame(data[i], data[last])) {
-        ++sum;
-        tmparr.push(data[i]);
-      } else {
-        last = i;
-        if (sum >= cou) {
-          ans = ans.concat(tmparr);
-        }
-        tmparr = [];
-      }
-    }
-    return ans;
-  };
-
   // 根据筛选条件获取数据
   const POSTMirnaRelationshipDataAxios = async () => {
     let options = {
@@ -140,6 +112,7 @@ export default function DLmirnadrugData() {
       data: {
         drugs: DrugSelectList,
         mirnas: MirnaSelectList,
+        filterRow: count,
         pageNum: parseInt(page_now),
         pageSize: parseInt(pageSizeInput.current.value),
         resources: SourceSelect,

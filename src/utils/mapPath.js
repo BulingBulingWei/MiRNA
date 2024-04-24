@@ -175,3 +175,10 @@ export const GetGeneInfo = `/gene/name`;
 
 //根据药物名字获取详细信息
 export const GetDrugInfo = `/rna/medicine/detail/byName`;
+
+//获取全部数据来源，用于几个Data页面
+export const GetAllDataSource = `/source/all`;
+// export const GetDataSourceInfo = `/source/all`;
+
+//获取来源数据库或者第三方渠道信息
+export const GetDataSourceInfo = `/source/list`;
