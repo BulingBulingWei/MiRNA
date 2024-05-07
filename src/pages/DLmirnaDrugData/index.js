@@ -38,6 +38,22 @@ import {
 import PageButton from "../../Component/PageButton";
 import { CancelSvg, LinkSvg, QuestionSvg } from "../../svg";
 import { useDebounce } from "../../utils/tools";
+import * as echarts from "echarts/core";
+import {
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+} from "echarts/components";
+import { GraphChart } from "echarts/charts";
+import { CanvasRenderer } from "echarts/renderers";
+
+echarts.use([
+  TitleComponent,
+  TooltipComponent,
+  LegendComponent,
+  GraphChart,
+  CanvasRenderer,
+]);
 
 export default function DLmirnadrugData() {
   const toastController = useContext(ToastContext);
@@ -45,9 +61,10 @@ export default function DLmirnadrugData() {
   // useRef
   const mirnaSearchInput = useRef(null);
   const drugSearchInput = useRef(null);
-
+  const graphDom = useRef(null);
   const pageSizeInput = useRef(null);
   const volumnSizeInput = useRef(null);
+  const scrollDom = useRef(null);
   const [pageSizeSelect, setPageSizeSelect] = useState(50);
   const [volumnSizeSelect, setVolumnSizeSelect] = useState(100);
 
@@ -58,9 +75,73 @@ export default function DLmirnadrugData() {
   const [DrugSelectList, setDrugSelectList] = useState([]);
   const [RelationshipData, setRelationshipData] = useState(undefined);
   const [count, setCount] = useState(0);
-  const [graphData, setGraphData] = useState(null);
   const [hasGraph, setHasGraph] = useState(false);
   const [downloadSource, setDownloadSource] = useState(null);
+  const [graphData, setGraphData] = useState({
+    nodes: [
+      {
+        id: "0",
+        name: "Myriel",
+        symbolSize: 19.12381,
+        value: 28.685715,
+        category: 0,
+      },
+      {
+        id: "1",
+        name: "Napoleon",
+        symbolSize: 2.6666666666666665,
+        value: 4,
+        category: 0,
+      },
+      {
+        id: "2",
+        name: "MlleBaptistine",
+        symbolSize: 6.323809333333333,
+        value: 9.485714,
+        category: 1,
+      },
+      {
+        id: "3",
+        name: "MmeMagloire",
+        symbolSize: 6.323809333333333,
+        value: 9.485714,
+        category: 1,
+      },
+      {
+        id: "4",
+        name: "CountessDeLo",
+        symbolSize: 2.6666666666666665,
+        value: 4,
+        category: 0,
+      },
+    ],
+    links: [
+      {
+        source: "1",
+        target: "0",
+      },
+      {
+        source: "2",
+        target: "0",
+      },
+      {
+        source: "3",
+        target: "0",
+      },
+      {
+        source: "3",
+        target: "2",
+      },
+    ],
+    categories: [
+      {
+        name: "miRNA",
+      },
+      {
+        name: "Disease",
+      },
+    ],
+  });
 
   //有关页数的state
   const [page_now, setPage_now] = useState(1);
@@ -93,6 +174,79 @@ export default function DLmirnadrugData() {
     Pmid: { name: "pmid", width: "15%" },
     "PubMed Link": { name: "PubMed", width: "8%" },
   };
+
+  useEffect(() => {
+    if (!hasGraph) return;
+    let myChart;
+    let graphOption = {
+      title: {
+        text: "Relationship diagram",
+        subtext: "Circular layout",
+        top: "bottom",
+        left: "right",
+      },
+      tooltip: {},
+      legend: [
+        {
+          data:
+            !!graphData?.categories &&
+            graphData?.categories.map(function (a) {
+              return a.name;
+            }),
+        },
+      ],
+      animationDurationUpdate: 1500,
+      animationEasingUpdate: "quinticInOut",
+      series: [
+        {
+          name: "Relationship diagram",
+          type: "graph",
+          layout: "circular",
+          circular: {
+            rotateLabel: true,
+          },
+          data: graphData?.nodes,
+          links: graphData?.links,
+          categories: graphData?.categories,
+          roam: true,
+          label: {
+            position: "right",
+            formatter: "{b}",
+          },
+          lineStyle: {
+            color: "source",
+            curveness: 0.3,
+          },
+        },
+      ],
+    };
+
+    myChart = echarts.init(graphDom.current);
+    myChart.showLoading("default", {
+      text: "loading",
+      color: "#c23531",
+      textColor: "#000",
+      maskColor: "rgba(255, 255, 255, 0.8)",
+      zlevel: 0,
+      fontSize: 12,
+      showSpinner: true,
+      spinnerRadius: 10,
+      lineWidth: 5,
+      fontWeight: "normal",
+      fontStyle: "normal",
+      fontFamily: "sans-serif",
+    });
+    myChart.clear();
+    myChart.setOption(graphOption, true);
+    myChart.hideLoading();
+    window.onresize = () => myChart.resize();
+    window.addEventListener("resize", () => myChart.resize());
+    return () => {
+      myChart.dispose();
+      myChart.clear();
+      graphOption = null;
+    };
+  }, [graphData, hasGraph]);
 
   const elementIsInFocus = (el) => el === document.activeElement;
 
@@ -322,6 +476,8 @@ export default function DLmirnadrugData() {
 
   return (
     <div
+      ref={scrollDom}
+      style={{ scrollBehavior: "smooth" }}
       className={`h-full w-full relative flex flex-col items-center overflow-y-scroll bg-gray-50`}
     >
       {/* 选择mirna\drug, 筛选count、是否画图 */}
@@ -581,6 +737,11 @@ export default function DLmirnadrugData() {
             style={{ backgroundColor: `${hasGraph ? "#0d9488" : ""}` }}
             onClick={() => {
               setHasGraph(!hasGraph);
+              if (!hasGraph) {
+                setTimeout(() => {
+                  scrollDom.current.scrollTo(0, graphDom.current.scrollHeight);
+                }, 100);
+              }
             }}
           >
             Graph
@@ -809,7 +970,16 @@ export default function DLmirnadrugData() {
             </Footer>
           </div>
         </div>
-        <GraphBox className=" bg-red-100">graph</GraphBox>
+        <GraphBox
+          id="graph"
+          ref={graphDom}
+          style={{
+            backgroundColor: "#eff7f4",
+            height: `${hasGraph ? "75vh" : "0"}`,
+          }}
+        >
+          graph
+        </GraphBox>
       </div>
 
       {/* DownloadWin 下载数据的弹窗*/}
