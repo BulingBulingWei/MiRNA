@@ -65,7 +65,7 @@ export default function DownloadData() {
   const [count, setCount] = useState(0);
   const [graphData, setGraphData] = useState(null);
   const [hasGraph, setHasGraph] = useState(false);
-  const [allSource, setAllSource] = useState(null);
+  const [downloadSource, setDownloadSource] = useState(null);
 
   //有关页数的state
   const [page_now, setPage_now] = useState(1);
@@ -76,6 +76,9 @@ export default function DownloadData() {
   const [SourceSelect, setSourceSelect] = useState([]);
   const [FileTypeSelect, setFileTypeSelect] = useState(0);
   const pageInput = useRef(null);
+
+  const [fetchRelationAxiosNum, setFetchRelationAxiosNum] = useState(0);
+  const [fetchRelationAxiosCnt, setFetchRelationAxiosCnt] = useState(0);
 
   const SOURCE_TYPE = "disease";
 
@@ -96,14 +99,14 @@ export default function DownloadData() {
   };
 
   useEffect(() => {
-    if (!!!allSource) {
+    if (!!!downloadSource) {
       GetDataSourceInfoAxios();
     }
   }, []);
 
   //download
   useEffect(() => {
-    if (!!allSource) POSTMirnaRelationshipDataAxios();
+    if (!!downloadSource) POSTMirnaRelationshipDataAxios();
   }, [
     page_now,
     SourceSelect,
@@ -111,6 +114,7 @@ export default function DownloadData() {
     DisSelectList,
     relevanceSelect,
     pageSizeSelect,
+    count,
   ]);
 
   // 获取所有的数据来源（非预测数据来源）
@@ -131,7 +135,7 @@ export default function DownloadData() {
       let tmp_source = res.data?.data?.filter(
         (item) => item?.type === SOURCE_TYPE
       );
-      setAllSource(tmp_source);
+      setDownloadSource(tmp_source);
       let tmp_select = [];
       res.data?.data?.forEach((item) => {
         if (item?.type === SOURCE_TYPE) {
@@ -150,8 +154,10 @@ export default function DownloadData() {
     }
   };
 
-  // TODO:参数修改
+  // 请求新的关系数据
   const POSTMirnaRelationshipDataAxios = async () => {
+    setFetchRelationAxiosCnt(fetchRelationAxiosCnt + 1);
+    let cnt = fetchRelationAxiosCnt;
     let options = {
       url: POSTMirnaRelationshipData,
       method: "POST",
@@ -162,7 +168,7 @@ export default function DownloadData() {
         diseases: DisSelectList,
         mirnas: MirnaSelectList,
         resources: SourceSelect,
-        filterRow: count,
+        filterRow: Number(count),
         maxRelevance: 1, //暂时固定不变
         minRelevance: parseFloat(relevanceInput.current.value),
         predictModel: isPredict,
@@ -171,6 +177,8 @@ export default function DownloadData() {
       },
     };
     let res = await axios(options);
+    if (cnt < fetchRelationAxiosNum) return;
+    else setFetchRelationAxiosNum(cnt);
 
     if (res?.data?.code === "0") {
       setRelationshipData(res?.data?.data?.mirnaRelationDTOList);
@@ -203,7 +211,7 @@ export default function DownloadData() {
     }
   };
 
-  // TODO：参数修改
+  // 下载关系数据
   const PostDownloadRelationshipDataAxios = async () => {
     let options = {
       url: PostDownloadRelationshipData,
@@ -218,7 +226,7 @@ export default function DownloadData() {
         downloadType: parseInt(FileTypeSelect),
         predictModel: isPredict,
         resources: SourceSelect,
-        filterRow: count,
+        filterRow: Number(count),
         row: parseInt(volumnSizeInput.current.value),
         maxRelevance: 1, //暂时固定不变
         minRelevance: parseFloat(relevanceInput.current.value),
@@ -538,19 +546,34 @@ export default function DownloadData() {
                   className="h-full w-full rounded px-2"
                   value={count === 0 ? "" : count}
                   min={0}
-                  max={100}
+                  max={100000}
                   onChange={(e) => {
-                    setCount(e.value);
+                    setCount(e.target.value);
                   }}
                 />
               </div>
             </div>
           </CountInputBox>
           <div
-            className="h-full w-8 flex justify-center items-center hover:scale-90
-          transition-all duration-300"
+            className="h-full w-8 flex justify-center items-center 
+          transition-all duration-300 relative"
           >
-            <QuestionSvg></QuestionSvg>
+            <div className={`peer`}>
+              <QuestionSvg></QuestionSvg>
+            </div>
+
+            <div
+              className={`peer-hover:visible invisible absolute -top-2 rotate-45 h-2 w-2
+               bg-gray-50 `}
+            ></div>
+            <div
+              className={`peer-hover:visible invisible absolute bottom-7 left-1 h-14 w-44
+               bg-gray-50 rounded-sm text-xs text-sky-800 p-1`}
+            >
+              <p>
+                count参数是指上方所选择的两种实体两两之间关系数据不少于count条的情况下才显示。
+              </p>
+            </div>
           </div>
 
           <Btn
@@ -592,8 +615,8 @@ export default function DownloadData() {
               Data Filter
             </p>
             <Label>Source:</Label>
-            {!!allSource &&
-              allSource.map((item) => {
+            {!!downloadSource &&
+              downloadSource.map((item) => {
                 return (
                   <ResourceBtn
                     key={item.id}
@@ -652,7 +675,7 @@ export default function DownloadData() {
                 defaultValue={0.9}
                 max={1}
                 min={0}
-                step={0.1}
+                step={0.01}
                 name="RelevanceBar"
                 id="RelevanceBar"
                 list="RelevanceMarks"
@@ -689,7 +712,7 @@ export default function DownloadData() {
                 defaultValue={50}
                 max={100}
                 min={20}
-                step={10}
+                step={5}
                 name="rangeBar"
                 id="rangeBar"
                 list="volumeMarks"
@@ -766,7 +789,7 @@ export default function DownloadData() {
                                 );
                               }}
                             >
-                              {data?.[WidthConfig[key]?.name]}
+                              {data?.[WidthConfig[key]?.name] ?? "--"}
                             </DataSpace>
                           );
                         else if (key === "PubMed Link")
@@ -794,7 +817,7 @@ export default function DownloadData() {
                           <DataSpace
                             style={{ width: `${WidthConfig[key]?.width}` }}
                           >
-                            {data?.[WidthConfig[key]?.name]}
+                            {data?.[WidthConfig[key]?.name] ?? "--"}
                           </DataSpace>
                         );
                       })}
@@ -857,7 +880,7 @@ export default function DownloadData() {
             </Footer>
           </div>
         </div>
-        <GraphBox className=" bg-red-100">123</GraphBox>
+        <GraphBox className=" bg-red-100">graph</GraphBox>
       </div>
 
       {/* DownloadWin 下载数据的弹窗*/}

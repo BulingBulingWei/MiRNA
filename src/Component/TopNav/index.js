@@ -232,7 +232,7 @@ export default function TopNav() {
           }}
           onClick={() => {
             beforeHandleSelect();
-            navigate(`/GeneInfo/xxx`);
+            navigate(`/GeneInfo/C1D`);
           }}
         >
           <div>

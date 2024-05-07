@@ -43,7 +43,7 @@ export default function GeneInfo() {
     let res = await axios(options);
     if (res?.data?.code === "0") {
       console.log("GetGeneInfo", res?.data?.data);
-      setGeneAllMessage(res?.data?.data?.GeneInfo);
+      setGeneAllMessage(res?.data?.data?.geneInfo);
     } else {
       toastController({
         mes: "request failure",

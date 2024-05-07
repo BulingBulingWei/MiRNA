@@ -4,9 +4,10 @@ import download from "downloadjs";
 //接口
 import {
   GetMirnaFuzzyName,
-  GetDrugFuzzyName,
-  GetMirnaDrugRelData,
-  GetMirnaDrugRelDataDownload,
+  GetGeneFuzzyName,
+  GetMirnaGeneRelData,
+  GetMirnaGeneRelDataDownload,
+  GetDataSourceInfo,
   axiosInstance as axios,
 } from "../../utils/mapPath";
 //组件样式
@@ -38,12 +39,12 @@ import PageButton from "../../Component/PageButton";
 import { CancelSvg, LinkSvg, QuestionSvg } from "../../svg";
 import { useDebounce } from "../../utils/tools";
 
-export default function DLmirnadrugData() {
+export default function DLmirnaGeneData() {
   const toastController = useContext(ToastContext);
 
   // useRef
   const mirnaSearchInput = useRef(null);
-  const drugSearchInput = useRef(null);
+  const geneSearchInput = useRef(null);
 
   const pageSizeInput = useRef(null);
   const volumnSizeInput = useRef(null);
@@ -52,13 +53,14 @@ export default function DLmirnadrugData() {
 
   //list & data
   const [MirnaFuzzySearchList, setMirnaFuzzySearchList] = useState([]);
-  const [DrugFuzzySearchList, setDrugFuzzySearchList] = useState([]);
+  const [GeneFuzzySearchList, setGeneFuzzySearchList] = useState([]);
   const [MirnaSelectList, setMirnaSelectList] = useState([]);
-  const [DrugSelectList, setDrugSelectList] = useState([]);
+  const [GeneSelectList, setGeneSelectList] = useState([]);
   const [RelationshipData, setRelationshipData] = useState(undefined);
   const [count, setCount] = useState(0);
   const [graphData, setGraphData] = useState(null);
   const [hasGraph, setHasGraph] = useState(false);
+  const [downloadSource, setDownloadSource] = useState(null);
 
   //有关页数的state
   const [page_now, setPage_now] = useState(1);
@@ -66,26 +68,14 @@ export default function DLmirnadrugData() {
   const [showDownloadWin, setShowDownloadWin] = useState(false);
 
   //一些input的 dom标识
-  const [SourceSelect, setSourceSelect] = useState(["0", "1", "2"]);
+  const [SourceSelect, setSourceSelect] = useState([]);
   const [FileTypeSelect, setFileTypeSelect] = useState("xlsx");
   const pageInput = useRef(null);
 
-  // 尽量使用策略模式
-  const SOURCE = {
-    ncDR: "0",
-    SM2mir3: "1",
-    RNAInter: "2",
-  };
+  const [fetchRelationAxiosNum, setFetchRelationAxiosNum] = useState(0);
+  const [fetchRelationAxiosCnt, setFetchRelationAxiosCnt] = useState(0);
 
-  const WidthConfig = {
-    "Data miRNA": { name: "rnaName", width: "16%" },
-    "miRbase Name": { name: "rnaBaseName", width: "16%" },
-    Drug: { name: "drug", width: "24%" },
-    CID: { name: "cid", width: "15%" },
-    Source: { name: "source", width: "20%" },
-    Pmid: { name: "pmid", width: "15%" },
-    "PubMed Link": { name: "PubMed", width: "8%" },
-  };
+  const SOURCE_TYPE = "gene";
 
   const FILETYPE = {
     xlsx: 0,
@@ -94,61 +84,96 @@ export default function DLmirnadrugData() {
     json: 3,
   };
 
+  const WidthConfig = {
+    accession: { name: "accession", width: "15%" },
+    mirnaName: { name: "mirnaName", width: "20%" },
+    geneName: { name: "geneName", width: "20%" },
+    geneId: { name: "geneId", width: "15%" },
+    Source: { name: "source", width: "15%" },
+    reference: { name: "reference", width: "15%" },
+  };
+
   const elementIsInFocus = (el) => el === document.activeElement;
+
+  useEffect(() => {
+    if (!!!downloadSource) {
+      GetDataSourceInfoAxios();
+    }
+  }, []);
 
   //download
   useEffect(() => {
-    POSTMirnaRelationshipDataAxios();
-  }, [page_now, SourceSelect, MirnaSelectList, DrugSelectList, pageSizeSelect]);
+    if (!!downloadSource) POSTMirnaRelationshipDataAxios();
+  }, [
+    page_now,
+    SourceSelect,
+    MirnaSelectList,
+    GeneSelectList,
+    pageSizeSelect,
+    count,
+  ]);
 
-  const countLimit = (cou, data) => {
-    let len = data.length;
-    let ans = [];
-    let sum = 0,
-      last = 0;
-    let tmparr = [];
-    function isSame(item1, item2) {
-      let keys = ["Data miRNA", "miRbase Name", "Drug"];
-      for (let k of keys) {
-        if (item1[k] !== item2[k]) return false;
-      }
-      return true;
-    }
-    for (let i = 1; i < len; ++i) {
-      if (isSame(data[i], data[last])) {
-        ++sum;
-        tmparr.push(data[i]);
-      } else {
-        last = i;
-        if (sum >= cou) {
-          ans = ans.concat(tmparr);
+  // 获取所有的数据来源（非预测数据来源）
+  const GetDataSourceInfoAxios = async () => {
+    let options = {
+      url: GetDataSourceInfo,
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      params: {
+        type: SOURCE_TYPE, //gene
+      },
+    };
+    let res = await axios(options);
+
+    if (res?.data?.code === "0") {
+      let tmp_source = res.data?.data?.filter(
+        (item) => item?.type === SOURCE_TYPE
+      );
+      setDownloadSource(tmp_source);
+      let tmp_select = [];
+      res.data?.data?.forEach((item) => {
+        if (item?.type === SOURCE_TYPE) {
+          tmp_select.push(item.id);
         }
-        tmparr = [];
-      }
+      });
+      setSourceSelect(tmp_select);
     }
-    return ans;
+    //请求不成功
+    else {
+      toastController({
+        mes: "request failure",
+        timeout: 1000,
+      });
+    }
   };
 
   // 根据筛选条件获取数据
   const POSTMirnaRelationshipDataAxios = async () => {
+    setFetchRelationAxiosCnt(fetchRelationAxiosCnt + 1);
+    let cnt = fetchRelationAxiosCnt;
     let options = {
-      url: GetMirnaDrugRelData,
+      url: GetMirnaGeneRelData,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       data: {
-        drugs: DrugSelectList,
+        geneList: GeneSelectList,
         mirnas: MirnaSelectList,
+        filterRow: Number(count),
         pageNum: parseInt(page_now),
         pageSize: parseInt(pageSizeInput.current.value),
         resources: SourceSelect,
       },
     };
     let res = await axios(options);
+    if (cnt < fetchRelationAxiosNum) return;
+    else setFetchRelationAxiosNum(cnt);
 
     if (res?.data?.code === "0") {
-      setRelationshipData(res?.data?.data?.drugList);
+      setRelationshipData(res?.data?.data?.geneList);
       if (parseInt(res?.data?.data?.total) === 0) {
         toastController({
           mes: "No data found~",
@@ -180,14 +205,14 @@ export default function DLmirnadrugData() {
 
   const PostDownloadRelationshipDataAxios = async () => {
     let options = {
-      url: GetMirnaDrugRelDataDownload,
+      url: GetMirnaGeneRelDataDownload,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       responseType: "blob",
       data: {
-        drug: DrugSelectList,
+        gene: GeneSelectList,
         mirnas: MirnaSelectList,
         downloadType: FILETYPE[FileTypeSelect],
         resources: SourceSelect,
@@ -236,22 +261,22 @@ export default function DLmirnadrugData() {
     }
   };
 
-  const GetDisFuzzySearchAxios = async () => {
+  const GetGeneFuzzySearchAxios = async () => {
     let options = {
-      url: GetDrugFuzzyName,
+      url: GetGeneFuzzyName,
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       params: {
-        drug: drugSearchInput.current.value,
+        geneName: geneSearchInput.current.value,
       },
     };
 
     let res = await axios(options);
     if (res?.data?.code === "0") {
-      if (elementIsInFocus(drugSearchInput.current))
-        setDrugFuzzySearchList(res?.data?.data);
+      if (elementIsInFocus(geneSearchInput.current))
+        setGeneFuzzySearchList(res?.data?.data);
     } else {
       toastController({
         mes: res?.data?.message,
@@ -265,7 +290,7 @@ export default function DLmirnadrugData() {
     1000
   );
 
-  const handleDisSearchInputChange = useDebounce(GetDisFuzzySearchAxios, 1000);
+  const handleDisSearchInputChange = useDebounce(GetGeneFuzzySearchAxios, 1000);
 
   const goToPage = (pageNum) => {
     if (typeof parseInt(pageNum) !== "number" || pageNum < 1) {
@@ -295,7 +320,7 @@ export default function DLmirnadrugData() {
     <div
       className={`h-full w-full relative flex flex-col items-center overflow-y-scroll bg-gray-50`}
     >
-      {/* 选择mirna\drug, 筛选count、是否画图 */}
+      {/* 选择mirna\gene, 筛选count、是否画图 */}
       <div
         className="h-fit w-full flex flex-col justify-center items-center md:sticky top-0 z-10"
         style={{
@@ -396,53 +421,50 @@ export default function DLmirnadrugData() {
           </SelectedLabelBox>
         </MirnaSelectBox>
 
-        {/* 选择drug */}
+        {/* gene */}
         <DisSelectBox style={{ zIndex: 10 }}>
           {/*left: 搜索框 & button */}
           <InputBox>
             <div className="h-6 w-full flex justify-start items-center ">
               {/* 输入框和模糊搜索选项 */}
               <div className="min-w-fit mr-2 font-bold w-20 text-right flex-shrink-0">
-                drug:
+                gene:
               </div>
               <div className="h-full flex-grow relative">
                 <input
                   type="text"
-                  placeholder="select drug"
+                  placeholder="select gene"
                   className="h-full w-full rounded px-2"
-                  ref={drugSearchInput}
+                  ref={geneSearchInput}
                   onFocus={handleDisSearchInputChange}
                   onChange={handleDisSearchInputChange}
                   onBlur={() => {
                     setTimeout(() => {
-                      setDrugFuzzySearchList(null);
+                      setGeneFuzzySearchList(null);
                     }, 500);
                   }}
                 />
-                {!!DrugFuzzySearchList && DrugFuzzySearchList.length > 0 && (
+                {!!GeneFuzzySearchList && GeneFuzzySearchList.length > 0 && (
                   <FuzzySearchList>
                     <ul
                       className="h-fit w-full flex-shrink-0 rounded border-2 
                          text-gray-600 shadow p-0 z-30 bg-gray-50"
                     >
-                      {DrugFuzzySearchList.map((fuzzyItem) => {
+                      {GeneFuzzySearchList.map((gene) => {
                         return (
                           <FuzzySearchItem
-                            key={fuzzyItem?.id}
                             onClick={(event) => {
-                              console.log(fuzzyItem?.drug);
+                              console.log(gene);
                               event.preventDefault();
 
-                              if (DrugSelectList.length === 10) {
+                              if (GeneSelectList.length === 10) {
                                 toastController({
                                   mes: `Can only filter up to 10 items`,
                                   timeout: 2000,
                                 });
                                 return;
                               }
-                              if (
-                                DrugSelectList.indexOf(fuzzyItem?.drug) !== -1
-                              ) {
+                              if (GeneSelectList.indexOf(gene) !== -1) {
                                 toastController({
                                   mes: `This disease has been selected`,
                                   timeout: 2000,
@@ -450,13 +472,10 @@ export default function DLmirnadrugData() {
                                 return;
                               }
                               setPage_now(1);
-                              setDrugSelectList([
-                                ...DrugSelectList,
-                                fuzzyItem?.drug,
-                              ]);
+                              setGeneSelectList([...GeneSelectList, gene]);
                             }}
                           >
-                            {fuzzyItem?.drug}
+                            {gene}
                           </FuzzySearchItem>
                         );
                       })}
@@ -466,18 +485,18 @@ export default function DLmirnadrugData() {
               </div>
             </div>
           </InputBox>
-          {/* right: 显示已选择的 drug */}
+          {/* right: 显示已选择的 gene */}
           <SelectedLabelBox>
-            {DrugSelectList.map((item) => {
+            {GeneSelectList.map((item) => {
               return (
                 <DisSelectedLabel key={item}>
                   {item}
                   <div
                     onClick={() => {
-                      if (DrugSelectList.indexOf(item) !== -1) {
-                        let set = new Set(DrugSelectList);
+                      if (GeneSelectList.indexOf(item) !== -1) {
+                        let set = new Set(GeneSelectList);
                         set.delete(item);
-                        setDrugSelectList([...set]);
+                        setGeneSelectList([...set]);
                       }
                     }}
                   >
@@ -503,26 +522,41 @@ export default function DLmirnadrugData() {
                   className="h-full w-full rounded px-2"
                   value={count === 0 ? "" : count}
                   min={0}
-                  max={100}
+                  max={100000}
                   onChange={(e) => {
-                    setCount(e.value);
+                    setCount(Number(e.value));
                   }}
                 />
               </div>
             </div>
           </CountInputBox>
           <div
-            className="h-full w-8 flex justify-center items-center hover:scale-90
-          transition-all duration-300"
+            className="h-full w-8 flex justify-center items-center 
+          transition-all duration-300 relative"
           >
-            <QuestionSvg></QuestionSvg>
+            <div className={`peer`}>
+              <QuestionSvg></QuestionSvg>
+            </div>
+
+            <div
+              className={`peer-hover:visible invisible absolute -top-2 rotate-45 h-2 w-2
+               bg-gray-50 `}
+            ></div>
+            <div
+              className={`peer-hover:visible invisible absolute bottom-7 left-1 h-14 w-44
+               bg-gray-50 rounded-sm text-xs text-sky-800 p-1`}
+            >
+              <p>
+                count参数是指上方所选择的两种实体两两之间关系数据不少于count条的情况下才显示。
+              </p>
+            </div>
           </div>
 
           <Btn
             className="transition-all duration-300"
             onClick={() => {
               setMirnaSelectList([]);
-              setDrugSelectList([]);
+              setGeneSelectList([]);
               setCount(0);
               toastController({
                 mes: "has already reset.",
@@ -557,15 +591,14 @@ export default function DLmirnadrugData() {
               Data Filter
             </p>
             <Label>Source:</Label>
-            {!!SOURCE &&
-              Object.keys(SOURCE).map((item) => {
+            {!!downloadSource &&
+              downloadSource.map((item) => {
                 return (
                   <ResourceBtn
-                    selected={
-                      SourceSelect.includes(SOURCE[item]) ? true : false
-                    }
+                    key={item.id}
+                    selected={SourceSelect.includes(item.id) ? true : false}
                     onClick={() => {
-                      if (SourceSelect.includes(SOURCE[item])) {
+                      if (SourceSelect.includes(item.id)) {
                         if (SourceSelect.length === 1) {
                           toastController({
                             mes: `Cannot select less than one source`,
@@ -574,17 +607,17 @@ export default function DLmirnadrugData() {
                           return;
                         }
                         const tmpList = SourceSelect.filter(
-                          (e) => e !== SOURCE[item]
+                          (e) => e !== item.id
                         );
                         setSourceSelect(tmpList);
                       } else {
-                        const tmpList = [...SourceSelect, SOURCE[item]];
+                        const tmpList = [...SourceSelect, item.id];
                         setSourceSelect(tmpList);
                       }
                       setPage_now(1);
                     }}
                   >
-                    {item}
+                    {item.label}
                   </ResourceBtn>
                 );
               })}
@@ -601,7 +634,7 @@ export default function DLmirnadrugData() {
               defaultValue={50}
               max={100}
               min={20}
-              step={10}
+              step={5}
               name="rangeBar"
               id="rangeBar"
               list="volumeMarks"
@@ -676,14 +709,14 @@ export default function DLmirnadrugData() {
                                 );
                               }}
                             >
-                              {data?.[WidthConfig[key]?.name]}
+                              {data?.[WidthConfig[key]?.name] ?? "--"}
                             </DataSpace>
                           );
                         else if (key === "PubMed Link")
                           return (
                             <DataSpace
                               style={{
-                                width: `${WidthConfig[key]}`,
+                                width: `${WidthConfig[key]?.width}`,
                                 cursor: "pointer",
                               }}
                             >
@@ -691,7 +724,7 @@ export default function DLmirnadrugData() {
                                 className="h-full w-fit px-1 flex justify-start items-center"
                                 onClick={() => {
                                   window.open(
-                                    `https://pubmed.ncbi.nlm.nih.gov/?term=${data?.rnaName}+AND+${data?.drug}&size=200`,
+                                    `https://pubmed.ncbi.nlm.nih.gov/?term=${data?.rnaName}+AND+${data?.gene}&size=200`,
                                     "_blank"
                                   );
                                 }}
@@ -704,46 +737,10 @@ export default function DLmirnadrugData() {
                           <DataSpace
                             style={{ width: `${WidthConfig[key]?.width}` }}
                           >
-                            {data?.[WidthConfig[key]?.name]}
+                            {data?.[WidthConfig[key]?.name] ?? "--"}
                           </DataSpace>
                         );
                       })}
-                      {/* <DataSpace style={{ width: "20%" }}>
-                        {data?.["Data miRNA"]}
-                      </DataSpace>
-                      <DataSpace style={{ width: "20%" }}>
-                        {data?.drug}
-                      </DataSpace>
-                      <DataSpace style={{ width: "15%" }}>
-                        {data?.source}
-                      </DataSpace>
-                      <DataSpace style={{ width: "15%" }}>
-                        {data?.cid}
-                      </DataSpace>
-                      <DataSpace
-                        style={{ width: "15%" }}
-                        onClick={() => {
-                          window.open(
-                            `https://pubmed.ncbi.nlm.nih.gov/${data?.pmid}/`,
-                            "_blank"
-                          );
-                        }}
-                      >
-                        {data?.pmid}
-                      </DataSpace>
-                      <DataSpace style={{ width: "15%", cursor: "pointer" }}>
-                        <div
-                          className="h-full w-fit px-1 flex justify-start items-center"
-                          onClick={() => {
-                            window.open(
-                              `https://pubmed.ncbi.nlm.nih.gov/?term=${data.rnaName}+AND+${data.drug}&size=200`,
-                              "_blank"
-                            );
-                          }}
-                        >
-                          <LinkSvg></LinkSvg>
-                        </div>
-                      </DataSpace> */}
                     </DataRow>
                   );
                 })}
@@ -753,7 +750,6 @@ export default function DLmirnadrugData() {
                 <PageButton
                   content={1}
                   onClick={() => {
-                    // console.log("click");
                     goToPage(1);
                   }}
                 ></PageButton>
@@ -803,7 +799,7 @@ export default function DLmirnadrugData() {
             </Footer>
           </div>
         </div>
-        <GraphBox className=" bg-red-100">123</GraphBox>
+        <GraphBox className=" bg-red-100">graph</GraphBox>
       </div>
 
       {/* DownloadWin 下载数据的弹窗*/}

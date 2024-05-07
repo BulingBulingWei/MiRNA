@@ -104,7 +104,7 @@ export default function TopNav() {
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
         ${isFocus(location, "GeneInfo") ? "bg-sky-100" : ""}`}
           onClick={() => {
-            navigate(`/GeneInfo/xxx`);
+            navigate(`/GeneInfo/C1D`);
           }}
         >
           <div>

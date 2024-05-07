@@ -26,6 +26,16 @@ export function throttle(fn, timeout) {
   };
 }
 
+//判断一个输入是否只含有数字
+export function isNumber(str) {
+  let patrn = /^[0-9]{1,20}$/;
+  let bool = true;
+  if (!patrn.exec(str)) {
+    bool = false;
+  }
+  return bool;
+}
+
 //深拷贝
 export function deepClone(obj) {
   let weakMap = new WeakMap();

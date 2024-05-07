@@ -178,7 +178,11 @@ export const GetDrugInfo = `/rna/medicine/detail/byName`;
 
 //获取全部数据来源，用于几个Data页面
 export const GetAllDataSource = `/source/all`;
-// export const GetDataSourceInfo = `/source/all`;
 
 //获取来源数据库或者第三方渠道信息
 export const GetDataSourceInfo = `/source/list`;
+
+//获取MiRNA-Gene的关系数据
+export const GetMirnaGeneRelData = `/gene/info`;
+
+export const GetMirnaGeneRelDataDownload = `/download/rna/gene/relationship`;
