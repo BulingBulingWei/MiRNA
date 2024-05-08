@@ -6,8 +6,8 @@ export const imageBedBaseUrl =
   "https://gitee.com/jackfs/PictureStore/raw/master/";
 
 export const axiosInstance = axios.create({
-  // baseURL: `/mirna-disease/`,
-  baseURL: `/`,
+  baseURL: `/mirna-disease/`,
+  // baseURL: `/`,
   headers: {
     token: `MirTarDis`,
   },
@@ -190,9 +190,3 @@ export const GetMirnaGeneRelDataDownload = `/download/rna/gene/relationship`;
 
 //三个下载关系数据页面获取的关系画图数据的接口
 export const GetDLPagesGraphData = `/relation/graph`;
-
-//获取miRNA-drug的关系画图数据
-export const GetMirnaDrugGraphData = ``;
-
-//获取miRNA-Gene的关系画图数据
-export const GetMirnaGeneGraphData = ``;

@@ -1030,9 +1030,7 @@ export default function DLmirnadrugData() {
             backgroundColor: "#eff7f4",
             height: `${hasGraph ? "75vh" : "0"}`,
           }}
-        >
-          graph
-        </GraphBox>
+        ></GraphBox>
       </div>
 
       {/* DownloadWin 下载数据的弹窗*/}
