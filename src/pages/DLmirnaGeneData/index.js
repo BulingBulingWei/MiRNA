@@ -8,6 +8,7 @@ import {
   GetMirnaGeneRelData,
   GetMirnaGeneRelDataDownload,
   GetDataSourceInfo,
+  GetDLPagesGraphData,
   axiosInstance as axios,
 } from "../../utils/mapPath";
 //组件样式
@@ -38,6 +39,7 @@ import {
 import PageButton from "../../Component/PageButton";
 import { CancelSvg, LinkSvg, QuestionSvg } from "../../svg";
 import { useDebounce } from "../../utils/tools";
+import { graphType } from "../../utils/enums";
 import * as echarts from "echarts/core";
 import {
   TitleComponent,
@@ -176,6 +178,7 @@ export default function DLmirnaGeneData() {
 
   useEffect(() => {
     if (!hasGraph) return;
+    console.log("lll");
     let myChart;
     let graphOption = {
       title: {
@@ -247,6 +250,47 @@ export default function DLmirnaGeneData() {
     };
   }, [graphData, hasGraph]);
 
+  useEffect(() => {
+    if (hasGraph) {
+      console.log("getData");
+      GetGraphDataAxios();
+    }
+  }, [hasGraph]);
+
+  //获取关系图数据
+  const GetGraphDataAxios = async () => {
+    let options = {
+      url: GetDLPagesGraphData,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        mirnas: MirnaSelectList,
+        queryWords: GeneSelectList,
+        graphType: graphType["miRNA-Gene"],
+        resources: SourceSelect,
+        filterRow: Number(count),
+        predictModel: false,
+        maxRelevance: 1, //暂时固定不变
+        minRelevance: 0,
+      },
+    };
+    let res = await axios(options);
+
+    if (res?.data?.code === "0") {
+      setGraphData(res?.data?.data);
+      console.log("graphData", res?.data?.data);
+    }
+    //请求不成功
+    else {
+      toastController({
+        mes: "request failure",
+        timeout: 1000,
+      });
+    }
+  };
+
   const elementIsInFocus = (el) => el === document.activeElement;
 
   useEffect(() => {
@@ -257,7 +301,10 @@ export default function DLmirnaGeneData() {
 
   //download
   useEffect(() => {
-    if (!!downloadSource) POSTMirnaRelationshipDataAxios();
+    if (!!downloadSource) {
+      setHasGraph(false);
+      POSTMirnaRelationshipDataAxios();
+    }
   }, [
     page_now,
     SourceSelect,
@@ -688,7 +735,7 @@ export default function DLmirnaGeneData() {
           </CountInputBox>
           <div
             className="h-full w-8 flex justify-center items-center 
-          transition-all duration-300 relative"
+          transition-all duration-300 relative z-50 cursor-pointer"
           >
             <div className={`peer`}>
               <QuestionSvg></QuestionSvg>
@@ -699,11 +746,13 @@ export default function DLmirnaGeneData() {
                bg-gray-50 `}
             ></div>
             <div
-              className={`peer-hover:visible invisible absolute bottom-7 left-1 h-14 w-44
+              className={`peer-hover:visible invisible absolute bottom-7 left-1 h-14 w-80
                bg-gray-50 rounded-sm text-xs text-sky-800 p-1`}
             >
               <p>
-                count参数是指上方所选择的两种实体两两之间关系数据不少于count条的情况下才显示。
+                The count parameter is only displayed when there are no less
+                than count pieces of relationship data between the two entities
+                selected above.
               </p>
             </div>
           </div>
@@ -722,20 +771,26 @@ export default function DLmirnaGeneData() {
           >
             Reset
           </Btn>
-          <Btn
-            className={`mr-2 transition-all duration-300`}
-            style={{ backgroundColor: `${hasGraph ? "#0d9488" : ""}` }}
-            onClick={() => {
-              setHasGraph(!hasGraph);
-              if (!hasGraph) {
-                setTimeout(() => {
-                  scrollDom.current.scrollTo(0, graphDom.current.scrollHeight);
-                }, 100);
-              }
-            }}
-          >
-            Graph
-          </Btn>
+          {(MirnaSelectList?.length > 0 || GeneSelectList?.length > 0) && (
+            <Btn
+              className={`mr-2 transition-all duration-300`}
+              style={{ backgroundColor: `${hasGraph ? "#0d9488" : ""}` }}
+              onClick={() => {
+                setHasGraph(!hasGraph);
+                console.log("hasGraph", !hasGraph);
+                if (!hasGraph) {
+                  setTimeout(() => {
+                    scrollDom.current.scrollTo(
+                      0,
+                      graphDom.current.scrollHeight
+                    );
+                  }, 100);
+                }
+              }}
+            >
+              Graph
+            </Btn>
+          )}
         </OtherSelectBox>
       </div>
 

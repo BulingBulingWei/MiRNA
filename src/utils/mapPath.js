@@ -185,4 +185,14 @@ export const GetDataSourceInfo = `/source/list`;
 //获取MiRNA-Gene的关系数据
 export const GetMirnaGeneRelData = `/gene/info`;
 
+// 获取MiRNA-Gene的关系数据下载
 export const GetMirnaGeneRelDataDownload = `/download/rna/gene/relationship`;
+
+//三个下载关系数据页面获取的关系画图数据的接口
+export const GetDLPagesGraphData = `/relation/graph`;
+
+//获取miRNA-drug的关系画图数据
+export const GetMirnaDrugGraphData = ``;
+
+//获取miRNA-Gene的关系画图数据
+export const GetMirnaGeneGraphData = ``;
