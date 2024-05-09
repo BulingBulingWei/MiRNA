@@ -79,71 +79,7 @@ export default function DLmirnaGeneData() {
   const [count, setCount] = useState(0);
   const [hasGraph, setHasGraph] = useState(false);
   const [downloadSource, setDownloadSource] = useState(null);
-  const [graphData, setGraphData] = useState({
-    nodes: [
-      {
-        id: "0",
-        name: "Myriel",
-        symbolSize: 19.12381,
-        value: 28.685715,
-        category: 0,
-      },
-      {
-        id: "1",
-        name: "Napoleon",
-        symbolSize: 2.6666666666666665,
-        value: 4,
-        category: 0,
-      },
-      {
-        id: "2",
-        name: "MlleBaptistine",
-        symbolSize: 6.323809333333333,
-        value: 9.485714,
-        category: 1,
-      },
-      {
-        id: "3",
-        name: "MmeMagloire",
-        symbolSize: 6.323809333333333,
-        value: 9.485714,
-        category: 1,
-      },
-      {
-        id: "4",
-        name: "CountessDeLo",
-        symbolSize: 2.6666666666666665,
-        value: 4,
-        category: 0,
-      },
-    ],
-    links: [
-      {
-        source: "1",
-        target: "0",
-      },
-      {
-        source: "2",
-        target: "0",
-      },
-      {
-        source: "3",
-        target: "0",
-      },
-      {
-        source: "3",
-        target: "2",
-      },
-    ],
-    categories: [
-      {
-        name: "miRNA",
-      },
-      {
-        name: "Disease",
-      },
-    ],
-  });
+  const [graphData, setGraphData] = useState({});
 
   //有关页数的state
   const [page_now, setPage_now] = useState(1);
@@ -491,7 +427,10 @@ export default function DLmirnaGeneData() {
     1000
   );
 
-  const handleDisSearchInputChange = useDebounce(GetGeneFuzzySearchAxios, 1000);
+  const handleGeneSearchInputChange = useDebounce(
+    GetGeneFuzzySearchAxios,
+    1000
+  );
 
   const goToPage = (pageNum) => {
     if (typeof parseInt(pageNum) !== "number" || pageNum < 1) {
@@ -639,8 +578,8 @@ export default function DLmirnaGeneData() {
                   placeholder="select gene"
                   className="h-full w-full rounded px-2"
                   ref={geneSearchInput}
-                  onFocus={handleDisSearchInputChange}
-                  onChange={handleDisSearchInputChange}
+                  onFocus={handleGeneSearchInputChange}
+                  onChange={handleGeneSearchInputChange}
                   onBlur={() => {
                     setTimeout(() => {
                       setGeneFuzzySearchList(null);
@@ -669,7 +608,7 @@ export default function DLmirnaGeneData() {
                               }
                               if (GeneSelectList.indexOf(gene) !== -1) {
                                 toastController({
-                                  mes: `This disease has been selected`,
+                                  mes: `This gene has been selected`,
                                   timeout: 2000,
                                 });
                                 return;

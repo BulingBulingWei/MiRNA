@@ -96,17 +96,17 @@ export default function TopNav() {
 
         {/* miRNA-Disease-Data */}
         <div
-          className={`h-full w-fit px-2  flex justify-center items-center rounded 
+          className={`h-full w-fit px-12  flex justify-center items-center rounded 
         transition-all hover:bg-sky-100 duration-300 cursor-pointer 
         ${DataDrop ? " border-sky-200" : " border-gray-50"}   
-        ${isFocus(location, "miRNA-Disease-Data") ? "bg-sky-100" : ""}`}
-          onClick={() => {
-            beforeHandleSelect();
-            navigate(`/miRNA-Disease-Data`);
+        ${isFocus(location, "Data") ? "bg-sky-100" : ""}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setDataDrop((drop) => !drop);
           }}
         >
           <div>
-            <p className="text-gray-500 font-bold">miRNA-Disease</p>
+            <p className="text-gray-500 font-bold">Data</p>
           </div>
           <div
             className="h-full w-fit pl-2 flex justify-center items-center"
@@ -249,6 +249,26 @@ export default function TopNav() {
           setDataDrop(false);
         }}
       >
+        {/* mirna-disease */}
+        <div
+          className={`h-10 w-full px-1 flex justify-center items-center rounded 
+        transition-all hover:bg-sky-100 duration-300 cursor-pointer bg-gray-50
+        border-2 border-gray-300 `}
+          style={{
+            backgroundColor: `${
+              isFocus(location, "miRNA-Disease-Data") ? "#e0f2fe" : "#f9fafb"
+            }`,
+          }}
+          onClick={() => {
+            beforeHandleSelect();
+            navigate(`/miRNA-Disease-Data`);
+          }}
+        >
+          <div>
+            <p className="text-gray-500 font-bold">miRNA-Disease</p>
+          </div>
+        </div>
+
         {/* mirna-drug */}
         <div
           className={`h-10 w-full px-1 flex justify-center items-center rounded 

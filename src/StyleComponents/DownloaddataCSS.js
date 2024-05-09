@@ -364,7 +364,8 @@ export const Footer = styled.div`
 `;
 
 export const GraphBox = styled.div`
-  height: 75vh;
+  height: 80vh;
   width: 100%;
-  margin: 2rem 0;
+  margin: 2rem 0 0 0;
+  padding-bottom: 1rem;
 `;

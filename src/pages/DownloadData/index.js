@@ -85,71 +85,7 @@ export default function DownloadData() {
   const [count, setCount] = useState(0);
   const [hasGraph, setHasGraph] = useState(false);
   const [downloadSource, setDownloadSource] = useState(null);
-  const [graphData, setGraphData] = useState({
-    nodes: [
-      {
-        id: "0",
-        name: "Myriel",
-        symbolSize: 19.12381,
-        value: 28.685715,
-        category: 0,
-      },
-      {
-        id: "1",
-        name: "Napoleon",
-        symbolSize: 2.6666666666666665,
-        value: 4,
-        category: 0,
-      },
-      {
-        id: "2",
-        name: "MlleBaptistine",
-        symbolSize: 6.323809333333333,
-        value: 9.485714,
-        category: 1,
-      },
-      {
-        id: "3",
-        name: "MmeMagloire",
-        symbolSize: 6.323809333333333,
-        value: 9.485714,
-        category: 1,
-      },
-      {
-        id: "4",
-        name: "CountessDeLo",
-        symbolSize: 2.6666666666666665,
-        value: 4,
-        category: 0,
-      },
-    ],
-    links: [
-      {
-        source: "1",
-        target: "0",
-      },
-      {
-        source: "2",
-        target: "0",
-      },
-      {
-        source: "3",
-        target: "0",
-      },
-      {
-        source: "3",
-        target: "2",
-      },
-    ],
-    categories: [
-      {
-        name: "miRNA",
-      },
-      {
-        name: "Disease",
-      },
-    ],
-  });
+  const [graphData, setGraphData] = useState({});
 
   //有关页数的state
   const [page_now, setPage_now] = useState(1);
@@ -554,16 +490,25 @@ export default function DownloadData() {
                   placeholder="select miRNA"
                   className="h-full w-full rounded px-2 z-10"
                   ref={mirnaSearchInput}
-                  onFocus={() => {
-                    miRNAFuzzyList.current.style.height = "fit-content";
-                    handleMirnaSearchInputChange();
-                  }}
-                  onChange={() => {
-                    miRNAFuzzyList.current.style.height = "fit-content";
-                    handleMirnaSearchInputChange();
-                  }}
+                  // onFocus={() => {
+                  //   miRNAFuzzyList.current.style.height = "fit-content";
+                  //   console.log("search");
+                  //   handleMirnaSearchInputChange();
+                  // }}
+                  // onChange={() => {
+                  //   miRNAFuzzyList.current.style.height = "fit-content";
+                  //   console.log("search");
+                  //   handleMirnaSearchInputChange();
+                  // }}
+                  // onBlur={() => {
+                  //   miRNAFuzzyList.current.style.height = 0;
+                  // }}
+                  onFocus={handleMirnaSearchInputChange}
+                  onChange={handleMirnaSearchInputChange}
                   onBlur={() => {
-                    miRNAFuzzyList.current.style.height = 0;
+                    setTimeout(() => {
+                      setMirnaFuzzySearchList([]);
+                    }, 500);
                   }}
                 />
                 {!!MirnaFuzzySearchList && MirnaFuzzySearchList.length > 0 && (
@@ -651,16 +596,23 @@ export default function DownloadData() {
                   placeholder="select disease"
                   className="h-full w-full rounded px-2"
                   ref={disSearchInput}
-                  onFocus={() => {
-                    DisFuzzyList.current.style.height = "fit-content";
-                    handleDisSearchInputChange();
-                  }}
-                  onChange={() => {
-                    DisFuzzyList.current.style.height = "fit-content";
-                    handleDisSearchInputChange();
-                  }}
+                  // onFocus={() => {
+                  //   DisFuzzyList.current.style.height = "fit-content";
+                  //   handleDisSearchInputChange();
+                  // }}
+                  // onChange={() => {
+                  //   DisFuzzyList.current.style.height = "fit-content";
+                  //   handleDisSearchInputChange();
+                  // }}
+                  // onBlur={() => {
+                  //   DisFuzzyList.current.style.height = 0;
+                  // }}
+                  onFocus={handleDisSearchInputChange}
+                  onChange={handleDisSearchInputChange}
                   onBlur={() => {
-                    DisFuzzyList.current.style.height = 0;
+                    setTimeout(() => {
+                      setDisFuzzySearchList([]);
+                    }, 500);
                   }}
                 />
                 {!!DisFuzzySearchList && DisFuzzySearchList.length > 0 && (
@@ -1098,7 +1050,7 @@ export default function DownloadData() {
           ref={graphDom}
           style={{
             backgroundColor: "#eff7f4",
-            height: `${hasGraph ? "75vh" : "0"}`,
+            height: `${hasGraph ? "80vh" : "0"}`,
           }}
         ></GraphBox>
       </div>

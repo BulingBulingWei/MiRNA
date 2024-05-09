@@ -6,8 +6,8 @@ export const imageBedBaseUrl =
   "https://gitee.com/jackfs/PictureStore/raw/master/";
 
 export const axiosInstance = axios.create({
-  baseURL: `/mirna-disease/`,
-  // baseURL: `/`,
+  // baseURL: `/mirna-disease/`,
+  baseURL: `/`,
   headers: {
     token: `MirTarDis`,
   },
